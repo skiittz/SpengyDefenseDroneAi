@@ -1,0 +1,89 @@
+﻿R e a d m e
+-----------
+Setup Guide
+Version 1.00.00
+
+Section 1: Minimum requirements
+	All grids must have 1 or more turrets.  For "TargetOnly" mode, this is the only requirement.
+	To use Patrol or Defend Mode:  your grid must also have:
+		-Minimum of 1 remote control block.  
+		-Minimum of 1 connector.  (ensure there is enough clearance above the connector, as defined in custom data)
+		-Minimum of 1 Battery/H2 Tank/Reactor
+		-Thrusters in every direction with sufficient fuel/power to run them all at max.
+
+	If you have multiple remotes and/or connectors, you can add the Tag defined in custom data to either the name or the custom data to denote which block ai should use.
+	For best results, both remote and connector should be placed on the perpendicular to the grid's center of mass.
+
+Section 2: Setup
+	The drone is capable of setting itself up with a single command.  No setup is required for "TargetOnly" mode.
+
+	For Defend mode: Dock the drone to its home connector, set the mode in custom data, recompile, and run the program with the argument "SETUP".  Your drone is now ready to go!
+	For Patrol mode: Same as Defend, but you also need to load the remote control with some waypoints that define the patrol route.
+
+Section 3: Custom Data
+	Upon compiling, custom data will be populated with some default data.
+	-Tag: (Default = SDDS) 
+		This is the tag mentioned above that the script will look for.  this is optional.
+
+	Mode: (Default = TargetOnly)
+		Mode the drone is running in.  Acceptable values are:
+			-TargetOnly: AI is disabled, however if turrets on the grid pick up an enemy they will relay the position and request backup from drones on the antenna network.
+			-Patrol: Will patrol a given set of waypoints looking for enemies.  If an enemy is spotted, the drone will engage directly and relay the position to other drones on the antenna network.
+			-Defend: Will sit and wait for an enemy position to be relayed through antenna network.  Upon receipt, drone will undock and fly to the target position to engage, and return home when it is neutralized.
+
+	RadioChannel: (Default = SDDS)
+		This is the name of the channel drones will use to talk to each other.  this must be the same for all drones in the given network.  
+		You can have multiple drone networks however.  Drones will only respond to their configured channel.
+		For example, Drones on Channel "A" will respond to enemies found by another drone on channel "A", but drones on channel "B" will do nothing until a drone on channel "B" spots and enemy.
+
+	AttackSpeedLimit: (Default = 100)
+		Maximum speed a drone may travel at when responding to an enemy.
+
+	DockSpeedLimit: (Default = 10)
+		Maximum speed a drone may travel during docking procedure.
+
+	GeneralSpeedLimit:(Default = 35)
+		Maximum speed a drone may travel during general operations, such as returning to base, patrolling, etc.
+
+	LowPowerThreshold: (Default = 20)
+		If grid battery capacity drops below this percentage, drone will return home to charge. 
+		Set to 0 to disable.
+		Is ignored if grid contains no batteries.
+
+	LowH2Threshold: (Default = 50)
+		If grid average fuel levels drops below this percentage, drone will return home to refuel.
+		Set to 0 to disable.
+		Is ignored if grid contains no H2 tanks.
+
+	LowReactorThreshold: (Default = 1)
+		If Reactor fuel drops below this value in kg, drone will return to home to refuel.
+		Set to 0 to disable.
+		Is ignored if grid contains no reactors.
+
+	DockClearance:40
+		A point this many meters directly above that a drone will manuever too when transitioning between dock/undock states.
+		Makes sure this is high enough to allow unimpeded docking and undocking.  
+		Warranty void if set to too low.
+
+	PersonalKey: (Default = None)
+		License key that enables the owner of the programmable block to use this program.*
+	FactionKey: (Default = None)
+		License key that enables any member of the faction it is registered to run this program in any programmable block owned by the faction.*
+
+	*You need a valid personal key OR a valid faction key.  Without one or the other this program will not run.  You do not need both.
+
+	EnableLowAmmoCheck: (Default = true)
+		true - when any turret on the grid is out of ammo, drone will return to base for more.
+		false - ammo is completely ignored and drone will continue to hover around an enemy like an annoying gnat even if all turrets are dry.
+
+Section 4: Troubleshooting
+		If you are installing this on a block that previously had a different program in it, there may be data stored on the block that prevents this one from functioning.  
+		Run the script with the argument "RESET" to delete internal data and re-initialize.  Note that this will remove any previous set up data, such as home location
+		and Patrol Routes.
+
+		If a drone appears to be confused you can manually send it a return command by running the block with "RETURN" as the argument.
+
+		If an error occurs that the drone cannot deal with, such as no remote present, or expired license, the internal update frequency will be set to none to avoid runaway errors, 
+		and the script will no longer run on its own.  Run the argument "ON" after correcting the problem to re-enable it.
+
+		Custom data is loaded on initialization.  If you have updated custom data, you must recompile in order for it to take effect.
