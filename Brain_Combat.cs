@@ -25,18 +25,30 @@ namespace IngameScript
         public void EnemyCheck()
         {
             var turrets = new List<IMyLargeTurretBase>();
+            var antennae = FirstTaggedOrDefault<IMyRadioAntenna>();
+
             GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(Me));
+            bool targetDetected = false;
             foreach (var turret in turrets)
             {
                 if (turret.HasTarget)
                 {
+                    targetDetected = true;
                     var target = turret.GetTargetedEntity();
                     Echo($"{Prompts.EnemyDetected}: " + target.Position);
+                    antennae.EnableBroadcasting = true;
                     IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), target.Position.ToString(), TransmissionDistance.TransmissionDistanceMax);
                     if (CurrentMode() != Mode.TargetOnly && !NeedsService())
                         Attack(target.Position);
                     break;
                 }
+            }
+
+            bool useBurstTransmission = false;
+            bool.TryParse(configuration.For(ConfigName.UseBurstTransmissions), out useBurstTransmission);
+            if (!targetDetected && useBurstTransmission)
+            {
+                antennae.EnableBroadcasting = false;
             }
         }
 
