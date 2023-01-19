@@ -103,7 +103,7 @@ namespace IngameScript
             {Program.ConfigName.PersonalKey,"PersonalKey" },
             {Program.ConfigName.FactionKey,"FactionKey" },
             {Program.ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
-            {Program.ConfigName.UseBurstTransmissions,"UseBurstTransmissions" }
+            {Program.ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
             {Program.ConfigName.EnableSuicide,"EnableSuicide" }
         };
 
