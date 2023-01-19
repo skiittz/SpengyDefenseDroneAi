@@ -44,6 +44,7 @@
     <Compile Include="Brain_Combat.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Enums.cs" />
+    <Compile Include="Scuttle.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="DateExtensions.cs" />
     <Compile Include="Configuration.cs" />
