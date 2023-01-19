@@ -75,6 +75,8 @@ namespace IngameScript
 
             public string For(ConfigName configName)
             {
+                if (!configs.ContainsKey(configName))
+                    return string.Empty;
                 return configs[configName];
             }
         }       

@@ -5,9 +5,14 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpengyDefenseDroneAi", "SpengyDefenseDroneAi.csproj", "{80879E3D-70FD-47F8-AD00-14F8D5426045}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KeyMaker", "..\KeyMaker\KeyMaker.csproj", "{8D21C78A-A3BF-49CE-A554-8AF4F30CE131}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyMaker", "..\KeyMaker\KeyMaker.csproj", "{8D21C78A-A3BF-49CE-A554-8AF4F30CE131}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Authenticator", "..\Authenticator\Authenticator.shproj", "{74BDB0A8-62D8-4060-97EE-95BFEB799431}"
 EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\Authenticator\Authenticator.projitems*{74bdb0a8-62d8-4060-97ee-95bfeb799431}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64

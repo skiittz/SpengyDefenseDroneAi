@@ -52,7 +52,8 @@ namespace IngameScript
             DockClearance,
             PersonalKey,
             FactionKey,
-            EnableLowAmmoCheck
+            EnableLowAmmoCheck,
+            UseBurstTransmissions
         }
     }
 }
