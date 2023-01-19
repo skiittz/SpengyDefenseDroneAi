@@ -54,6 +54,7 @@ namespace IngameScript
             FactionKey,
             EnableLowAmmoCheck,
             UseBurstTransmissions
+            EnableSuicide
         }
     }
 }

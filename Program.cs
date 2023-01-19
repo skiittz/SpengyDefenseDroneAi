@@ -149,6 +149,8 @@ namespace IngameScript
                 return;
             }
 
+            CheckScuttle();
+
             Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
             Echo($"{Prompts.CurrentStatus}: {MyState.Status.ToHumanReadableName()}");
             Echo($"{Prompts.Enroute}: {MyState.Enroute}");
