@@ -79,6 +79,12 @@ namespace IngameScript
                     return string.Empty;
                 return configs[configName];
             }
+
+            public bool IsEnabled(ConfigName configName)
+            {
+                bool output;
+                return bool.TryParse(For(configName), out output) && output;
+            }
         }       
 
         public Mode CurrentMode()

@@ -156,9 +156,16 @@ namespace IngameScript
             Echo($"{Prompts.Enroute}: {MyState.Enroute}");
             if (MyState.Enroute) Echo($"{Prompts.MovingTo} : {(remote?.CurrentWaypoint == null ? Prompts._null : remote.CurrentWaypoint.ToString())}");
 
-            
+            if(configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
+            {
+                var packet = listeners[0].AcceptMessage();
+                var antenna = FirstTaggedOrDefault<IMyRadioAntenna>();
+                antenna.EnableBroadcasting = true;
+                IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), packet.Data, TransmissionDistance.TransmissionDistanceMax);
+            }
+           
 
-            if( CurrentMode() == Mode.TargetOnly)
+            if ( CurrentMode() == Mode.TargetOnly)
             {
                 EnemyCheck();
                 return;

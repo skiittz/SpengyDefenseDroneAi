@@ -104,7 +104,8 @@ namespace IngameScript
             {Program.ConfigName.FactionKey,"FactionKey" },
             {Program.ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
             {Program.ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
-            {Program.ConfigName.EnableSuicide,"EnableSuicide" }
+            {Program.ConfigName.EnableSuicide,"EnableSuicide" },
+            {Program.ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"}
         };
 
         private static readonly Dictionary<Program.Mode, string> modeDecodes = new Dictionary<Program.Mode, string>

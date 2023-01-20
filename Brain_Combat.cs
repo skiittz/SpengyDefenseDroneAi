@@ -62,12 +62,8 @@ namespace IngameScript
                 }
             }
 
-            bool useBurstTransmission = false;
-            bool.TryParse(configuration.For(ConfigName.UseBurstTransmissions), out useBurstTransmission);
-            if (!targetDetected && useBurstTransmission)
-            {
+            if (!targetDetected && configuration.IsEnabled(ConfigName.UseBurstTransmissions))
                 antennae.EnableBroadcasting = false;
-            }
         }
 
         public void Attack(Vector3D target)
