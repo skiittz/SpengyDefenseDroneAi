@@ -28,16 +28,13 @@ namespace IngameScript
             if (!bool.TryParse(configuration.For(ConfigName.EnableSuicide), out enableScuttle) || !enableScuttle)
                 return;
 
-            var turrets = new List<IMyLargeTurretBase>();
-            GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(Me));
-                                 
-            if (!turrets.Any())
+            if (Me.IsBeingHacked)
                 Scuttle();
 
-            var remotes = new List<IMyRemoteControl>();
-            GridTerminalSystem.GetBlocksOfType(remotes, block => block.IsSameConstructAs(Me));
-
-            if (!remotes.Any())
+            var warheads = new List<IMyWarhead>();
+            GridTerminalSystem.GetBlocksOfType(warheads, block => block.IsSameConstructAs(Me));
+            
+            if (warheads.Any(x => x.IsBeingHacked))
                 Scuttle();
         }
         public void Scuttle()
