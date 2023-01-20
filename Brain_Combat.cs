@@ -44,6 +44,24 @@ namespace IngameScript
                 }
             }
 
+            if (!targetDetected)
+            {
+                var sensors = new List<IMySensorBlock>();
+                GridTerminalSystem.GetBlocksOfType(sensors, block => block.IsSameConstructAs(Me));
+
+                foreach(var sensor in sensors)
+                {
+                    var detectedEnemies = new List<MyDetectedEntityInfo>();
+                    sensor.DetectedEntities(detectedEnemies);
+                    var targets = detectedEnemies.Where(x => x.Relationship == MyRelationsBetweenPlayerAndBlock.Enemies).ToList();
+
+                    if (!targets.Any())
+                        return;
+
+                    IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), targets.First().Position.ToString(), TransmissionDistance.TransmissionDistanceMax);
+                }
+            }
+
             bool useBurstTransmission = false;
             bool.TryParse(configuration.For(ConfigName.UseBurstTransmissions), out useBurstTransmission);
             if (!targetDetected && useBurstTransmission)
