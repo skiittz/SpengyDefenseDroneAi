@@ -36,14 +36,22 @@ Section 3: Custom Data
 		You can have multiple drone networks however.  Drones will only respond to their configured channel.
 		For example, Drones on Channel "A" will respond to enemies found by another drone on channel "A", but drones on channel "B" will do nothing until a drone on channel "B" spots and enemy.
 
+	SAMAutoPilotTag: (Default = SAM)
+		With this config you can override the Keen Remote Control Navigation Model, using SAM Autopilot Manager v2 instead!  This is highly recommended as the keen model tends to be extremely inefficient and wastes tons of power/fuel.
+		Simply install his script (link below) in a seperate programmable block, setting up per the SAM instructions.  Then, update this value to the same tag used by the SAM script.
+
+		SAM Autopilot Manager v1: https://steamcommunity.com/sharedfiles/filedetails/?id=1653875433
+
 	AttackSpeedLimit: (Default = 100)
 		Maximum speed a drone may travel at when responding to an enemy.
+		*Is not used if using SAM navigation model.  Set in SAM instead.
 
 	DockSpeedLimit: (Default = 10)
 		Maximum speed a drone may travel during docking procedure.
 
 	GeneralSpeedLimit:(Default = 35)
 		Maximum speed a drone may travel during general operations, such as returning to base, patrolling, etc.
+		*Is not used if using SAM navigation model. Set in SAM instead.
 
 	LowPowerThreshold: (Default = 20)
 		If grid battery capacity drops below this percentage, drone will return home to charge. 
