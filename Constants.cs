@@ -67,10 +67,9 @@ namespace IngameScript
 
     static class Special
     {
-        //public static string NewTaraget_RadioSignal = "NewTarget";
         public static string Debug_ArgFlag = "_dbg";
         public static string Debug_StateFlag = "_State_";
-        public static string Debug_Enroute = "_Enroute";
+        public static string Debug_Enroute = "_Enroute";        
     }
 
     static class AuthConst
@@ -93,6 +92,7 @@ namespace IngameScript
             {Program.ConfigName.Tag,"Tag"},
             {Program.ConfigName.Mode, "Mode"},
             {Program.ConfigName.RadioChannel,"RadioChannel" },
+            {Program.ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
             {Program.ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
             {Program.ConfigName.DockSpeedLimit, "DockSpeedLimit" },
             {Program.ConfigName.GeneralSpeedLimit,"GeneralSpeedLimit" },

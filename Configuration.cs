@@ -29,6 +29,7 @@ namespace IngameScript
                         {ConfigName.Tag,"SDDS"},
                         {ConfigName.Mode, "TargetOnly"},
                         {ConfigName.RadioChannel,"SDDS" },
+                        {ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
                         {ConfigName.AttackSpeedLimit, "100" },
                         {ConfigName.DockSpeedLimit, "10" },
                         {ConfigName.GeneralSpeedLimit,"35" },
@@ -79,7 +80,14 @@ namespace IngameScript
                     return string.Empty;
                 return configs[configName];
             }
-        }       
+
+            public T For<T>(ConfigName configName) where T:struct
+            {
+                T parseResult;
+                Enum.TryParse(For(configName), out parseResult);
+                return parseResult;
+            }
+        }
 
         public Mode CurrentMode()
         {

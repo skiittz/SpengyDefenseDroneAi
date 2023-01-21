@@ -43,6 +43,7 @@ namespace IngameScript
             Tag,
             Mode,
             RadioChannel,
+            SAMAutoPilotTag,
             AttackSpeedLimit,
             DockSpeedLimit,
             GeneralSpeedLimit,
@@ -55,6 +56,12 @@ namespace IngameScript
             EnableLowAmmoCheck,
             UseBurstTransmissions,
             EnableSuicide
+        }
+
+        public enum NavigationModel
+        {
+            Keen,
+            SAM
         }
     }
 }

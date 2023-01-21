@@ -31,6 +31,8 @@ namespace IngameScript
             public Status Status { get; set; }
             public bool Enroute { get; set; }
             public int CurrentPatrolPoint { get; set; }
+            public NavigationModel NavigationModel { get; set; }
+            public IMyProgrammableBlock SAM_Nav { get; set; }
             public bool IsSetUpFor(Mode currentMode)
             {
                 if (currentMode == Mode.TargetOnly)
@@ -55,7 +57,8 @@ namespace IngameScript
                 result += $"{nameof(DockApproach)}|{DockApproach};";
                 result += $"{nameof(Status)}|{Status};";
                 result += $"{nameof(Enroute)}|{Enroute};";
-                result += $"{nameof(CurrentPatrolPoint)}|{CurrentPatrolPoint};";               
+                result += $"{nameof(CurrentPatrolPoint)}|{CurrentPatrolPoint};";         
+                result += $"{nameof(NavigationModel)}|{NavigationModel};";
                 for (int i = 0; i < PatrolRoute.Count; i++)
                 {
                     result += $"{nameof(PatrolRoute)}{i}|{PatrolRoute[i]};";

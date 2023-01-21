@@ -64,7 +64,7 @@ namespace IngameScript
 
             IGC.RegisterBroadcastListener(configuration.For(ConfigName.RadioChannel));
             IGC.GetBroadcastListeners(listeners);
-            listeners[0].SetMessageCallback("NewTarget");// Special.NewTaraget_RadioSignal);
+            listeners[0].SetMessageCallback("NewTarget");
 
             var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), OwnerId(), FactionTag());
             string authorizationMessage;
@@ -87,7 +87,7 @@ namespace IngameScript
                     MyState.Enroute = !MyState.Enroute;
                 else if(argument.Contains(Special.Debug_StateFlag))
                 {
-                    var cmd = argument.Replace($"{Special.Debug_ArgFlag}{Special.Debug_StateFlag}", "");
+                    var cmd = argument.Replace($"{Special.Debug_ArgFlag}{Special.Debug_StateFlag}", "");                   
                     Status status;
                     if(Enum.TryParse(cmd, out status))
                         MyState.Status = status;
@@ -154,9 +154,8 @@ namespace IngameScript
             Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
             Echo($"{Prompts.CurrentStatus}: {MyState.Status.ToHumanReadableName()}");
             Echo($"{Prompts.Enroute}: {MyState.Enroute}");
-            if (MyState.Enroute) Echo($"{Prompts.MovingTo} : {(remote?.CurrentWaypoint == null ? Prompts._null : remote.CurrentWaypoint.ToString())}");
-
-            
+            if (MyState.Enroute)
+                Echo($"{Prompts.MovingTo} : {(remote?.CurrentWaypoint == null ? Prompts._null : remote.CurrentWaypoint.ToString())}");            
 
             if( CurrentMode() == Mode.TargetOnly)
             {
