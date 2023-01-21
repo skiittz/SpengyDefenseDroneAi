@@ -19,21 +19,28 @@ using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
 namespace IngameScript
-{
+{  
     partial class Program
     {
-        public void Go(Vector3D Destination, bool Docking, int speedLimit)
+        public void Go(Vector3D destination, bool docking, int speedLimit)
         {
-            remote.SetAutoPilotEnabled(false);
-            MyState.Enroute = true;            
-            remote.ClearWaypoints();
-            remote.AddWaypoint(Destination, Prompts.Destination);
-            remote.SetAutoPilotEnabled(true);
-            remote.SpeedLimit = speedLimit;
-            remote.SetDockingMode(Docking);
-            remote.SetCollisionAvoidance(!Docking);
-        }
+            Runtime.UpdateFrequency = UpdateFrequency.Update10;
+            string msg = "";
+            switch (MyState.NavigationModel)
+            {
+                case NavigationModel.Keen:
+                    MyState.Enroute = KeenNav_Controller.Go(remote, destination, docking, speedLimit, out msg);
+                    break;
+                case NavigationModel.SAM:
+                    MyState.Enroute = SAM_Controller.Go(sam_controller, destination, out msg);
+                    break;
+            }
+            Echo(msg);
 
+            if (MyState.Enroute)
+                MyState.CurrentDestination = destination;
+        }
+       
         public void UnDock()
         {
             var batteries = new List<IMyBatteryBlock>();
@@ -67,7 +74,7 @@ namespace IngameScript
 
         public double DistanceToWaypoint()
         {
-            return DistanceToWaypoint(remote.CurrentWaypoint.Coords);
+            return DistanceToWaypoint(MyState.CurrentDestination);
         }
 
         public double DistanceToWaypoint(Vector3D destination)

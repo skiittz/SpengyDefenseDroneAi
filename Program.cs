@@ -24,6 +24,7 @@ namespace IngameScript
     {
         public State MyState;
         List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
+        public IMyProgrammableBlock sam_controller;
         public IMyRemoteControl remote;
         public IMyShipConnector connector;
         public List<IMyGasTank> h2Tanks;
@@ -56,6 +57,7 @@ namespace IngameScript
                 MyState = new State();
 
             GetBasicBlocks();
+            MyState.SetControllers(remote, sam_controller);
 
             if (!MyState.IsSetUpFor(CurrentMode()))
                 Runtime.UpdateFrequency = UpdateFrequency.None;
@@ -81,6 +83,15 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            if(argument == "TEST SAM")
+            {
+                bool samFound;
+                sam_controller = SingleTagged<IMyProgrammableBlock>(configuration.For(ConfigName.SAMAutoPilotTag), out samFound);
+                if (samFound)
+                    Echo($"SAM Found: {sam_controller.CustomName}");
+                else
+                    Echo("SAM not found");
+            }
             if (argument.Contains(Special.Debug_ArgFlag))
             {
                 if (argument == $"{Special.Debug_ArgFlag}{Special.Debug_Enroute}")
@@ -153,6 +164,7 @@ namespace IngameScript
 
             Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
             Echo($"{Prompts.CurrentStatus}: {MyState.Status.ToHumanReadableName()}");
+            Echo($"{Prompts.NavigationModel}: {MyState.NavigationModel.ToHumanReadableName()}");
             Echo($"{Prompts.Enroute}: {MyState.Enroute}");
 
             if(configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")

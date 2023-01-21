@@ -44,8 +44,7 @@
     <Compile Include="Brain_Combat.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Enums.cs" />
-    <Compile Include="Example_rdav.cs" />
-    <Compile Include="Navigation_CustomModel.cs" />
+    <Compile Include="KeenNavIntegration.cs" />
     <Compile Include="SAMIntegration.cs" />
     <Compile Include="Scuttle.cs" />
     <Compile Include="Setup.cs" />

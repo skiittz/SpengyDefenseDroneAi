@@ -29,7 +29,7 @@ namespace IngameScript
                         {ConfigName.Tag,"SDDS"},
                         {ConfigName.Mode, "TargetOnly"},
                         {ConfigName.RadioChannel,"SDDS" },
-                        {ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
+                        {ConfigName.SAMAutoPilotTag,"SAM" },
                         {ConfigName.AttackSpeedLimit, "100" },
                         {ConfigName.DockSpeedLimit, "10" },
                         {ConfigName.GeneralSpeedLimit,"35" },
@@ -57,7 +57,7 @@ namespace IngameScript
                 configs.Clear();
                 foreach (var line in lines)
                 {
-                    var config = line.Split(':');                   
+                    var config = line.Split(':');    
                     configs.Add(config[0].ConfigFromHumanReadableName(), config[1]);
                 }
             }
