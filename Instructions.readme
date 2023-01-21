@@ -40,7 +40,7 @@ Section 3: Custom Data
 		With this config you can override the Keen Remote Control Navigation Model, using SAM Autopilot Manager v2 instead!  This is highly recommended as the keen model tends to be extremely inefficient and wastes tons of power/fuel.
 		Simply install his script (link below) in a seperate programmable block, setting up per the SAM instructions.  Then, update this value to the same tag used by the SAM script.
 
-		SAM Autopilot Manager v1: https://steamcommunity.com/sharedfiles/filedetails/?id=1653875433
+		SAM Autopilot Manager v2: https://steamcommunity.com/sharedfiles/filedetails/?id=1653875433
 
 	AttackSpeedLimit: (Default = 100)
 		Maximum speed a drone may travel at when responding to an enemy.
@@ -56,17 +56,17 @@ Section 3: Custom Data
 	LowPowerThreshold: (Default = 20)
 		If grid battery capacity drops below this percentage, drone will return home to charge. 
 		Set to 0 to disable.
-		Is ignored if grid contains no batteries.
+		Is not used if grid contains no batteries.
 
 	LowH2Threshold: (Default = 50)
 		If grid average fuel levels drops below this percentage, drone will return home to refuel.
 		Set to 0 to disable.
-		Is ignored if grid contains no H2 tanks.
+		Is not used if grid contains no H2 tanks.
 
 	LowReactorThreshold: (Default = 1)
 		If Reactor fuel drops below this value in kg, drone will return to home to refuel.
 		Set to 0 to disable.
-		Is ignored if grid contains no reactors.
+		Is not used if grid contains no reactors.
 
 	DockClearance:40
 		A point this many meters directly above that a drone will manuever too when transitioning between dock/undock states.
