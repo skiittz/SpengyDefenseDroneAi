@@ -1,4 +1,5 @@
-﻿using Sandbox.Game.EntityComponents;
+﻿
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -55,7 +56,8 @@ namespace IngameScript
             FactionKey,
             EnableLowAmmoCheck,
             UseBurstTransmissions,
-            EnableSuicide
+            EnableSuicide,
+            EnableRelayBroadcast
         }
 
         public enum NavigationModel

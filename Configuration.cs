@@ -81,6 +81,13 @@ namespace IngameScript
                 return configs[configName];
             }
 
+            public bool IsEnabled(ConfigName configName)
+            {
+                bool output;
+                return bool.TryParse(For(configName), out output) && output;
+            }
+        }       
+
             public T For<T>(ConfigName configName) where T:struct
             {
                 T parseResult;

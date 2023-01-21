@@ -24,8 +24,7 @@ namespace IngameScript
     {
         public void CheckScuttle()
         {
-            bool enableScuttle = false;
-            if (!bool.TryParse(configuration.For(ConfigName.EnableSuicide), out enableScuttle) || !enableScuttle)
+            if (!configuration.IsEnabled(ConfigName.EnableSuicide))
                 return;
 
             if (Me.IsBeingHacked)
