@@ -66,6 +66,7 @@ namespace IngameScript
             }
             else
             {
+                Runtime.UpdateFrequency = UpdateFrequency.Update10;
                 switch (MyState.Status)
                 {
                     case Status.Waiting:
@@ -97,7 +98,10 @@ namespace IngameScript
                         Go(MyState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                         break;
                     case Status.Docking:
-                        Go(MyState.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)));
+                        string msg;
+                        MyState.CurrentDestination = MyState.DockPos;
+                        MyState.Enroute = KeenNav_Controller.Go(remote, MyState.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
+                        Echo(msg);
                         break;
                 }
             }

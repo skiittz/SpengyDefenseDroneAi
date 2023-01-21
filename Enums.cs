@@ -1,4 +1,5 @@
-﻿using Sandbox.Game.EntityComponents;
+﻿
+using Sandbox.Game.EntityComponents;
 using Sandbox.ModAPI.Ingame;
 using Sandbox.ModAPI.Interfaces;
 using SpaceEngineers.Game.ModAPI.Ingame;
@@ -43,6 +44,7 @@ namespace IngameScript
             Tag,
             Mode,
             RadioChannel,
+            SAMAutoPilotTag,
             AttackSpeedLimit,
             DockSpeedLimit,
             GeneralSpeedLimit,
@@ -52,7 +54,16 @@ namespace IngameScript
             DockClearance,
             PersonalKey,
             FactionKey,
-            EnableLowAmmoCheck
+            EnableLowAmmoCheck,
+            UseBurstTransmissions,
+            EnableSuicide,
+            EnableRelayBroadcast
+        }
+
+        public enum NavigationModel
+        {
+            Keen,
+            SAM
         }
     }
 }

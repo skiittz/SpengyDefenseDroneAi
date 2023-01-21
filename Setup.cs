@@ -66,6 +66,10 @@ namespace IngameScript
             {
                 remote = FirstTaggedOrDefault<IMyRemoteControl>();
                 connector = FirstTaggedOrDefault<IMyShipConnector>();
+                bool samFound;
+                sam_controller = SingleTagged<IMyProgrammableBlock>(configuration.For(ConfigName.SAMAutoPilotTag), out samFound);
+                if (samFound)
+                    MyState.NavigationModel = NavigationModel.SAM;
             }
 
             h2Tanks = new List<IMyGasTank>();
@@ -78,26 +82,37 @@ namespace IngameScript
             GridTerminalSystem.GetBlocksOfType(reactors, block => block.IsSameConstructAs(Me));
         }
 
-        public T FirstTaggedOrDefault<T>() where T : class
+        public T FirstTaggedOrDefault<T>(string tag = null) where T : class
         {
             var list = new List<T>();
             GridTerminalSystem.GetBlocksOfType(list, block => ((block as IMyTerminalBlock).IsSameConstructAs(Me)));
-            return list.FirstOrDefault(x => IsTaggedForUse(x)) ?? list.FirstOrDefault();
+            return list.FirstOrDefault(x => IsTaggedForUse(x, tag ?? configuration.For(ConfigName.Tag))) ?? list.FirstOrDefault();
         }
 
-        public T FirstTaggedOrDefault<T>(IEnumerable<T> obj)
+        public T SingleTagged<T>(string tag, out bool found) where T : class
         {
-            return obj.FirstOrDefault(x => IsTaggedForUse(x));
+            var list = new List<T>();
+            GridTerminalSystem
+                .GetBlocksOfType(list, block => ((block as IMyTerminalBlock).IsSameConstructAs(Me)) && ((block as IMyTerminalBlock).Name != Me.Name));
+
+            list = list.Where(x => IsTaggedForUse(x, tag)).ToList();
+            found = list.Count == 1;
+            return found ? list.Single() : null;
         }
 
-        public bool IsTaggedForUse(object obj)
+        public T FirstTaggedOrDefault<T>(IEnumerable<T> obj, string tag)
         {
-            return IsTaggedForUse((obj as IMyTerminalBlock));
+            return obj.FirstOrDefault(x => IsTaggedForUse(x, tag));
         }
 
-        public bool IsTaggedForUse(IMyTerminalBlock block)
+        public bool IsTaggedForUse(object obj, string tag)
         {
-            return block.Name.Contains(configuration.For(ConfigName.Tag)) || block.CustomData.Contains(configuration.For(ConfigName.Tag));
+            return IsTaggedForUse((obj as IMyTerminalBlock), tag);
+        }
+
+        public bool IsTaggedForUse(IMyTerminalBlock block, string tag)
+        {
+            return block.CustomName.Contains(tag) || block.CustomData.Contains(tag);
         }
     }
 }

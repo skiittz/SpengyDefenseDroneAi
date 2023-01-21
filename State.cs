@@ -27,10 +27,14 @@ namespace IngameScript
             public Vector3D DockPos { get; set; }
             public Vector3D DockApproach { get; set; }
             public Vector3D PendingTarget { get; set; }
+            public Vector3D CurrentDestination { get; set; }
             public List<Vector3D> PatrolRoute { get; set; }
             public Status Status { get; set; }
             public bool Enroute { get; set; }
             public int CurrentPatrolPoint { get; set; }
+            public NavigationModel NavigationModel { get; set; }
+            public IMyRemoteControl keen_controller { get; set; }
+            public IMyProgrammableBlock sam_controller { get; set; }
             public bool IsSetUpFor(Mode currentMode)
             {
                 if (currentMode == Mode.TargetOnly)
@@ -46,7 +50,12 @@ namespace IngameScript
                 DockPos = Vector3D.Zero;
                 DockApproach = Vector3D.Zero;
                 PendingTarget = Vector3D.Zero;
-                PatrolRoute = new List<Vector3D>();
+                PatrolRoute = new List<Vector3D>();                
+            }
+            public void SetControllers(IMyRemoteControl keen_controller, IMyProgrammableBlock sam_controller)
+            {
+                this.keen_controller = keen_controller;
+                this.sam_controller = sam_controller;
             }
 
             public string Serialize()
@@ -55,7 +64,9 @@ namespace IngameScript
                 result += $"{nameof(DockApproach)}|{DockApproach};";
                 result += $"{nameof(Status)}|{Status};";
                 result += $"{nameof(Enroute)}|{Enroute};";
-                result += $"{nameof(CurrentPatrolPoint)}|{CurrentPatrolPoint};";               
+                result += $"{nameof(CurrentPatrolPoint)}|{CurrentPatrolPoint};";         
+                result += $"{nameof(NavigationModel)}|{NavigationModel};";
+                result += $"{nameof(CurrentDestination)}|{CurrentDestination};";
                 for (int i = 0; i < PatrolRoute.Count; i++)
                 {
                     result += $"{nameof(PatrolRoute)}{i}|{PatrolRoute[i]};";
@@ -70,28 +81,14 @@ namespace IngameScript
                 var result = new State();
                 var lines = data.Split(';');
                 var values = lines.ToDictionary(x => x.Split('|')[0], x => x.Split('|')[1]);
-
-                Vector3D dockPos = new Vector3D();
-                if (values.ContainsKey(nameof(DockPos)) && Vector3D.TryParse(values[nameof(DockPos)], out dockPos))
-                    result.DockPos = dockPos;
-
-                Vector3D dockApproach = new Vector3D();
-                if (values.ContainsKey(nameof(DockApproach)) && Vector3D.TryParse(values[nameof(DockApproach)], out dockApproach))
-                    result.DockApproach = dockApproach;
-
+                               
+                result.DockPos = values.Parse(nameof(DockPos));
+                result.DockApproach = values.Parse(nameof(DockApproach));
                 result.PendingTarget = Vector3D.Zero;
-
-                Status status;               
-                if (values.ContainsKey(nameof(Status)) && Enum.TryParse(values[nameof(Status)], out status))
-                    result.Status = status;
-
-                bool isEnroute;
-                result.Enroute = values.ContainsKey(nameof(Enroute)) && bool.TryParse(values[nameof(Enroute)], out isEnroute) && isEnroute;
-
-                int patrolPoint;
-                if (values.ContainsKey(nameof(CurrentPatrolPoint)) && int.TryParse(values[nameof(CurrentPatrolPoint)], out patrolPoint))
-                    result.CurrentPatrolPoint = patrolPoint;
-
+                result.Status = values.Parse<Status>(values[nameof(Status)]);
+                result.Enroute = values.ParseBool(nameof(Enroute));
+                result.CurrentPatrolPoint = values.ParseInt(nameof(CurrentPatrolPoint));
+                result.CurrentDestination = values.Parse(nameof(CurrentDestination));
                 result.PatrolRoute = new List<Vector3D>();
                 foreach (var waypoint in values.Where(x => x.Key.Contains(nameof(PatrolRoute))))
                 {
@@ -106,7 +103,14 @@ namespace IngameScript
             public void CompleteStateAndChangeTo(Status newStatus)
             {
                 Enroute = false;
-                Status = newStatus;                
+                Status = newStatus;
+                CurrentDestination = Vector3D.Zero;
+                
+                keen_controller.ClearWaypoints();
+                keen_controller.SetAutoPilotEnabled(false);
+
+                if (sam_controller != null)
+                    sam_controller.TryRun("STOP");
             }
 
             public void SetNextPatrolWaypoint()
@@ -117,6 +121,45 @@ namespace IngameScript
 
                 CompleteStateAndChangeTo(Status.Waiting);
             }
+        }
+    }
+
+    public static class extensions
+    {
+        public static T Parse<T>(this Dictionary<string, string> values, string name)where T : struct
+        {
+            T parseResult;
+            if (values.ContainsKey(name) && Enum.TryParse(values[name], out parseResult))
+                return parseResult;
+            else
+                return default(T);
+        }
+
+        public static Vector3D Parse(this Dictionary<string, string> values, string name)
+        {
+            Vector3D vector;
+            if (values.ContainsKey(name) && Vector3D.TryParse(values[name], out vector))
+                return vector;
+            else
+                return Vector3D.Zero;
+        }
+
+        public static int ParseInt(this Dictionary<string,string> values, string name)
+        {
+            int result;
+            if (values.ContainsKey(name) && int.TryParse(values[name], out result))
+                return result;
+
+            return default(int);
+        }
+
+        public static bool ParseBool(this Dictionary<string, string> values, string name)
+        {
+            bool result;
+            if (values.ContainsKey(name) && bool.TryParse(values[name], out result))
+                return result;
+
+            return default(bool);
         }
     }
 }

@@ -29,6 +29,7 @@ namespace IngameScript
                         {ConfigName.Tag,"SDDS"},
                         {ConfigName.Mode, "TargetOnly"},
                         {ConfigName.RadioChannel,"SDDS" },
+                        {ConfigName.SAMAutoPilotTag,"SAM" },
                         {ConfigName.AttackSpeedLimit, "100" },
                         {ConfigName.DockSpeedLimit, "10" },
                         {ConfigName.GeneralSpeedLimit,"35" },
@@ -56,7 +57,7 @@ namespace IngameScript
                 configs.Clear();
                 foreach (var line in lines)
                 {
-                    var config = line.Split(':');                   
+                    var config = line.Split(':');    
                     configs.Add(config[0].ConfigFromHumanReadableName(), config[1]);
                 }
             }
@@ -75,9 +76,24 @@ namespace IngameScript
 
             public string For(ConfigName configName)
             {
+                if (!configs.ContainsKey(configName))
+                    return string.Empty;
                 return configs[configName];
             }
-        }       
+
+            public bool IsEnabled(ConfigName configName)
+            {
+                bool output;
+                return bool.TryParse(For(configName), out output) && output;
+            }              
+
+            public T For<T>(ConfigName configName) where T:struct
+            {
+                T parseResult;
+                Enum.TryParse(For(configName), out parseResult);
+                return parseResult;
+            }
+        }
 
         public Mode CurrentMode()
         {

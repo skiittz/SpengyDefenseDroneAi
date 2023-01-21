@@ -46,11 +46,12 @@ namespace IngameScript
         public static string DockAndRunSetup = "Dock and run setup";
         public static string CurrentMode = "Current Mode";
         public static string CurrentStatus = "Current Status";
+        public static string NavigationModel = "Navigation Model";
         public static string Enroute = "Enroute";
         public static string MovingTo = "Moving to";
         public static string _null = "null";
         public static string LowAmmo = "Low Ammo";
-        public static string AmmoGood = "AmmoGood";
+        public static string AmmoGood = "Ammo Good";
         public static string LowPower = "Low Power";
         public static string PowerGood = "Power Good";
         public static string LowH2 = "Low H2";
@@ -67,10 +68,9 @@ namespace IngameScript
 
     static class Special
     {
-        //public static string NewTaraget_RadioSignal = "NewTarget";
         public static string Debug_ArgFlag = "_dbg";
         public static string Debug_StateFlag = "_State_";
-        public static string Debug_Enroute = "_Enroute";
+        public static string Debug_Enroute = "_Enroute";        
     }
 
     static class AuthConst
@@ -93,6 +93,7 @@ namespace IngameScript
             {Program.ConfigName.Tag,"Tag"},
             {Program.ConfigName.Mode, "Mode"},
             {Program.ConfigName.RadioChannel,"RadioChannel" },
+            {Program.ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
             {Program.ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
             {Program.ConfigName.DockSpeedLimit, "DockSpeedLimit" },
             {Program.ConfigName.GeneralSpeedLimit,"GeneralSpeedLimit" },
@@ -102,7 +103,10 @@ namespace IngameScript
             {Program.ConfigName.DockClearance,"DockClearance" },
             {Program.ConfigName.PersonalKey,"PersonalKey" },
             {Program.ConfigName.FactionKey,"FactionKey" },
-            {Program.ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"}
+            {Program.ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
+            {Program.ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
+            {Program.ConfigName.EnableSuicide,"EnableSuicide" },
+            {Program.ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"}
         };
 
         private static readonly Dictionary<Program.Mode, string> modeDecodes = new Dictionary<Program.Mode, string>
@@ -121,6 +125,11 @@ namespace IngameScript
             {Program.Status.PreparingToAttack,"Preparing to Attack" }
         };
 
+        private static readonly Dictionary<Program.NavigationModel, string> navigationModelDecodes = new Dictionary<Program.NavigationModel, string> 
+        {
+            {Program.NavigationModel.Keen,"Keen" },
+            {Program.NavigationModel.SAM,"SAM" }
+        };
          public static string ToHumanReadableName(this Program.ConfigName config)
         {
             return configDecodes[config];
@@ -145,6 +154,11 @@ namespace IngameScript
         public static string ToHumanReadableName(this Program.Status status)
         {
             return statusDecodes[status];
+        }
+
+        public static string ToHumanReadableName(this Program.NavigationModel model)
+        {
+            return navigationModelDecodes[model];
         }
     }
 }

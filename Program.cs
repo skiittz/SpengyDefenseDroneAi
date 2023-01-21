@@ -24,6 +24,7 @@ namespace IngameScript
     {
         public State MyState;
         List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
+        public IMyProgrammableBlock sam_controller;
         public IMyRemoteControl remote;
         public IMyShipConnector connector;
         public List<IMyGasTank> h2Tanks;
@@ -56,6 +57,7 @@ namespace IngameScript
                 MyState = new State();
 
             GetBasicBlocks();
+            MyState.SetControllers(remote, sam_controller);
 
             if (!MyState.IsSetUpFor(CurrentMode()))
                 Runtime.UpdateFrequency = UpdateFrequency.None;
@@ -64,7 +66,7 @@ namespace IngameScript
 
             IGC.RegisterBroadcastListener(configuration.For(ConfigName.RadioChannel));
             IGC.GetBroadcastListeners(listeners);
-            listeners[0].SetMessageCallback("NewTarget");// Special.NewTaraget_RadioSignal);
+            listeners[0].SetMessageCallback("NewTarget");
 
             var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), OwnerId(), FactionTag());
             string authorizationMessage;
@@ -81,13 +83,22 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            if(argument == "TEST SAM")
+            {
+                bool samFound;
+                sam_controller = SingleTagged<IMyProgrammableBlock>(configuration.For(ConfigName.SAMAutoPilotTag), out samFound);
+                if (samFound)
+                    Echo($"SAM Found: {sam_controller.CustomName}");
+                else
+                    Echo("SAM not found");
+            }
             if (argument.Contains(Special.Debug_ArgFlag))
             {
                 if (argument == $"{Special.Debug_ArgFlag}{Special.Debug_Enroute}")
                     MyState.Enroute = !MyState.Enroute;
                 else if(argument.Contains(Special.Debug_StateFlag))
                 {
-                    var cmd = argument.Replace($"{Special.Debug_ArgFlag}{Special.Debug_StateFlag}", "");
+                    var cmd = argument.Replace($"{Special.Debug_ArgFlag}{Special.Debug_StateFlag}", "");                   
                     Status status;
                     if(Enum.TryParse(cmd, out status))
                         MyState.Status = status;
@@ -149,14 +160,25 @@ namespace IngameScript
                 return;
             }
 
+            CheckScuttle();
+
             Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
             Echo($"{Prompts.CurrentStatus}: {MyState.Status.ToHumanReadableName()}");
+            Echo($"{Prompts.NavigationModel}: {MyState.NavigationModel.ToHumanReadableName()}");
             Echo($"{Prompts.Enroute}: {MyState.Enroute}");
-            if (MyState.Enroute) Echo($"{Prompts.MovingTo} : {(remote?.CurrentWaypoint == null ? Prompts._null : remote.CurrentWaypoint.ToString())}");
 
-            
+            if(configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
+            {
+                var packet = listeners[0].AcceptMessage();
+                var antenna = FirstTaggedOrDefault<IMyRadioAntenna>();
+                antenna.EnableBroadcasting = true;
+                IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), packet.Data, TransmissionDistance.TransmissionDistanceMax);
+            }
+           
+            if (MyState.Enroute)
+                Echo($"{Prompts.MovingTo} : {(remote?.CurrentWaypoint == null ? Prompts._null : remote.CurrentWaypoint.ToString())}");            
 
-            if( CurrentMode() == Mode.TargetOnly)
+            if ( CurrentMode() == Mode.TargetOnly)
             {
                 EnemyCheck();
                 return;

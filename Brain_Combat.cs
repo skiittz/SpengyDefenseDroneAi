@@ -25,19 +25,45 @@ namespace IngameScript
         public void EnemyCheck()
         {
             var turrets = new List<IMyLargeTurretBase>();
+            var antennae = FirstTaggedOrDefault<IMyRadioAntenna>();
+
             GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(Me));
+            bool targetDetected = false;
             foreach (var turret in turrets)
             {
                 if (turret.HasTarget)
                 {
+                    targetDetected = true;
                     var target = turret.GetTargetedEntity();
                     Echo($"{Prompts.EnemyDetected}: " + target.Position);
+                    antennae.EnableBroadcasting = true;
                     IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), target.Position.ToString(), TransmissionDistance.TransmissionDistanceMax);
                     if (CurrentMode() != Mode.TargetOnly && !NeedsService())
                         Attack(target.Position);
                     break;
                 }
             }
+
+            if (!targetDetected)
+            {
+                var sensors = new List<IMySensorBlock>();
+                GridTerminalSystem.GetBlocksOfType(sensors, block => block.IsSameConstructAs(Me));
+
+                foreach(var sensor in sensors)
+                {
+                    var detectedEnemies = new List<MyDetectedEntityInfo>();
+                    sensor.DetectedEntities(detectedEnemies);
+                    var targets = detectedEnemies.Where(x => x.Relationship == MyRelationsBetweenPlayerAndBlock.Enemies).ToList();
+
+                    if (!targets.Any())
+                        return;
+
+                    IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), targets.First().Position.ToString(), TransmissionDistance.TransmissionDistanceMax);
+                }
+            }
+
+            if (!targetDetected && configuration.IsEnabled(ConfigName.UseBurstTransmissions))
+                antennae.EnableBroadcasting = false;
         }
 
         public void Attack(Vector3D target)

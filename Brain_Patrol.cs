@@ -42,7 +42,7 @@ namespace IngameScript
                 {
                     var distanceToWaypoint = DistanceToWaypoint();
                     if (distanceToWaypoint < 3)
-                    {
+                    {                        
                         switch (MyState.Status)
                         {
                             case Status.Docking:
@@ -70,13 +70,17 @@ namespace IngameScript
                 }
                 else
                 {
+                    Runtime.UpdateFrequency = UpdateFrequency.Update10;
                     switch (MyState.Status)
                     {
                         case Status.Returning:
                             Go(MyState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                             break;
                         case Status.Docking:
-                            Go(MyState.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)));
+                            MyState.CurrentDestination = MyState.DockPos;
+                            string msg;
+                            MyState.Enroute = KeenNav_Controller.Go(remote, MyState.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
+                            Echo(msg);
                             break;
                         case Status.Patrolling:
                             MyState.CompleteStateAndChangeTo(Status.Waiting);
