@@ -46,7 +46,6 @@
     <Compile Include="Enums.cs" />
     <Compile Include="KeenNavIntegration.cs" />
     <Compile Include="SAMIntegration.cs" />
-    <Compile Include="Scuttle.cs" />
     <Compile Include="Setup.cs" />
     <Compile Include="DateExtensions.cs" />
     <Compile Include="Configuration.cs" />

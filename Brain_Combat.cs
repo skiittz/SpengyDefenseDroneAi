@@ -61,9 +61,6 @@ namespace IngameScript
                     IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), targets.First().Position.ToString(), TransmissionDistance.TransmissionDistanceMax);
                 }
             }
-
-            if (!targetDetected && configuration.IsEnabled(ConfigName.UseBurstTransmissions))
-                antennae.EnableBroadcasting = false;
         }
 
         public void Attack(Vector3D target)

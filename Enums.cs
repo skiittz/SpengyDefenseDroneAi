@@ -54,10 +54,7 @@ namespace IngameScript
             DockClearance,
             PersonalKey,
             FactionKey,
-            EnableLowAmmoCheck,
-            UseBurstTransmissions,
-            EnableSuicide,
-            EnableRelayBroadcast
+            EnableLowAmmoCheck
         }
 
         public enum NavigationModel

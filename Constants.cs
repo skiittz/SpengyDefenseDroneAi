@@ -103,10 +103,7 @@ namespace IngameScript
             {Program.ConfigName.DockClearance,"DockClearance" },
             {Program.ConfigName.PersonalKey,"PersonalKey" },
             {Program.ConfigName.FactionKey,"FactionKey" },
-            {Program.ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
-            {Program.ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
-            {Program.ConfigName.EnableSuicide,"EnableSuicide" },
-            {Program.ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"}
+            {Program.ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"}
         };
 
         private static readonly Dictionary<Program.Mode, string> modeDecodes = new Dictionary<Program.Mode, string>
