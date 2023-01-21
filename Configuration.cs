@@ -85,8 +85,7 @@ namespace IngameScript
             {
                 bool output;
                 return bool.TryParse(For(configName), out output) && output;
-            }
-        }       
+            }              
 
             public T For<T>(ConfigName configName) where T:struct
             {
