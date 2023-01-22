@@ -32,6 +32,7 @@ namespace IngameScript
         public List<IMyReactor> reactors;
         private readonly Configuration configuration;
         public bool isAuthorized;
+        public IMyCameraBlock fixedWeaponController;
         public Program()
         {
             configuration = new Configuration();
@@ -83,14 +84,11 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            if(argument == "TEST SAM")
+            CheckAndFireFixedWeapons();
+            if (argument.ToUpper().Contains("SCAN "))
             {
-                bool samFound;
-                sam_controller = SingleTagged<IMyProgrammableBlock>(configuration.For(ConfigName.SAMAutoPilotTag), out samFound);
-                if (samFound)
-                    Echo($"SAM Found: {sam_controller.CustomName}");
-                else
-                    Echo("SAM not found");
+                ScanForTarget(argument.ToUpper().Replace("SCAN ", ""));
+                return;
             }
             if (argument.Contains(Special.Debug_ArgFlag))
             {
@@ -172,7 +170,7 @@ namespace IngameScript
                 var packet = listeners[0].AcceptMessage();
                 var antenna = FirstTaggedOrDefault<IMyRadioAntenna>();
                 antenna.EnableBroadcasting = true;
-                IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), packet.Data, TransmissionDistance.TransmissionDistanceMax);
+                IGC.Relay(packet, configuration.For(ConfigName.RadioChannel));
             }
            
             if (MyState.Enroute)

@@ -42,6 +42,9 @@
     <Compile Include="Brain_Patrol.cs" />
     <Compile Include="Brain_Defend.cs" />
     <Compile Include="Brain_Combat.cs" />
+    <Compile Include="FixedWeaponController.cs" />
+    <Compile Include="TargetBroadcaster.cs" />
+    <Compile Include="TargetDesignator.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="KeenNavIntegration.cs" />

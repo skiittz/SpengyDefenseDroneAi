@@ -83,5 +83,11 @@ namespace IngameScript
             Echo($"{Prompts.DistanceToWaypoint}: {distance}");
             return distance;
         }
+
+        public double DistanceBetween(Vector3D p1, Vector3D p2)
+        {
+            var distance = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2) + Math.Pow(p1.Z - p2.Z, 2));
+            return distance;
+        }
     }
 }

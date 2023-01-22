@@ -68,8 +68,10 @@ namespace IngameScript
                 connector = FirstTaggedOrDefault<IMyShipConnector>();
                 bool samFound;
                 sam_controller = SingleTagged<IMyProgrammableBlock>(configuration.For(ConfigName.SAMAutoPilotTag), out samFound);
-                if (samFound)
+                if (samFound && sam_controller.IsWorking)
                     MyState.NavigationModel = NavigationModel.SAM;
+                else
+                    MyState.NavigationModel = NavigationModel.Keen;
             }
 
             h2Tanks = new List<IMyGasTank>();

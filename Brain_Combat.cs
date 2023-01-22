@@ -24,6 +24,9 @@ namespace IngameScript
     {
         public void EnemyCheck()
         {
+            if(NeedsService())
+                return;
+
             var turrets = new List<IMyLargeTurretBase>();
             var antennae = FirstTaggedOrDefault<IMyRadioAntenna>();
 
@@ -37,8 +40,9 @@ namespace IngameScript
                     var target = turret.GetTargetedEntity();
                     Echo($"{Prompts.EnemyDetected}: " + target.Position);
                     antennae.EnableBroadcasting = true;
-                    IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), target.Position.ToString(), TransmissionDistance.TransmissionDistanceMax);
-                    if (CurrentMode() != Mode.TargetOnly && !NeedsService())
+                    IGC.BroadcastTarget(target, configuration.For(ConfigName.RadioChannel));
+
+                    if (CurrentMode() != Mode.TargetOnly)
                         Attack(target.Position);
                     break;
                 }
@@ -58,7 +62,7 @@ namespace IngameScript
                     if (!targets.Any())
                         return;
 
-                    IGC.SendBroadcastMessage(configuration.For(ConfigName.RadioChannel), targets.First().Position.ToString(), TransmissionDistance.TransmissionDistanceMax);
+                    IGC.BroadcastTarget(targets.First(), configuration.For(ConfigName.RadioChannel));
                 }
             }
 
