@@ -42,6 +42,31 @@ namespace IngameScript
                         {ConfigName.EnableLowAmmoCheck,"true"}
             };
 
+            public static IEnumerable<ConfigName> ApplicableConfigs(Mode mode, NavigationModel navModel)
+            {
+                yield return ConfigName.Tag; 
+                yield return ConfigName.Mode;
+                yield return ConfigName.RadioChannel;
+                yield return ConfigName.PersonalKey;
+                yield return ConfigName.FactionKey;
+                yield return ConfigName.UseBurstTransmissions;
+                yield return ConfigName.EnableSuicide;
+                yield return ConfigName.EnableRelayBroadcast;
+
+                if(mode != Mode.TargetOnly)
+                {
+                    yield return ConfigName.SAMAutoPilotTag;
+                    yield return ConfigName.DockSpeedLimit;
+                    yield return ConfigName.AttackSpeedLimit;
+                    yield return ConfigName.GeneralSpeedLimit; 
+                    yield return ConfigName.DockClearance;
+                    yield return ConfigName.LowPowerThreshold;
+                    yield return ConfigName.LowH2Threshold;
+                    yield return ConfigName.LowReactorThreshold;
+                    yield return ConfigName.EnableLowAmmoCheck;
+                }
+            }
+
             public Configuration()
             {
                 configs = Defaults;
@@ -93,11 +118,19 @@ namespace IngameScript
                 Enum.TryParse(For(configName), out parseResult);
                 return parseResult;
             }
+
+            public void CleanUp(Mode mode, NavigationModel navModel)
+            {
+                foreach(var config in configs.Select(x => x.Key)){
+                    if (!ApplicableConfigs(mode, navModel).Contains(config))
+                        configs.Remove(config);
+                }
+            }
         }
 
         public Mode CurrentMode()
         {
             return configuration.For(ConfigName.Mode).ModeFromHumanReadableName();
-        }
+        }        
     }
 }

@@ -71,7 +71,7 @@ namespace IngameScript
             var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), OwnerId(), FactionTag());
             string authorizationMessage;
             isAuthorized = authenticator.IsAuthorized(out authorizationMessage);
-            Echo(authorizationMessage);
+            Echo(authorizationMessage);            
         }
 
         public void Save()

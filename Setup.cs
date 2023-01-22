@@ -57,6 +57,9 @@ namespace IngameScript
             MyState.DockApproach = remote.GetPosition() + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
             Save();
             Runtime.UpdateFrequency = UpdateFrequency.Update100;
+
+            configuration.CleanUp(CurrentMode(), MyState.NavigationModel);
+            Me.CustomData = configuration.ToString();
             return true;
         }
 
