@@ -32,7 +32,6 @@ namespace IngameScript
         public List<IMyReactor> reactors;
         private readonly Configuration configuration;
         public bool isAuthorized;
-        public IMyCameraBlock fixedWeaponController;
         public Program()
         {
             configuration = new Configuration();

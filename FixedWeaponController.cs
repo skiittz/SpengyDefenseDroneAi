@@ -51,9 +51,5 @@ namespace IngameScript
                 weapon.ShootOnce();
             }
         }
-        public class FixedWeaponController
-        {
-            
-        }
     }
 }
