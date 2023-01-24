@@ -62,6 +62,7 @@ namespace IngameScript
 
         public void GetBasicBlocks()
         {
+            myBrain = GetBrain();
             if (CurrentMode() != Mode.TargetOnly)
             {
                 remote = FirstTaggedOrDefault<IMyRemoteControl>();

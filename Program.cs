@@ -32,6 +32,7 @@ namespace IngameScript
         public List<IMyReactor> reactors;
         private readonly Configuration configuration;
         public bool isAuthorized;
+        public AiBrain myBrain;
         public Program()
         {
             configuration = new Configuration();
@@ -177,22 +178,10 @@ namespace IngameScript
                 IGC.Relay(packet, configuration.For(ConfigName.RadioChannel));
             }
            
-            if (MyState.Enroute)
-                Echo($"{Prompts.MovingTo} : {(remote?.CurrentWaypoint == null ? Prompts._null : remote.CurrentWaypoint.ToString())}");            
-
-            if ( CurrentMode() == Mode.TargetOnly)
-            {
-                EnemyCheck();
-                return;
-            }           
-            else if (CurrentMode() == Mode.Defend)
-            {
-                DeployLogic(argument);
-            }
-            else if(CurrentMode() == Mode.Patrol)
-            {
-                PatrolLogic();
-            }
+            myBrain.Process(argument);
+            Runtime.UpdateFrequency = MyState.Enroute && DistanceToWaypoint() < 1000
+                ? UpdateFrequency.Update10 
+                : UpdateFrequency.Update100;
         }
 
         void ClearData()
