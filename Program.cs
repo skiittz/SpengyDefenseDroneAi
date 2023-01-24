@@ -57,6 +57,9 @@ namespace IngameScript
                 MyState = new State();
 
             GetBasicBlocks();
+            //reset dock approach in case clearance setting was changeed
+            MyState.DockApproach = MyState.DockApproach + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
+
             MyState.SetControllers(remote, sam_controller);
 
             if (!MyState.IsSetUpFor(CurrentMode()))

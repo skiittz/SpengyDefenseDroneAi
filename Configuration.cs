@@ -39,7 +39,10 @@ namespace IngameScript
                         {ConfigName.DockClearance,"40" },
                         {ConfigName.PersonalKey,"None" },
                         {ConfigName.FactionKey,"None" },
-                        {ConfigName.EnableLowAmmoCheck,"true"}
+                        {ConfigName.EnableLowAmmoCheck,"true"},
+                        {ConfigName.UseBurstTransmissions,"true" },
+                        {ConfigName.EnableSuicide,"true" },
+                        {ConfigName.EnableRelayBroadcast,"true" }
             };
 
             public Configuration()

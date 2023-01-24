@@ -78,6 +78,16 @@ Section 3: Custom Data
 	FactionKey: (Default = None)
 		License key that enables any member of the faction it is registered to run this program in any programmable block owned by the faction.*
 
+	UseBurstTransmissions: (Default = true)
+		Keeps Antenna broadcasting off unless needed.
+
+	EnableSuicide: (Default = true)
+		If someone is hacking either the current programmable block, or any warhead on the grid, detonate all warheads.
+
+    EnableRelayBroadcast: (Default = false)
+		Repeats received signals.  Can extend signal range by daisy-chaining through relays.
+
+
 	*You need a valid personal key OR a valid faction key.  Without one or the other this program will not run.  You do not need both.
 
 	EnableLowAmmoCheck: (Default = true)
