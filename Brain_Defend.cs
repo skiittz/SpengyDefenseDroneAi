@@ -60,7 +60,8 @@ namespace IngameScript
                     case Status.Attacking:
                         if(distanceToWaypoint < 50)
                             MyState.CompleteStateAndChangeTo(Status.Returning);
-                        EnemyCheck();
+                        if(!NeedsService())
+                            EnemyCheck();
                         break;
                 }
             }
@@ -73,7 +74,7 @@ namespace IngameScript
                         if (connector.Status == MyShipConnectorStatus.Connected)
                         {
                             Echo(argument);
-                            if (argument.Equals("NewTarget")/*Special.NewTaraget_RadioSignal)*/ && !NeedsService())
+                            if (argument.Equals("NewTarget") && !NeedsService())
                             {
                                 var packet = listeners[0].AcceptMessage();
                                 Echo(packet.ToString());

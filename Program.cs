@@ -85,11 +85,13 @@ namespace IngameScript
         public void Main(string argument, UpdateType updateSource)
         {
             CheckAndFireFixedWeapons();
+
             if (argument.ToUpper().Contains("SCAN "))
             {
                 ScanForTarget(argument.ToUpper().Replace("SCAN ", ""));
                 return;
             }
+
             if (argument.Contains(Special.Debug_ArgFlag))
             {
                 if (argument == $"{Special.Debug_ArgFlag}{Special.Debug_Enroute}")
