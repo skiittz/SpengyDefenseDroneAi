@@ -28,7 +28,7 @@ namespace IngameScript
             public static readonly Dictionary<ConfigName, string> Defaults = new Dictionary<ConfigName, string> {
                         {ConfigName.Tag,"SDDS"},
                         {ConfigName.Mode, "TargetOnly"},
-                        {ConfigName.RadioChannel,"SDDS" },
+                        {ConfigName.MyName,"SDDS Drone 1" },
                         {ConfigName.SAMAutoPilotTag,"SAM" },
                         {ConfigName.AttackSpeedLimit, "100" },
                         {ConfigName.DockSpeedLimit, "10" },

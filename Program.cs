@@ -67,7 +67,7 @@ namespace IngameScript
             else
                 Runtime.UpdateFrequency = UpdateFrequency.Update100;
 
-            IGC.RegisterBroadcastListener(configuration.For(ConfigName.RadioChannel));
+            IGC.RegisterBroadcastListener(configuration.For(ConfigName.MyName));
             IGC.GetBroadcastListeners(listeners);
             listeners[0].SetMessageCallback("NewTarget");
 
@@ -174,7 +174,7 @@ namespace IngameScript
                 var packet = listeners[0].AcceptMessage();
                 var antenna = FirstTaggedOrDefault<IMyRadioAntenna>();
                 antenna.EnableBroadcasting = true;
-                IGC.Relay(packet, configuration.For(ConfigName.RadioChannel));
+                IGC.Relay(packet, configuration.For(ConfigName.MyName));
             }
            
             if (MyState.Enroute)

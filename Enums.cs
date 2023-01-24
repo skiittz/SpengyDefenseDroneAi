@@ -43,7 +43,7 @@ namespace IngameScript
         {
             Tag,
             Mode,
-            RadioChannel,
+            MyName,
             SAMAutoPilotTag,
             AttackSpeedLimit,
             DockSpeedLimit,

@@ -40,7 +40,7 @@ namespace IngameScript
                     var target = turret.GetTargetedEntity();
                     Echo($"{Prompts.EnemyDetected}: " + target.Position);
                     antennae.EnableBroadcasting = true;
-                    IGC.BroadcastTarget(target, configuration.For(ConfigName.RadioChannel));
+                    IGC.BroadcastTarget(target, configuration.For(ConfigName.MyName));
 
                     if (CurrentMode() != Mode.TargetOnly)
                         Attack(target.Position);
@@ -62,7 +62,7 @@ namespace IngameScript
                     if (!targets.Any())
                         return;
 
-                    IGC.BroadcastTarget(targets.First(), configuration.For(ConfigName.RadioChannel));
+                    IGC.BroadcastTarget(targets.First(), configuration.For(ConfigName.MyName));
                 }
             }
 

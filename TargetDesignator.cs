@@ -49,7 +49,7 @@ namespace IngameScript
 
             Echo($"Target found: {DistanceBetween(camera.GetPosition(), target.Value)}");
             Echo(target.Value.ToString());
-            IGC.BroadcastTarget(target.Value, configuration.For(ConfigName.RadioChannel));
+            IGC.BroadcastTarget(target.Value, configuration.For(ConfigName.MyName));
         }
     }
     

@@ -92,7 +92,7 @@ namespace IngameScript
         {
             {Program.ConfigName.Tag,"Tag"},
             {Program.ConfigName.Mode, "Mode"},
-            {Program.ConfigName.RadioChannel,"RadioChannel" },
+            {Program.ConfigName.MyName,"MyName" },
             {Program.ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
             {Program.ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
             {Program.ConfigName.DockSpeedLimit, "DockSpeedLimit" },
