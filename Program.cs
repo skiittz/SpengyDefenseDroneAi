@@ -67,9 +67,7 @@ namespace IngameScript
             else
                 Runtime.UpdateFrequency = UpdateFrequency.Update100;
 
-            IGC.RegisterBroadcastListener(configuration.For(ConfigName.MyName));
-            IGC.GetBroadcastListeners(listeners);
-            listeners[0].SetMessageCallback("NewTarget");
+            SetUpRadioListeners();          
 
             var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), OwnerId(), FactionTag());
             string authorizationMessage;
@@ -87,6 +85,9 @@ namespace IngameScript
         public void Main(string argument, UpdateType updateSource)
         {
             CheckAndFireFixedWeapons();
+
+            if (CheckCommandIssuedViaRadio(argument))
+                return;
 
             if (argument.ToUpper().Contains("SCAN "))
             {
