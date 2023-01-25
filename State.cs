@@ -32,7 +32,6 @@ namespace IngameScript
             public Status Status { get; set; }
             public bool Enroute { get; set; }
             public int CurrentPatrolPoint { get; set; }
-            public NavigationModel NavigationModel { get; set; }
             public IMyRemoteControl keen_controller { get; set; }
             public IMyProgrammableBlock sam_controller { get; set; }
             public bool IsSetUpFor(Mode currentMode)
@@ -65,7 +64,6 @@ namespace IngameScript
                 result += $"{nameof(Status)}|{Status};";
                 result += $"{nameof(Enroute)}|{Enroute};";
                 result += $"{nameof(CurrentPatrolPoint)}|{CurrentPatrolPoint};";         
-                result += $"{nameof(NavigationModel)}|{NavigationModel};";
                 result += $"{nameof(CurrentDestination)}|{CurrentDestination};";
                 for (int i = 0; i < PatrolRoute.Count; i++)
                 {

@@ -22,10 +22,10 @@ namespace IngameScript
 {  
     partial class Program
     {
-        public void Go(Vector3D destination, bool docking, int speedLimit)
+        public static void Go(Vector3D destination, bool docking, int speedLimit, State MyState, MyGridProgram mgp, IMyProgrammableBlock sam_controller, IMyRemoteControl remote)
         {
-            Runtime.UpdateFrequency = UpdateFrequency.Update10;
-            string msg = "";
+            mgp.Runtime.UpdateFrequency = UpdateFrequency.Update10;
+            string msg = string.Empty;
             switch (MyState.NavigationModel)
             {
                 case NavigationModel.Keen:
@@ -35,29 +35,28 @@ namespace IngameScript
                     MyState.Enroute = SAM_Controller.Go(sam_controller, destination, out msg);
                     break;
             }
-            Echo(msg);
-
+            mgp.Echo(msg);
             if (MyState.Enroute)
                 MyState.CurrentDestination = destination;
         }
        
-        public void UnDock()
+        public static void UnDock(MyGridProgram mgp, int speedLimit, State MyState, IMyShipConnector connector, IMyProgrammableBlock sam_controller, IMyRemoteControl remote)
         {
             var batteries = new List<IMyBatteryBlock>();
             var h2Tanks = new List<IMyGasTank>();
 
-            GridTerminalSystem.GetBlocksOfType(batteries, block => block.IsSameConstructAs(Me));
-            GridTerminalSystem.GetBlocksOfType(h2Tanks, block => block.IsSameConstructAs(Me) && block.BlockDefinition.SubtypeName.Contains("Hydro"));
+            mgp.GridTerminalSystem.GetBlocksOfType(batteries, block => block.IsSameConstructAs(mgp.Me));
+            mgp.GridTerminalSystem.GetBlocksOfType(h2Tanks, block => block.IsSameConstructAs(mgp.Me) && block.BlockDefinition.SubtypeName.Contains("Hydro"));
 
             batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
             h2Tanks.ForEach(x => x.Stockpile = false);
 
             connector.Disconnect();
 
-            Go(MyState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+            Go(MyState.DockApproach, false, speedLimit, MyState, mgp, sam_controller, remote);
         }
 
-        public void Dock()
+        public void Dock(State MyState)
         {
             connector.Connect();
             var batteries = new List<IMyBatteryBlock>();
@@ -72,7 +71,7 @@ namespace IngameScript
             MyState.CompleteStateAndChangeTo(Status.Waiting);
         }
 
-        public double DistanceToWaypoint()
+        public double DistanceToWaypoint(State MyState)
         {
             return DistanceToWaypoint(MyState.CurrentDestination);
         }

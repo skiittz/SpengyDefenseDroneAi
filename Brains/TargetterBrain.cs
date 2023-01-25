@@ -24,9 +24,28 @@ namespace IngameScript
     {
         public class TargetterBrain : AiBrain
         {
-            public void Process(string argument, IMyShipConnector connector)
+            public MyGridProgram GridProgram { get; set; }
+            public Configuration configuration { get; set; }
+
+            public TargetterBrain(MyGridProgram gridProgram)
+            {
+                this.GridProgram = gridProgram;
+            }
+            public void Process(string argument)
             {
                 EnemyCheck();
+            }
+
+            public void StatusReport()
+            {
+                GridProgram.Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
+            }
+
+            public void ClearData() { }
+
+            public void TurnOff()
+            {
+                GridProgram.Runtime.UpdateFrequency = UpdateFrequency.None;
             }
         }
     }

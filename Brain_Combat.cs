@@ -22,15 +22,15 @@ namespace IngameScript
 {
     partial class Program
     {
-        public void EnemyCheck()
+        public static void EnemyCheck(MyGridProgram mgp, Configuration configuration, List<IMyBatteryBlock> batteries, List<IMyReactor> reactors, List<IMyGasTank> h2Tanks)
         {
-            if(NeedsService())
+            if(NeedsService(mgp,configuration, batteries,reactors,h2Tanks))
                 return;
 
             var turrets = new List<IMyLargeTurretBase>();
-            var antennae = FirstTaggedOrDefault<IMyRadioAntenna>();
+            var antennae = mgp.FirstTaggedOrDefault<IMyRadioAntenna>();
 
-            GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(Me));
+            mgp.GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(mgp.Me));
             bool targetDetected = false;
             foreach (var turret in turrets)
             {
@@ -38,9 +38,9 @@ namespace IngameScript
                 {
                     targetDetected = true;
                     var target = turret.GetTargetedEntity();
-                    Echo($"{Prompts.EnemyDetected}: " + target.Position);
+                    mgp.Echo($"{Prompts.EnemyDetected}: " + target.Position);
                     antennae.EnableBroadcasting = true;
-                    IGC.BroadcastTarget(target, configuration.For(ConfigName.RadioChannel));
+                    mgp.IGC.BroadcastTarget(target, configuration.For(ConfigName.RadioChannel));
 
                     if (CurrentMode() != Mode.TargetOnly)
                         Attack(target.Position);
@@ -70,8 +70,9 @@ namespace IngameScript
                 antennae.EnableBroadcasting = false;
         }
 
-        public void Attack(Vector3D target)
+        public static void Attack(State MyState, float attackSpeedLimit)
         {
+            var target = MyState.PendingTarget;
             Echo(Prompts.Attacking);
             MyState.Status = Status.Attacking;
 
@@ -81,7 +82,7 @@ namespace IngameScript
             targetDir = Vector3D.Multiply(targetDir, vmulti);
             var attackPos = Vector3D.Add(remote.GetPosition(), targetDir);
 
-            var speedLimit = distance < 600 ? (float)Math.Pow(distance / 600, 4) * float.Parse(configuration.For(ConfigName.AttackSpeedLimit)) : float.Parse(configuration.For(ConfigName.AttackSpeedLimit));
+            var speedLimit = distance < 600 ? (float)Math.Pow(distance / 600, 4) * attackSpeedLimit : attackSpeedLimit;
             speedLimit = Math.Max(float.Parse(configuration.For(ConfigName.DockSpeedLimit)), speedLimit);
             Go(attackPos, false, (int)speedLimit);
         }

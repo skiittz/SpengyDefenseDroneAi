@@ -22,26 +22,27 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
-        public State MyState;
-        List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
-        public IMyProgrammableBlock sam_controller;
-        public IMyRemoteControl remote;
-        public IMyShipConnector connector;
-        public List<IMyGasTank> h2Tanks;
-        public List<IMyBatteryBlock> batteries;
-        public List<IMyReactor> reactors;
-        private readonly Configuration configuration;
+        //public State MyState;
+        static List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
+        //public IMyProgrammableBlock sam_controller;
+        //public IMyRemoteControl remote;
+        //public IMyShipConnector connector;
+        //public List<IMyGasTank> h2Tanks;
+        //public List<IMyBatteryBlock> batteries;
+        //public List<IMyReactor> reactors;
+        //private Configuration configuration;
         public bool isAuthorized;
         public AiBrain myBrain;
         public Program()
         {
-            configuration = new Configuration();
+            var configuration = new Configuration();
             
             if (Me.CustomData != string.Empty)
                 configuration.LoadFrom(Me.CustomData);
             else
                 Me.CustomData = configuration.ToString();
 
+            State MyState;
             if (Storage != string.Empty)
                 try {
                     MyState = State.Deserialize(Storage); 
@@ -76,6 +77,8 @@ namespace IngameScript
             string authorizationMessage;
             isAuthorized = authenticator.IsAuthorized(out authorizationMessage);
             Echo(authorizationMessage);
+
+            myBrain = GetBrain(MyState, this, configuration);
         }
 
         public void Save()
@@ -87,26 +90,16 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            CheckAndFireFixedWeapons();
+            CheckAndFireFixedWeapons(this);
 
             if (argument.ToUpper().Contains("SCAN "))
             {
-                ScanForTarget(argument.ToUpper().Replace("SCAN ", ""));
+                ScanForTarget(argument.ToUpper().Replace("SCAN ", ""), myBrain);
                 return;
             }
 
-            if (argument.Contains(Special.Debug_ArgFlag))
-            {
-                if (argument == $"{Special.Debug_ArgFlag}{Special.Debug_Enroute}")
-                    MyState.Enroute = !MyState.Enroute;
-                else if(argument.Contains(Special.Debug_StateFlag))
-                {
-                    var cmd = argument.Replace($"{Special.Debug_ArgFlag}{Special.Debug_StateFlag}", "");                   
-                    Status status;
-                    if(Enum.TryParse(cmd, out status))
-                        MyState.Status = status;
-                }
-            }
+            if (myBrain.SetManualOverride(argument))
+                return;
 
             if (argument.ToUpper() == Prompts.RESET)
             {
@@ -116,12 +109,7 @@ namespace IngameScript
             }
             if(argument.ToUpper() == Prompts.OFF)
             {
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-                if (CurrentMode() != Mode.TargetOnly)
-                {
-                    remote.ClearWaypoints();
-                    remote.SetAutoPilotEnabled(false);
-                }
+                myBrain.TurnOff();
                 return;
             }
             if (!isAuthorized)
@@ -153,7 +141,7 @@ namespace IngameScript
             if(argument.ToUpper() == Prompts.RETURN)
             {
                 MyState.Status = Status.Returning;
-                Go(MyState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+                Go(MyState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), MyState, this, sam_controller, remote);
             }
 
             if (!MyState.IsSetUpFor(CurrentMode()))
@@ -165,34 +153,24 @@ namespace IngameScript
 
             CheckScuttle();
 
-            Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
-            Echo($"{Prompts.CurrentStatus}: {MyState.Status.ToHumanReadableName()}");
-            Echo($"{Prompts.NavigationModel}: {MyState.NavigationModel.ToHumanReadableName()}");
-            Echo($"{Prompts.Enroute}: {MyState.Enroute}");
-
             if(configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
             {
                 var packet = listeners[0].AcceptMessage();
-                var antenna = FirstTaggedOrDefault<IMyRadioAntenna>();
+                var antenna = this.FirstTaggedOrDefault<IMyRadioAntenna>(configuration.For(ConfigName.Tag));
                 antenna.EnableBroadcasting = true;
                 IGC.Relay(packet, configuration.For(ConfigName.RadioChannel));
             }
-           
+
+            myBrain.StatusReport();
             myBrain.Process(argument);
-            Runtime.UpdateFrequency = MyState.Enroute && DistanceToWaypoint() < 1000
+            Runtime.UpdateFrequency = MyState.Enroute && DistanceToWaypoint(MyState) < 1000
                 ? UpdateFrequency.Update10 
                 : UpdateFrequency.Update100;
         }
 
         void ClearData()
         {
-            Storage = string.Empty;
-            MyState = new State();
-            if (remote != null)
-            {
-                remote.ClearWaypoints();
-                remote.SetAutoPilotEnabled(false);
-            }
+            myBrain.ClearData();            
             Save();
         }
     }

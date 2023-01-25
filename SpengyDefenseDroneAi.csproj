@@ -40,11 +40,15 @@
   <ItemGroup>
     <Compile Include="Brains\AiBrain.cs" />
     <Compile Include="Authenticator.cs" />
+    <Compile Include="Brains\AiBrainExtensions.cs" />
     <Compile Include="Brains\PatrollerBrain.cs" />
     <Compile Include="Brains\TargetterBrain.cs" />
     <Compile Include="Brain_Combat.cs" />
     <Compile Include="Brains\DefenderBrain.cs" />
+    <Compile Include="ConfigExtensions.cs" />
     <Compile Include="FixedWeaponController.cs" />
+    <Compile Include="ManualCommands.cs" />
+    <Compile Include="MyGridProgramExtensions.cs" />
     <Compile Include="TargetBroadcaster.cs" />
     <Compile Include="TargetDesignator.cs" />
     <Compile Include="Constants.cs" />

@@ -22,24 +22,37 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class DefenderBrain : AiBrain
+        public class DefenderBrain : AdvancedAiBrain
         {
-            private Program.State myState { get; set; }
-
-            public DefenderBrain(Program.State state)
+            public IMyRemoteControl remote { get; set; }
+            public IMyShipConnector connector { get; set; }
+            public IMyProgrammableBlock samController { get; set; }
+            public List<IMyBatteryBlock> batteries { get; set; }
+            public List<IMyGasTank> h2Tanks { get; set; }
+            public List<IMyReactor> reactors { get; set; }
+            public MyGridProgram GridProgram { get; set; }
+            public Configuration configuration { get; set; }
+            public NavigationModel navigationModel { get; set; }
+            public State state { get; set; }
+            
+            public DefenderBrain(Program.State state, MyGridProgram gridProgram, Configuration configuration)
             {
-                myState = state;
+                this.GridProgram = gridProgram;
+                this.configuration = configuration;
+                this.state = state;
+                this.GetBasicBlocks();
             }
-            public void Process(string argument, IMyShipConnector connector)
+
+            public void Process(string argument)
             {
 
-                if (myState.Status == Status.Attacking)
+                if (state.Status == Status.Attacking)
                     EnemyCheck();
 
-                if (myState.Enroute)
+                if (state.Enroute)
                 {
-                    var distanceToWaypoint = DistanceToWaypoint();
-                    switch (myState.Status)
+                    var distanceToWaypoint = DistanceToWaypoint(state);
+                    switch (state.Status)
                     {
                         case Status.Docking:
                             if (connector.Status == MyShipConnectorStatus.Connectable)
@@ -47,76 +60,106 @@ namespace IngameScript
                             break;
                         case Status.Returning:
                             if (connector.Status == MyShipConnectorStatus.Connected)
-                                myState.CompleteStateAndChangeTo(Status.Waiting);
-                            if (!NeedsService())
-                                EnemyCheck();
+                                state.CompleteStateAndChangeTo(Status.Waiting);
+                            if (!NeedsService(mgp, configuration, batteries, reactors, h2Tanks))
+                                EnemyCheck(mgp);
                             if (distanceToWaypoint < 3)
-                                myState.CompleteStateAndChangeTo(Status.Docking);
+                                state.CompleteStateAndChangeTo(Status.Docking);
                             break;
                         case Status.Waiting:
                             if (connector.Status == MyShipConnectorStatus.Connected)
-                                myState.Enroute = false;
+                                state.Enroute = false;
                             else if (distanceToWaypoint < 50)
-                                myState.CompleteStateAndChangeTo(Status.Returning);
+                                state.CompleteStateAndChangeTo(Status.Returning);
                             break;
                         case Status.PreparingToAttack:
                             if (distanceToWaypoint < 3)
                             {
-                                Attack(myState.PendingTarget);
-                                myState.PendingTarget = Vector3D.Zero;
+                                Attack(state);
+                                state.PendingTarget = Vector3D.Zero;
                             }
                             break;
                         case Status.Attacking:
                             if (distanceToWaypoint < 50)
-                                myState.CompleteStateAndChangeTo(Status.Returning);
-                            if (!NeedsService())
-                                EnemyCheck();
+                                state.CompleteStateAndChangeTo(Status.Returning);
+                            if (!NeedsService(mgp,configuration,batteries,reactors,h2Tanks))
+                                EnemyCheck(mgp);
                             break;
                     }
                 }
                 else
                 {
-                    Runtime.UpdateFrequency = UpdateFrequency.Update10;
-                    switch (myState.Status)
+                    mgp.Runtime.UpdateFrequency = UpdateFrequency.Update10;
+                    switch (state.Status)
                     {
                         case Status.Waiting:
                             if (connector.Status == MyShipConnectorStatus.Connected)
                             {
-                                Echo(argument);
-                                if (argument.Equals("NewTarget") && !NeedsService())
+                                mgp.Echo(argument);
+                                if (argument.Equals("NewTarget") && !NeedsService(mgp, configuration, batteries, reactors, h2Tanks))
                                 {
                                     var packet = listeners[0].AcceptMessage();
-                                    Echo(packet.ToString());
+                                    mgp.Echo(packet.ToString());
                                     Vector3D targetPosition;
                                     if (Vector3D.TryParse((string)packet.Data, out targetPosition))
                                     {
-                                        myState.PendingTarget = targetPosition;
-                                        myState.Status = Status.PreparingToAttack;
-                                        UnDock();
+                                        state.PendingTarget = targetPosition;
+                                        state.Status = Status.PreparingToAttack;
+                                        UnDock(mgp, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), state, connector, sam_controller);
                                     }
                                 }
                                 else
                                 {
-                                    Echo(Prompts.WaitingForSignal);
-                                    EnemyCheck();
+                                    mgp.Echo(Prompts.WaitingForSignal);
+                                    EnemyCheck(mgp);
                                 }
                             }
                             else
-                                myState.CompleteStateAndChangeTo(Status.Docking);
+                                state.CompleteStateAndChangeTo(Status.Docking);
                             break;
                         case Status.Returning:
-                            Go(myState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+                            Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), state, mgp, sam_controller, remote);
                             break;
                         case Status.Docking:
                             string msg;
-                            myState.CurrentDestination = myState.DockPos;
-                            myState.Enroute = KeenNav_Controller.Go(remote, myState.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
-                            Echo(msg);
+                            state.CurrentDestination = state.DockPos;
+                            state.Enroute = KeenNav_Controller.Go(remote, state.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
+                            mgp.Echo(msg);
                             break;
                     }
                 }
-                if (myState.Status == Status.Attacking)
-                    EnemyCheck();
+                if (state.Status == Status.Attacking)
+                    EnemyCheck(mgp);
+            }
+
+            public void StatusReport()
+            {
+                GridProgram.Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
+                GridProgram.Echo($"{Prompts.CurrentStatus}: {state.Status.ToHumanReadableName()}");
+                GridProgram.Echo($"{Prompts.NavigationModel}: {state.NavigationModel.ToHumanReadableName()}");
+                GridProgram.Echo($"{Prompts.Enroute}: {state.Enroute}");
+            }
+
+            public void ClearData()
+            {
+                GridProgram.Storage = string.Empty;
+                state = new State();
+                if(remote != null)
+                {
+                    remote.ClearWaypoints();
+                    remote.SetAutoPilotEnabled(false);
+                }
+            }
+
+            public void TurnOff()
+            {
+                GridProgram.Runtime.UpdateFrequency = UpdateFrequency.None;
+                
+                remote.ClearWaypoints();
+                remote.SetAutoPilotEnabled(false);
+
+                state.Status = Status.Waiting;
+                state.Enroute = false;
             }
         }
     }

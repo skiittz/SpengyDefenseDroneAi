@@ -20,21 +20,18 @@ using VRageMath;
 
 namespace IngameScript
 {
-    // This template is intended for extension classes. For most purposes you're going to want a normal
-    // utility class.
-    // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods
     partial class Program
     {
-        public void ScanForTarget(string cameraName)
+        public void ScanForTarget(string cameraName, AiBrain brain)
         {
-            Echo("Searching for targets");
+            brain.GridProgram.Echo("Searching for targets");
             var cameras = new List<IMyCameraBlock>();
-            GridTerminalSystem.GetBlocksOfType(cameras);
-            GridTerminalSystem.GetBlocksOfType(cameras, x => x.CustomName.ToUpper() == cameraName);
+            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(cameras);
+            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(cameras, x => x.CustomName.ToUpper() == cameraName);
 
             if (cameras.Count != 1)
             {
-                Echo("Error locating camera for raycast");
+                brain.GridProgram.Echo("Error locating camera for raycast");
                 return;
             }
 
@@ -42,14 +39,14 @@ namespace IngameScript
             var target = camera.Scan().EnemyPosition();
             if (!target.HasValue)
             {
-                Echo("No Target");
+                brain.GridProgram.Echo("No Target");
                 return;
             }
 
 
-            Echo($"Target found: {DistanceBetween(camera.GetPosition(), target.Value)}");
-            Echo(target.Value.ToString());
-            IGC.BroadcastTarget(target.Value, configuration.For(ConfigName.RadioChannel));
+            brain.GridProgram.Echo($"Target found: {DistanceBetween(camera.GetPosition(), target.Value)}");
+            brain.GridProgram.Echo(target.Value.ToString());
+            brain.GridProgram.IGC.BroadcastTarget(target.Value, brain.configuration.For(ConfigName.RadioChannel));
         }
     }
     

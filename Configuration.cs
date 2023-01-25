@@ -98,9 +98,17 @@ namespace IngameScript
             }
         }
 
-        public Mode CurrentMode()
-        {
-            return configuration.For(ConfigName.Mode).ModeFromHumanReadableName();
-        }
+        //public Mode CurrentMode()
+        //{
+        //    return configuration.For(ConfigName.Mode).ModeFromHumanReadableName();
+        //}
     }
+
+    //public static class ConfigExtensions
+    //{
+    //    public static Program.Mode CurrentMode(this Program.Configuration configuration)
+    //    {
+    //        return configuration.For(ConfigName.Mode).ModeFromHumanReadableName(); return configuration.For(ConfigName.Mode).ModeFromHumanReadableName();
+    //    }
+    //}
 }

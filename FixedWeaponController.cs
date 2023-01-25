@@ -22,22 +22,22 @@ namespace IngameScript
 {
     partial class Program
     {
-        public List<IMySmallMissileLauncher> GetFixedWeapons()
+        public List<IMySmallMissileLauncher> GetFixedWeapons(MyGridProgram mgp)
         {
             var weapons = new List<IMySmallMissileLauncher>();
-            GridTerminalSystem.GetBlocksOfType(weapons, block => block.IsSameConstructAs(Me) && IsTaggedForUse(block, "FIXEDREF"));
+            mgp.GridTerminalSystem.GetBlocksOfType(weapons, block => block.IsSameConstructAs(mgp.Me) && block.IsTaggedForUse("FIXEDREF"));
 
             return weapons;
         }
 
-        public void CheckAndFireFixedWeapons()
+        public void CheckAndFireFixedWeapons(MyGridProgram mgp)
         {
             var weapons = GetFixedWeapons();
             if (!weapons.Any())
                 return;
 
             bool found;
-            var camera = SingleTagged<IMyCameraBlock>("FIXEDREF", out found);
+            var camera = mgp.SingleTagged<IMyCameraBlock>("FIXEDREF", out found);
             if (!found)
                 return;
 
