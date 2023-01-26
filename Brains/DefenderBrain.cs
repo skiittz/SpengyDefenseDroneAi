@@ -22,6 +22,7 @@ namespace IngameScript
 {
     public class DefenderBrain : IAdvancedAiBrain
     {
+        public BrainType MyBrainType { get; set; }
         public IMyRemoteControl remote { get; set; }
         public IMyShipConnector connector { get; set; }
         public IMyProgrammableBlock samController { get; set; }
@@ -42,6 +43,7 @@ namespace IngameScript
             this.state = state;
             this.listeners = listeners;
             this.GetBasicBlocks();
+            this.MyBrainType = BrainType.Defend;
         }
 
         public void Process(string argument)
