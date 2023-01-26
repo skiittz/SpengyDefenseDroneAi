@@ -133,6 +133,7 @@ namespace IngameScript
                 this.EnemyCheck();
 
             this.SetRuntimeFrequency();
+            this.ManageAntennas();
         }
 
         public void StatusReport()

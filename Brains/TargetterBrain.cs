@@ -32,6 +32,7 @@ namespace IngameScript
             public void Process(string argument)
             {
                 this.EnemyCheck();
+                this.ManageAntennas();
             }
 
             public void StatusReport()

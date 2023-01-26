@@ -91,9 +91,20 @@ namespace IngameScript
                 if (Enum.TryParse(args[0], out cmd))
                 {
                     var success = myBrain.HandleCommand(cmd, args.Skip(1).ToArray());
+                    
                     if (cmd == CommandType.Reset && success)
                         ClearProgramData();
+                    if (cmd == CommandType.Setup && success)
+                    {
+                        NavigationModel navModel;
+                        if (myBrain.MyBrainType != BrainType.TargetOnly)
+                            navModel = (myBrain as IAdvancedAiBrain).navigationModel;
+                        else
+                            navModel = NavigationModel.Keen;
 
+                        myBrain.configuration.CleanUp(myBrain.configuration.For<BrainType>(ConfigName.BrainType), navModel);
+                    }
+                        
                     Echo($"{argument}: {(success ? "Success" : "Failed")}");
                 }
                 else
