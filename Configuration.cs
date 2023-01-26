@@ -65,41 +65,47 @@ namespace IngameScript
                         {ConfigName.EnableRelayBroadcast,"true" }
             };
 
-            public static IEnumerable<ConfigName> ApplicableConfigs(Mode mode, NavigationModel navModel)
-            {
-                yield return ConfigName.Tag; 
-                yield return ConfigName.Mode;
-                yield return ConfigName.RadioChannel;
-                yield return ConfigName.PersonalKey;
-                yield return ConfigName.FactionKey;
-                yield return ConfigName.UseBurstTransmissions;
-                yield return ConfigName.EnableSuicide;
-                yield return ConfigName.EnableRelayBroadcast;
+        public static IEnumerable<ConfigName> ApplicableConfigs(BrainType mode, NavigationModel navModel)
+        {
+            yield return ConfigName.Tag;
+            yield return ConfigName.BrainType;
+            yield return ConfigName.RadioChannel;
+            yield return ConfigName.PersonalKey;
+            yield return ConfigName.FactionKey;
+            yield return ConfigName.UseBurstTransmissions;
+            yield return ConfigName.EnableSuicide;
+            yield return ConfigName.EnableRelayBroadcast;
+            yield return ConfigName.FixedWeaponReferenceTag;
+            yield return ConfigName.SAMAutoPilotTag;
 
-                if(mode != Mode.TargetOnly)
+            if (mode != BrainType.TargetOnly)
+            {
+                if (navModel == NavigationModel.Keen)
                 {
-                    yield return ConfigName.SAMAutoPilotTag;
-                    yield return ConfigName.DockSpeedLimit;
                     yield return ConfigName.AttackSpeedLimit;
-                    yield return ConfigName.GeneralSpeedLimit; 
-                    yield return ConfigName.DockClearance;
-                    yield return ConfigName.LowPowerThreshold;
-                    yield return ConfigName.LowH2Threshold;
-                    yield return ConfigName.LowReactorThreshold;
-                    yield return ConfigName.EnableLowAmmoCheck;
+                    yield return ConfigName.GeneralSpeedLimit;
                 }
-            }
 
-            public Configuration()
-            {
-                configs = Defaults;
+                yield return ConfigName.DockSpeedLimit;
+
+                yield return ConfigName.DockClearance;
+                yield return ConfigName.LowPowerThreshold;
+                yield return ConfigName.LowH2Threshold;
+                yield return ConfigName.LowReactorThreshold;
+                yield return ConfigName.EnableLowAmmoCheck;
             }
-            public void LoadFrom(string customData)
+        }
+
+        public Configuration()
+        {
+            configs = Defaults;
+        }
+        public void LoadFrom(string customData)
+        {
+            if (customData == string.Empty)
             {
-                if (customData == string.Empty)
-                {                    
-                    return;
-                }
+                return;
+            }
 
             var lines = customData.Split('\n');
             configs.Clear();
@@ -135,25 +141,20 @@ namespace IngameScript
             return bool.TryParse(For(configName), out output) && output;
         }
 
-            public T For<T>(ConfigName configName) where T:struct
-            {
-                T parseResult;
-                Enum.TryParse(For(configName), out parseResult);
-                return parseResult;
-            }
-
-            public void CleanUp(Mode mode, NavigationModel navModel)
-            {
-                foreach(var config in configs.Select(x => x.Key)){
-                    if (!ApplicableConfigs(mode, navModel).Contains(config))
-                        configs.Remove(config);
-                }
-            }
+        public T For<T>(ConfigName configName) where T : struct
+        {
+            T parseResult;
+            Enum.TryParse(For(configName), out parseResult);
+            return parseResult;
         }
 
-        public Mode CurrentMode()
+        public void CleanUp(BrainType mode, NavigationModel navModel)
         {
-            return configuration.For(ConfigName.Mode).ModeFromHumanReadableName();
-        }        
+            foreach (var config in configs.Select(x => x.Key))
+            {
+                if (!ApplicableConfigs(mode, navModel).Contains(config))
+                    configs.Remove(config);
+            }
+        }
     }
 }

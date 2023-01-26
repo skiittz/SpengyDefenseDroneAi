@@ -44,6 +44,7 @@ namespace IngameScript
     }
         public interface IAiBrain
         {
+            BrainType MyBrainType { get; private set; }
             Configuration configuration { get; set; }
             MyGridProgram GridProgram { get; set; }
             void Process(string argument);
