@@ -42,7 +42,6 @@ namespace IngameScript
             this.state = state;
             this.listeners = listeners;
             this.GetBasicBlocks();
-            state.SetControllers(remote, samController);
         }
 
         public void Process(string argument)
@@ -62,18 +61,18 @@ namespace IngameScript
                         break;
                     case Status.Returning:
                         if (connector.Status == MyShipConnectorStatus.Connected)
-                            state.CompleteStateAndChangeTo(Status.Waiting);
+                            state.CompleteStateAndChangeTo(Status.Waiting, this);
 
                         CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
 
                         if (distanceToWaypoint < 3)
-                            state.CompleteStateAndChangeTo(Status.Docking);
+                            state.CompleteStateAndChangeTo(Status.Docking, this);
                         break;
                     case Status.Waiting:
                         if (connector.Status == MyShipConnectorStatus.Connected)
                             state.Enroute = false;
                         else if (distanceToWaypoint < 50)
-                            state.CompleteStateAndChangeTo(Status.Returning);
+                            state.CompleteStateAndChangeTo(Status.Returning, this);
                         break;
                     case Status.PreparingToAttack:
                         if (distanceToWaypoint < 3)
@@ -84,7 +83,7 @@ namespace IngameScript
                         break;
                     case Status.Attacking:
                         if (distanceToWaypoint < 50)
-                            state.CompleteStateAndChangeTo(Status.Returning);
+                            state.CompleteStateAndChangeTo(Status.Returning, this);
                         CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
                         break;
                 }
@@ -117,7 +116,7 @@ namespace IngameScript
                             }
                         }
                         else
-                            state.CompleteStateAndChangeTo(Status.Docking);
+                            state.CompleteStateAndChangeTo(Status.Docking, this);
                         break;
                     case Status.Returning:
                         NavigationFunctions.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
@@ -142,6 +141,8 @@ namespace IngameScript
             GridProgram.Echo($"{Prompts.CurrentStatus}: {state.Status.ToHumanReadableName()}");
             GridProgram.Echo($"{Prompts.NavigationModel}: {navigationModel.ToHumanReadableName()}");
             GridProgram.Echo($"{Prompts.Enroute}: {state.Enroute}");
+            if (state.Enroute)
+                GridProgram.Echo($"{Prompts.DistanceToWaypoint}: {Math.Round(NavigationFunctions.DistanceToWaypoint(this))}");
         }
 
         public void ClearData()

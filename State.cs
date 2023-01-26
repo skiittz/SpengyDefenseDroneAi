@@ -30,8 +30,7 @@ namespace IngameScript
         public Status Status { get; set; }
         public bool Enroute { get; set; }
         public int CurrentPatrolPoint { get; set; }
-        public IMyRemoteControl keen_controller { get; set; }
-        public IMyProgrammableBlock sam_controller { get; set; }
+
         public bool IsSetUpFor(Mode currentMode)
         {
             if (currentMode == Mode.TargetOnly)
@@ -48,11 +47,6 @@ namespace IngameScript
             DockApproach = Vector3D.Zero;
             PendingTarget = Vector3D.Zero;
             PatrolRoute = new List<Vector3D>();
-        }
-        public void SetControllers(IMyRemoteControl keen_controller, IMyProgrammableBlock sam_controller)
-        {
-            this.keen_controller = keen_controller;
-            this.sam_controller = sam_controller;
         }
 
         public string Serialize()
@@ -96,26 +90,26 @@ namespace IngameScript
             return result;
         }
 
-        public void CompleteStateAndChangeTo(Status newStatus)
+        public void CompleteStateAndChangeTo(Status newStatus, IAdvancedAiBrain brain)
         {
             Enroute = false;
             Status = newStatus;
             CurrentDestination = Vector3D.Zero;
 
-            keen_controller.ClearWaypoints();
-            keen_controller.SetAutoPilotEnabled(false);
+            brain.remote.ClearWaypoints();
+            brain.remote.SetAutoPilotEnabled(false);
 
-            if (sam_controller != null)
-                sam_controller.TryRun("STOP");
+            if (brain.samController != null)
+                brain.samController.TryRun("STOP");
         }
 
-        public void SetNextPatrolWaypoint()
+        public void SetNextPatrolWaypoint(IAdvancedAiBrain brain)
         {
             CurrentPatrolPoint = CurrentPatrolPoint == (PatrolRoute.Count() - 1)
                 ? 0
                 : (CurrentPatrolPoint + 1);
 
-            CompleteStateAndChangeTo(Status.Waiting);
+            CompleteStateAndChangeTo(Status.Waiting, brain);
         }
     }
 

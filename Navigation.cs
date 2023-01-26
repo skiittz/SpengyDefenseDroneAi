@@ -56,7 +56,7 @@ namespace IngameScript
             brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Recharge);
             brain.h2Tanks.ForEach(x => x.Stockpile = true);
 
-            brain.state.CompleteStateAndChangeTo(Status.Waiting);
+            brain.state.CompleteStateAndChangeTo(Status.Waiting, brain);
         }
 
         public static double DistanceToWaypoint(IAdvancedAiBrain brain)
@@ -67,7 +67,6 @@ namespace IngameScript
         public static double DistanceToWaypoint(Vector3D destination, IMyRemoteControl remote, MyGridProgram mgp)
         {
             var distance = Math.Sqrt(Math.Pow(remote.GetPosition().X - destination.X, 2) + Math.Pow(remote.GetPosition().Y - destination.Y, 2) + Math.Pow(remote.GetPosition().Z - destination.Z, 2));
-            mgp.Echo($"{Prompts.DistanceToWaypoint}: {distance}");
             return distance;
         }
 

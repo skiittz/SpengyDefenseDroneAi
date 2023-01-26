@@ -41,7 +41,6 @@ namespace IngameScript
             this.configuration = configuration;
             this.listeners = listeners;
             this.GetBasicBlocks();
-            state.SetControllers(remote, samController);
         }
 
         public void Process(string argument)
@@ -72,19 +71,19 @@ namespace IngameScript
                                     NavigationFunctions.Dock(this);
                                 break;
                             case Status.Returning:
-                                state.CompleteStateAndChangeTo(Status.Docking);
+                                state.CompleteStateAndChangeTo(Status.Docking, this);
                                 break;
                             case Status.Waiting:
                                 if (ServiceFunctions.NeedsService(GridProgram, configuration, batteries, reactors, h2Tanks))
-                                    state.CompleteStateAndChangeTo(Status.Returning);
+                                    state.CompleteStateAndChangeTo(Status.Returning, this);
                                 else
-                                    state.CompleteStateAndChangeTo(Status.Waiting);
+                                    state.CompleteStateAndChangeTo(Status.Waiting, this);
                                 break;
                             case Status.Patrolling:
-                                state.CompleteStateAndChangeTo(Status.Patrolling);
+                                state.CompleteStateAndChangeTo(Status.Patrolling, this);
                                 break;
                             case Status.Attacking:
-                                state.CompleteStateAndChangeTo(Status.Waiting);
+                                state.CompleteStateAndChangeTo(Status.Waiting, this);
                                 CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
                                 break;
                         }
@@ -104,15 +103,15 @@ namespace IngameScript
                             GridProgram.Echo(msg);
                             break;
                         case Status.Patrolling:
-                            state.CompleteStateAndChangeTo(Status.Waiting);
+                            state.CompleteStateAndChangeTo(Status.Waiting, this);
                             break;
                         case Status.Waiting:
                             if (connector.Status == MyShipConnectorStatus.Unconnected)
                                 if (ServiceFunctions.NeedsService(GridProgram, configuration, batteries, reactors, h2Tanks))
-                                    state.CompleteStateAndChangeTo(Status.Returning);
+                                    state.CompleteStateAndChangeTo(Status.Returning, this);
                                 else
                                 {
-                                    state.SetNextPatrolWaypoint();
+                                    state.SetNextPatrolWaypoint(this);
                                     ResumePatrol(GridProgram, state, samController);
                                 }
                             else
@@ -131,7 +130,7 @@ namespace IngameScript
         public void ResumePatrol(MyGridProgram GridProgram, State state, IMyProgrammableBlock sam_controller)
         {
             GridProgram.Echo($"{Prompts.PatrolPoint} {state.CurrentPatrolPoint}");
-            state.CompleteStateAndChangeTo(Status.Patrolling);
+            state.CompleteStateAndChangeTo(Status.Patrolling, this);
             NavigationFunctions.Go(state.PatrolRoute[state.CurrentPatrolPoint], false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
         }
 
@@ -141,6 +140,8 @@ namespace IngameScript
             GridProgram.Echo($"{Prompts.CurrentStatus}: {state.Status.ToHumanReadableName()}");
             GridProgram.Echo($"{Prompts.NavigationModel}: {navigationModel.ToHumanReadableName()}");
             GridProgram.Echo($"{Prompts.Enroute}: {state.Enroute}");
+            if (state.Enroute)
+                GridProgram.Echo($"{Prompts.DistanceToWaypoint}: {Math.Round(NavigationFunctions.DistanceToWaypoint(this))}");
         }
 
         public void ClearData()
