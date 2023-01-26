@@ -172,17 +172,26 @@ namespace IngameScript
             return !state.DockPos.IsZero() && !state.DockApproach.IsZero();
         }
 
-        public bool HandleCommand(CommandType commandType)
+        public bool HandleCommand(CommandType commandType, string additionalData = "")
         {
             switch (commandType)
             {
+                case CommandType.On:
+                    GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                    return true;
+                case CommandType.Off:
+                    TurnOff();
+                    return true;
+                case CommandType.Scan:
+                    this.ScanForTarget(additionalData);
+                    return true;
                 case CommandType.Return:
                     state.Status = Status.Returning;
                     this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                     return true;
                 case CommandType.Setup:
                     SetUp();
-                    return true;
+                    return true;               
                 default:
                     GridProgram.Echo("I do not know that command!");
                     return false;

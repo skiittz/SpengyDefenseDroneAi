@@ -51,14 +51,24 @@ namespace IngameScript
                 return true;
             }
 
-            public bool HandleCommand(CommandType commandType) {
-                switch (commandType)
-                {
-                    default:
-                        GridProgram.Echo("I do not know that command!");
-                        return false;
-                }
+        public bool HandleCommand(CommandType commandType, string additionalData = "")
+        {
+            switch (commandType)
+            {
+                case CommandType.On:
+                    GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                    return true;
+                case CommandType.Off:
+                    TurnOff();
+                    return true;
+                case CommandType.Scan:
+                    this.ScanForTarget(additionalData);
+                    return true;
+                default:
+                    GridProgram.Echo("I do not know that command!");
+                    return false;
             }
+        }
 
             public string SerializeState()
             {

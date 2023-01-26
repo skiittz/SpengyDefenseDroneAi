@@ -20,9 +20,9 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public static class TargetDesignationCortex
     {
-        public void ScanForTarget(string cameraName, IAiBrain brain)
+        public static void ScanForTarget(this IAiBrain brain, string cameraName)
         {
             brain.GridProgram.Echo("Searching for targets");
             var cameras = new List<IMyCameraBlock>();
@@ -48,14 +48,11 @@ namespace IngameScript
             brain.GridProgram.Echo(target.Value.ToString());
             brain.GridProgram.IGC.BroadcastTarget(target.Value, brain.configuration.For(ConfigName.RadioChannel));
         }
-    }
-    
-    static class TargetDesignator
-    {
-        public static MyDetectedEntityInfo Scan(this IMyCameraBlock camera, int range = 10000)
+
+        private static MyDetectedEntityInfo Scan(this IMyCameraBlock camera, int range = 10000)
         {
             camera.EnableRaycast = true;
-            return camera.Raycast(range);        
+            return camera.Raycast(range);
         }
 
         public static Vector3D? EnemyPosition(this MyDetectedEntityInfo detected)

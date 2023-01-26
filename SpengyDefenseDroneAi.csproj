@@ -44,6 +44,7 @@
     <Compile Include="Brains\Cortex\CombatCortex.cs" />
     <Compile Include="Brains\Cortex\MaintenanceCortex.cs" />
     <Compile Include="Brains\Cortex\NavigationCortex.cs" />
+    <Compile Include="Brains\Cortex\TargetDesignationCortex.cs" />
     <Compile Include="Brains\PatrollerBrain.cs" />
     <Compile Include="Brains\TargetterBrain.cs" />
     <Compile Include="Brains\DefenderBrain.cs" />
@@ -51,7 +52,6 @@
     <Compile Include="ManualCommands.cs" />
     <Compile Include="MyGridProgramExtensions.cs" />
     <Compile Include="TargetBroadcaster.cs" />
-    <Compile Include="TargetDesignator.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="KeenNavIntegration.cs" />
     <Compile Include="SAMIntegration.cs" />

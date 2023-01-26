@@ -110,7 +110,8 @@ namespace IngameScript
 
             if (argument.ToUpper().Contains("SCAN "))
             {
-                ScanForTarget(argument.ToUpper().Replace("SCAN ", ""), myBrain);
+                var cameraName = argument.ToUpper().Replace("SCAN ", "");
+                myBrain.HandleCommand(CommandType.Scan, cameraName);
                 return;
             }
 
@@ -119,7 +120,7 @@ namespace IngameScript
 
             if(argument.ToUpper() == Prompts.OFF)
             {
-                myBrain.TurnOff();
+                myBrain.HandleCommand(CommandType.Off);
                 return;
             }
             if (!isAuthorized)
@@ -131,7 +132,7 @@ namespace IngameScript
             }
             if (argument.ToUpper() == Prompts.ON)
             {
-                Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                myBrain.HandleCommand(CommandType.On);
             }
             
             if(argument.ToUpper() == Prompts.RETURN)

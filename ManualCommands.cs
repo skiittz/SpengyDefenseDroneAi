@@ -23,7 +23,10 @@ namespace IngameScript
         public enum CommandType
         {
             Return,
-            Setup
+            Setup,
+            On,
+            Off,
+            Scan
         }
     static class ManualCommands
     {
