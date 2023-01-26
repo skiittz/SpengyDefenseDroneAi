@@ -22,6 +22,7 @@ namespace IngameScript
 {
     public class PatrollerBrain : IAdvancedAiBrain
     {
+        public BrainType MyBrainType { get; set; }
         public IMyRemoteControl remote { get; set; }
         public IMyShipConnector connector { get; set; }
         public IMyProgrammableBlock samController { get; set; }
@@ -41,6 +42,7 @@ namespace IngameScript
             this.configuration = configuration;
             this.listeners = listeners;
             this.GetBasicBlocks();
+            this.MyBrainType = BrainType.Patrol;
         }
 
         public void Process(string argument)
@@ -127,7 +129,6 @@ namespace IngameScript
             }
 
             this.SetRuntimeFrequency();
-            this.ManageAntennas();
         }
 
         public void ResumePatrol(MyGridProgram GridProgram, State state, IMyProgrammableBlock sam_controller)

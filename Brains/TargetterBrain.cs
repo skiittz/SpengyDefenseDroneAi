@@ -22,17 +22,18 @@ namespace IngameScript
 {
         public class TargetterBrain : IAiBrain
         {
-            public MyGridProgram GridProgram { get; set; }
+        public BrainType MyBrainType { get; set; }
+        public MyGridProgram GridProgram { get; set; }
             public Configuration configuration { get; set; }
 
             public TargetterBrain(MyGridProgram gridProgram)
             {
                 this.GridProgram = gridProgram;
+                this.MyBrainType = BrainType.TargetOnly;
             }
             public void Process(string argument)
             {
                 this.EnemyCheck();
-                this.ManageAntennas();
             }
 
             public void StatusReport()

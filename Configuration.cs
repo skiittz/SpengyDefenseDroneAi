@@ -66,9 +66,6 @@ namespace IngameScript
             yield return ConfigName.RadioChannel;
             yield return ConfigName.PersonalKey;
             yield return ConfigName.FactionKey;
-            yield return ConfigName.UseBurstTransmissions;
-            yield return ConfigName.EnableSuicide;
-            yield return ConfigName.EnableRelayBroadcast;
             yield return ConfigName.FixedWeaponReferenceTag;
             yield return ConfigName.SAMAutoPilotTag;
 
