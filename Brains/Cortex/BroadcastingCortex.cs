@@ -33,30 +33,10 @@ namespace IngameScript
             brain.GridProgram.IGC.SendBroadcastMessage(brain.configuration.For(ConfigName.RadioChannel), target.ToString(), TransmissionDistance.TransmissionDistanceMax);
         }
 
-        public static void Relay(this IAiBrain brain, MyIGCMessage packet)
-        {
-            if (!brain.configuration.IsEnabled(ConfigName.EnableRelayBroadcast))
-                return;
-
-            brain.EnableAntenna();
-            brain.GridProgram.IGC.SendBroadcastMessage(brain.configuration.For(ConfigName.RadioChannel), packet.Data, TransmissionDistance.TransmissionDistanceMax);
-        }
-
         private static void EnableAntenna(this IAiBrain brain)
         {
             var antenna = brain.GridProgram.FirstTaggedOrDefault<IMyRadioAntenna>(brain.configuration.For(ConfigName.Tag));
             antenna.EnableBroadcasting = true;
-        }
-
-        public static void ManageAntennas(this IAiBrain brain)
-        {
-            if (!brain.configuration.IsEnabled(ConfigName.UseBurstTransmissions))
-                return;
-
-            var antennas = new List<IMyRadioAntenna>();
-            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(antennas, block => block.IsSameConstructAs(brain.GridProgram.Me));
-
-            antennas.ForEach(x => x.EnableBroadcasting = false);
         }
     }
 }

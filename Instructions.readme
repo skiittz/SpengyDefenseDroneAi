@@ -78,21 +78,15 @@ Section 3: Custom Data
 	FactionKey: (Default = None)
 		License key that enables any member of the faction it is registered to run this program in any programmable block owned by the faction.*
 
-	UseBurstTransmissions: (Default = true)
-		Keeps Antenna broadcasting off unless needed.
-
-	EnableSuicide: (Default = true)
-		If someone is hacking either the current programmable block, or any warhead on the grid, detonate all warheads.
-
-    EnableRelayBroadcast: (Default = false)
-		Repeats received signals.  Can extend signal range by daisy-chaining through relays.
-
-
 	*You need a valid personal key OR a valid faction key.  Without one or the other this program will not run.  You do not need both.
 
 	EnableLowAmmoCheck: (Default = true)
 		true - when any turret on the grid is out of ammo, drone will return to base for more.
 		false - ammo is completely ignored and drone will continue to hover around an enemy like an annoying gnat even if all turrets are dry.
+
+	FixedWeaponGroupPrefix: (Optional, not listed by default)
+		A tag that defines block groupings for fixed weapon management.  For example, if you have 2 fixed assault cannons, set this prefix to "FixedGroup1", and then create a block group in the terminal named "FixedGroup1 Cannons".
+		The group should contain a camera (for range finding) and any weapons  you want to be fired when a target is detected by the camera.
 
 Section 4: Troubleshooting
 		If you are installing this on a block that previously had a different program in it, there may be data stored on the block that prevents this one from functioning.  

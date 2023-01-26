@@ -94,9 +94,6 @@ namespace IngameScript
             {ConfigName.PersonalKey,"PersonalKey" },
             {ConfigName.FactionKey,"FactionKey" },
             {ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
-            {ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
-            {ConfigName.EnableSuicide,"EnableSuicide" },
-            {ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"},
             {ConfigName.FixedWeaponReferenceTag, "FixedWeaponGroupPrefix" }
         };
 

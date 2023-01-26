@@ -47,7 +47,6 @@ namespace IngameScript
         public void Process(string argument)
         {
             this.CheckAndFireFixedWeapons();
-            this.CheckScuttle();
             if (state.Status == Status.Attacking)
                 this.EnemyCheck();
 

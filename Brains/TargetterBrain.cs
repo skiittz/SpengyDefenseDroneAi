@@ -31,7 +31,6 @@ namespace IngameScript
             }
             public void Process(string argument)
             {
-                this.CheckScuttle();
                 this.EnemyCheck();
             }
 

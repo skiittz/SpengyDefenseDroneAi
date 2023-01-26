@@ -86,9 +86,6 @@ namespace IngameScript
                 }
             }
 
-            if (!targetDetected && brain.configuration.IsEnabled(ConfigName.UseBurstTransmissions))
-                antenna.EnableBroadcasting = false;
-
             return target;
         }
 
