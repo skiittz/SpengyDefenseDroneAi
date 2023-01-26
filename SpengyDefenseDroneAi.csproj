@@ -41,6 +41,7 @@
     <Compile Include="Brains\AiBrain.cs" />
     <Compile Include="Authenticator.cs" />
     <Compile Include="Brains\AiBrainExtensions.cs" />
+    <Compile Include="Brains\Cortex\BroadcastingCortex.cs" />
     <Compile Include="Brains\Cortex\CombatCortex.cs" />
     <Compile Include="Brains\Cortex\FixedWeaponControlCortex.cs" />
     <Compile Include="Brains\Cortex\MaintenanceCortex.cs" />
@@ -52,7 +53,6 @@
     <Compile Include="Brains\DefenderBrain.cs" />
     <Compile Include="ManualCommands.cs" />
     <Compile Include="MyGridProgramExtensions.cs" />
-    <Compile Include="TargetBroadcaster.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="KeenNavIntegration.cs" />
     <Compile Include="SAMIntegration.cs" />

@@ -46,7 +46,7 @@ namespace IngameScript
 
             brain.GridProgram.Echo($"Target found: {NavigationCortex.DistanceBetween(camera.GetPosition(), target.Value)}");
             brain.GridProgram.Echo(target.Value.ToString());
-            brain.GridProgram.IGC.BroadcastTarget(target.Value, brain.configuration.For(ConfigName.RadioChannel));
+            brain.BroadcastTarget(target.Value);
         }
 
         public static MyDetectedEntityInfo Scan(this IMyCameraBlock camera, int range = 10000)

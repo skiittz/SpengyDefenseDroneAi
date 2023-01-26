@@ -61,7 +61,7 @@ namespace IngameScript
                     target = turret.GetTargetedEntity();
                     brain.GridProgram.Echo($"{Prompts.EnemyDetected}: " + target.Value.Position);
                     antenna.EnableBroadcasting = true;
-                    brain.GridProgram.IGC.BroadcastTarget(target.Value, brain.configuration.For(ConfigName.RadioChannel));                  
+                    brain.BroadcastTarget(target.Value);                  
                     break;
                 }
             }
@@ -82,7 +82,7 @@ namespace IngameScript
 
                     targetDetected = true;
                     target = targets.First();
-                    brain.GridProgram.IGC.BroadcastTarget(target.Value, brain.configuration.For(ConfigName.RadioChannel));
+                    brain.BroadcastTarget(target.Value);
                 }
             }
 
