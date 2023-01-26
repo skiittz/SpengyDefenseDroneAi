@@ -128,6 +128,7 @@ namespace IngameScript
             }
 
             this.SetRuntimeFrequency();
+            this.ManageAntennas();
         }
 
         public void ResumePatrol(MyGridProgram GridProgram, State state, IMyProgrammableBlock sam_controller)

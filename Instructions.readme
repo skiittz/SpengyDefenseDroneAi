@@ -1,7 +1,7 @@
 ﻿R e a d m e
 -----------
 Setup Guide
-Version 1.07.00
+Version 1.07.01
 
 Section 1: Minimum requirements
 	All grids must have 1 or more turrets.  For "TargetOnly" mode, this is the only requirement.
@@ -77,6 +77,7 @@ Section 3: Custom Data
 		License key that enables the owner of the programmable block to use this program.*
 	FactionKey: (Default = None)
 		License key that enables any member of the faction it is registered to run this program in any programmable block owned by the faction.*
+	*You need a valid personal key OR a valid faction key.  Without one or the other this program will not run.  You do not need both.
 
 	UseBurstTransmissions: (Default = true)
 		Keeps Antenna broadcasting off unless needed.
@@ -86,9 +87,6 @@ Section 3: Custom Data
 
     EnableRelayBroadcast: (Default = false)
 		Repeats received signals.  Can extend signal range by daisy-chaining through relays.
-
-
-	*You need a valid personal key OR a valid faction key.  Without one or the other this program will not run.  You do not need both.
 
 	EnableLowAmmoCheck: (Default = true)
 		true - when any turret on the grid is out of ammo, drone will return to base for more.

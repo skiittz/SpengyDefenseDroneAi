@@ -60,7 +60,6 @@ namespace IngameScript
                     targetDetected = true;
                     target = turret.GetTargetedEntity();
                     brain.GridProgram.Echo($"{Prompts.EnemyDetected}: " + target.Value.Position);
-                    antenna.EnableBroadcasting = true;
                     brain.BroadcastTarget(target.Value);                  
                     break;
                 }
@@ -80,14 +79,11 @@ namespace IngameScript
                     if (!targets.Any())
                         return null;
 
-                    targetDetected = true;
                     target = targets.First();
                     brain.BroadcastTarget(target.Value);
+                    break;
                 }
             }
-
-            if (!targetDetected && brain.configuration.IsEnabled(ConfigName.UseBurstTransmissions))
-                antenna.EnableBroadcasting = false;
 
             return target;
         }

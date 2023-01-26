@@ -33,6 +33,7 @@ namespace IngameScript
             {
                 this.CheckScuttle();
                 this.EnemyCheck();
+                this.ManageAntennas();
             }
 
             public void StatusReport()
