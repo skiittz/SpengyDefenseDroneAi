@@ -50,15 +50,14 @@ namespace IngameScript
                 {
                     Echo($"{Prompts.CouldNotDeserializeState}: {e.Message}");
                     Echo(Storage);
+                    Storage = string.Empty;
                     Runtime.UpdateFrequency = UpdateFrequency.None;
-
-                    MyState = new State();
                     return;
                 }
             else
                 MyState = new State();
 
-            myBrain = GetBrain(MyState, this, configuration);
+            myBrain = BrainFunctions.GetBrain(MyState, this, configuration, listeners);
 
             if (!myBrain.IsSetUp())
                 Runtime.UpdateFrequency = UpdateFrequency.None;
@@ -69,7 +68,7 @@ namespace IngameScript
             IGC.GetBroadcastListeners(listeners);
             listeners[0].SetMessageCallback("NewTarget");
 
-            var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), OwnerId(), FactionTag());
+            var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), Authenticator.OwnerId(Me), Authenticator.FactionTag(Me));
             string authorizationMessage;
             isAuthorized = authenticator.IsAuthorized(out authorizationMessage);
             Echo(authorizationMessage);            
@@ -77,14 +76,37 @@ namespace IngameScript
 
         public void Save()
         {
-            if(myBrain.IsSetUp())
-                Storage = myBrain.SerializeState();                
+            if (myBrain != null && myBrain.IsSetUp())
+                Storage = myBrain.SerializeState();
         }
 
 
         public void Main(string argument, UpdateType updateSource)
         {
-            CheckAndFireFixedWeapons(this);
+            Echo($"Running: {argument}");
+            if (argument.ToUpper() == Prompts.RESET)
+            {
+                Echo(Prompts.ResettingInternalData);
+                ClearData();
+                return;
+            }
+            if (argument.ToUpper() == Prompts.SETUP)
+            {
+                Echo(Prompts.AttemptingAutoSetUp);
+                if (myBrain.HandleCommand(CommandType.Setup))
+                {
+                    Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                    Echo(Prompts.SetupSuccessfulDroneIsReady);
+                }
+                else
+                {
+                    Runtime.UpdateFrequency = UpdateFrequency.None;
+                    Echo(Prompts.SetupFailedDroneIsNotOperational);
+                    return;
+                }
+            }
+
+            FixedWeaponsHandler.CheckAndFireFixedWeapons(this);
 
             if (argument.ToUpper().Contains("SCAN "))
             {
@@ -95,12 +117,6 @@ namespace IngameScript
             if (myBrain.SetManualOverride(argument))
                 return;
 
-            if (argument.ToUpper() == Prompts.RESET)
-            {
-                Echo(Prompts.ResettingInternalData);
-                ClearData();
-                return;
-            }
             if(argument.ToUpper() == Prompts.OFF)
             {
                 myBrain.TurnOff();
@@ -108,8 +124,8 @@ namespace IngameScript
             }
             if (!isAuthorized)
             {
-                Echo($"{Prompts.Invalid} {WordKey()}");
-                Echo($"{Prompts.YourOwnerIdFactionTag}: {OwnerId()}/{FactionTag()}");
+                Echo($"{Prompts.Invalid} {Authenticator.WordKey()}");
+                Echo($"{Prompts.YourOwnerIdFactionTag}: {Authenticator.OwnerId(Me)}/{Authenticator.FactionTag(Me)}");
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
@@ -117,21 +133,7 @@ namespace IngameScript
             {
                 Runtime.UpdateFrequency = UpdateFrequency.Update100;
             }
-            if (argument.ToUpper() == Prompts.SETUP) 
-            {
-                Echo(Prompts.AttemptingAutoSetUp);              
-                if (myBrain.HandleCommand(CommandType.Setup))
-                {
-                    Runtime.UpdateFrequency = UpdateFrequency.Update100;
-                    Echo(Prompts.SetupSuccessfulDroneIsReady);
-                }
-                else
-                {
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Echo(Prompts.SetupFailedDroneIsNotOperational);
-                    return; 
-                }
-            }
+            
             if(argument.ToUpper() == Prompts.RETURN)
             {
                 myBrain.HandleCommand(CommandType.Return);
@@ -161,7 +163,8 @@ namespace IngameScript
         void ClearData()
         {
             Storage = string.Empty;
-            myBrain.ClearData();            
+            if(myBrain != null)
+                myBrain.ClearData();            
             Save();
         }
     }

@@ -20,12 +20,10 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public class Configuration
     {
-        public class Configuration
-        {
-            private Dictionary<ConfigName, string> configs;
-            public static readonly Dictionary<ConfigName, string> Defaults = new Dictionary<ConfigName, string> {
+        private Dictionary<ConfigName, string> configs;
+        public static readonly Dictionary<ConfigName, string> Defaults = new Dictionary<ConfigName, string> {
                         {ConfigName.Tag,"SDDS"},
                         {ConfigName.Mode, "TargetOnly"},
                         {ConfigName.RadioChannel,"SDDS" },
@@ -45,70 +43,56 @@ namespace IngameScript
                         {ConfigName.EnableRelayBroadcast,"true" }
             };
 
-            public Configuration()
+        public Configuration()
+        {
+            configs = Defaults;
+        }
+        public void LoadFrom(string customData)
+        {
+            if (customData == string.Empty)
             {
-                configs = Defaults;
-            }
-            public void LoadFrom(string customData)
-            {
-                if (customData == string.Empty)
-                {                    
-                    return;
-                }
-
-                var lines = customData.Split('\n');
-                configs.Clear();
-                foreach (var line in lines)
-                {
-                    var config = line.Split(':');    
-                    configs.Add(config[0].ConfigFromHumanReadableName(), config[1]);
-                }
+                return;
             }
 
-            public override string ToString()
+            var lines = customData.Split('\n');
+            configs.Clear();
+            foreach (var line in lines)
             {
-                var customData = string.Empty;
-                foreach (var config in configs)
-                {
-                    customData += $"{config.Key.ToHumanReadableName()}:{config.Value}\n";
-                }
-                customData = customData.TrimEnd('\r').TrimEnd('\n');
-
-                return customData;
-            }
-
-            public string For(ConfigName configName)
-            {
-                if (!configs.ContainsKey(configName))
-                    return string.Empty;
-                return configs[configName];
-            }
-
-            public bool IsEnabled(ConfigName configName)
-            {
-                bool output;
-                return bool.TryParse(For(configName), out output) && output;
-            }              
-
-            public T For<T>(ConfigName configName) where T:struct
-            {
-                T parseResult;
-                Enum.TryParse(For(configName), out parseResult);
-                return parseResult;
+                var config = line.Split(':');
+                configs.Add(config[0].ConfigFromHumanReadableName(), config[1]);
             }
         }
 
-        //public Mode CurrentMode()
-        //{
-        //    return configuration.For(ConfigName.Mode).ModeFromHumanReadableName();
-        //}
-    }
+        public override string ToString()
+        {
+            var customData = string.Empty;
+            foreach (var config in configs)
+            {
+                customData += $"{config.Key.ToHumanReadableName()}:{config.Value}\n";
+            }
+            customData = customData.TrimEnd('\r').TrimEnd('\n');
 
-    //public static class ConfigExtensions
-    //{
-    //    public static Program.Mode CurrentMode(this Program.Configuration configuration)
-    //    {
-    //        return configuration.For(ConfigName.Mode).ModeFromHumanReadableName(); return configuration.For(ConfigName.Mode).ModeFromHumanReadableName();
-    //    }
-    //}
+            return customData;
+        }
+
+        public string For(ConfigName configName)
+        {
+            if (!configs.ContainsKey(configName))
+                return string.Empty;
+            return configs[configName];
+        }
+
+        public bool IsEnabled(ConfigName configName)
+        {
+            bool output;
+            return bool.TryParse(For(configName), out output) && output;
+        }
+
+        public T For<T>(ConfigName configName) where T : struct
+        {
+            T parseResult;
+            Enum.TryParse(For(configName), out parseResult);
+            return parseResult;
+        }
+    }
 }

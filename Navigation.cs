@@ -20,11 +20,10 @@ using VRageMath;
 
 namespace IngameScript
 {  
-    partial class Program
+    public static class NavigationFunctions
     {
         public static void Go(Vector3D destination, bool docking, int speedLimit, IAdvancedAiBrain brain)
         {
-            brain.GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update10;
             string msg = string.Empty;
             switch (brain.navigationModel)
             {
@@ -50,7 +49,7 @@ namespace IngameScript
             Go(brain.state.DockApproach, false, speedLimit, brain);
         }
 
-        public static void Dock(Program.IAdvancedAiBrain brain)
+        public static void Dock(IAdvancedAiBrain brain)
         {
             brain.connector.Connect();
 
@@ -72,7 +71,7 @@ namespace IngameScript
             return distance;
         }
 
-        public double DistanceBetween(Vector3D p1, Vector3D p2)
+        public static double DistanceBetween(Vector3D p1, Vector3D p2)
         {
             var distance = Math.Sqrt(Math.Pow(p1.X - p2.X, 2) + Math.Pow(p1.Y - p2.Y, 2) + Math.Pow(p1.Z - p2.Z, 2));
             return distance;

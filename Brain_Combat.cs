@@ -20,11 +20,11 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public static class CombatFunctions
     {
         public static void EnemyCheck(MyGridProgram mgp, Configuration configuration, List<IMyBatteryBlock> batteries, List<IMyReactor> reactors, List<IMyGasTank> h2Tanks, IAdvancedAiBrain brain)
         {
-            if(NeedsService(mgp,configuration, batteries,reactors,h2Tanks))
+            if (ServiceFunctions.NeedsService(mgp, configuration, batteries, reactors, h2Tanks))
                 return;
 
             var turrets = new List<IMyLargeTurretBase>();
@@ -56,7 +56,7 @@ namespace IngameScript
                 var sensors = new List<IMySensorBlock>();
                 mgp.GridTerminalSystem.GetBlocksOfType(sensors, block => block.IsSameConstructAs(mgp.Me));
 
-                foreach(var sensor in sensors)
+                foreach (var sensor in sensors)
                 {
                     var detectedEnemies = new List<MyDetectedEntityInfo>();
                     sensor.DetectedEntities(detectedEnemies);
@@ -79,7 +79,7 @@ namespace IngameScript
             brain.GridProgram.Echo(Prompts.Attacking);
             MyState.Status = Status.Attacking;
 
-            var distance = DistanceToWaypoint(target, remote, brain.GridProgram);
+            var distance = NavigationFunctions.DistanceToWaypoint(target, remote, brain.GridProgram);
             var vmulti = distance / 600;
             var targetDir = Vector3D.Subtract(target, remote.GetPosition());
             targetDir = Vector3D.Multiply(targetDir, vmulti);
@@ -87,7 +87,7 @@ namespace IngameScript
 
             var speedLimit = distance < 600 ? (float)Math.Pow(distance / 600, 4) * attackSpeedLimit : attackSpeedLimit;
             speedLimit = Math.Max(5, speedLimit);
-            Go(attackPos, false, (int)speedLimit,brain);
+            NavigationFunctions.Go(attackPos, false, (int)speedLimit, brain);
         }
     }
 }

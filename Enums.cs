@@ -21,8 +21,6 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
-    {
         public enum Mode
         {
             Patrol,
@@ -65,5 +63,4 @@ namespace IngameScript
             Keen,
             SAM
         }
-    }
 }

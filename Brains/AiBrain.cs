@@ -20,39 +20,40 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public static class BrainFunctions
     {
-        public IAiBrain GetBrain(State state, MyGridProgram mgp, Configuration configuration)
+        public static IAiBrain GetBrain(State state, MyGridProgram mgp, Configuration configuration, List<IMyBroadcastListener> listeners)
         {
-            switch (configuration.For<Mode>(ConfigName.Mode))
+            switch (configuration.For(ConfigName.Mode).ModeFromHumanReadableName())
             {
                 case Mode.Defend:
-                    return new DefenderBrain(state, mgp, configuration).GetBasicBlocks();
+                    return new DefenderBrain(state, mgp, configuration, listeners).GetBasicBlocks();
                 case Mode.Patrol:
-                    return new PatrollerBrain(state, mgp, configuration).GetBasicBlocks();
+                    return new PatrollerBrain(state, mgp, configuration, listeners).GetBasicBlocks();
                 default:
                     return new TargetterBrain(mgp);
             }
         }
-
+    }
         public interface IAiBrain
         {
             Configuration configuration { get; set; }
             MyGridProgram GridProgram { get; set; }
-
             void Process(string argument);
             void StatusReport();
             void ClearData();
             void TurnOff();
             bool IsSetUp();
-            bool HandleCommand(Program.CommandType commandType);
+            bool HandleCommand(CommandType commandType);
             string SerializeState();
             bool SetUp();            
         }
 
         public interface IAdvancedAiBrain : IAiBrain
         {
-            IMyRemoteControl remote { get; set; }
+        List<IMyBroadcastListener> listeners { get; set; }
+
+        IMyRemoteControl remote { get; set; }
             IMyShipConnector connector { get; set; }
             IMyProgrammableBlock samController { get; set; }
             List<IMyBatteryBlock> batteries { get; set; }
@@ -62,5 +63,4 @@ namespace IngameScript
             State state { get; set; }
             void RefreshDockApproach();
         }
-    }
 }

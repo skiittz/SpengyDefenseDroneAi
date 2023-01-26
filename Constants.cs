@@ -20,9 +20,6 @@ using VRageMath;
 
 namespace IngameScript
 {
-    // This template is intended for extension classes. For most purposes you're going to want a normal
-    // utility class.
-    // https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/classes-and-structs/extension-methods
     static class Prompts
     {
         public static string CouldNotParseDateFrom = "could not parse date from";
@@ -40,7 +37,7 @@ namespace IngameScript
         public static string SETUP = "SETUP";
         public static string YourOwnerIdFactionTag = "Your OwnerId/Faction Tag";
         public static string AttemptingAutoSetUp = "Attempting Auto-Setup";
-        public static string SetupSuccessfulDroneIsReady = "Setp Successful - Drone is ready!";
+        public static string SetupSuccessfulDroneIsReady = "Setup Successful - Drone is ready!";
         public static string SetupFailedDroneIsNotOperational = "Setup failed - Drone is not operational";
         public static string RETURN = "RETURN";
         public static string DockAndRunSetup = "Dock and run setup";
@@ -88,92 +85,92 @@ namespace IngameScript
 
     static class ConfigNameExtensions
     {
-        private static readonly Dictionary<Program.ConfigName, string> configDecodes = new Dictionary<Program.ConfigName, string>
+        private static readonly Dictionary<ConfigName, string> configDecodes = new Dictionary<ConfigName, string>
         {
-            {Program.ConfigName.Tag,"Tag"},
-            {Program.ConfigName.Mode, "Mode"},
-            {Program.ConfigName.RadioChannel,"RadioChannel" },
-            {Program.ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
-            {Program.ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
-            {Program.ConfigName.DockSpeedLimit, "DockSpeedLimit" },
-            {Program.ConfigName.GeneralSpeedLimit,"GeneralSpeedLimit" },
-            {Program.ConfigName.LowPowerThreshold,"LowPowerThreshold" },
-            {Program.ConfigName.LowH2Threshold,"LowH2Threshold" },
-            {Program.ConfigName.LowReactorThreshold,"LowReactorThreshold" },
-            {Program.ConfigName.DockClearance,"DockClearance" },
-            {Program.ConfigName.PersonalKey,"PersonalKey" },
-            {Program.ConfigName.FactionKey,"FactionKey" },
-            {Program.ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
-            {Program.ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
-            {Program.ConfigName.EnableSuicide,"EnableSuicide" },
-            {Program.ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"}
+            {ConfigName.Tag,"Tag"},
+            {ConfigName.Mode, "Mode"},
+            {ConfigName.RadioChannel,"RadioChannel" },
+            {ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
+            {ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
+            {ConfigName.DockSpeedLimit, "DockSpeedLimit" },
+            {ConfigName.GeneralSpeedLimit,"GeneralSpeedLimit" },
+            {ConfigName.LowPowerThreshold,"LowPowerThreshold" },
+            {ConfigName.LowH2Threshold,"LowH2Threshold" },
+            {ConfigName.LowReactorThreshold,"LowReactorThreshold" },
+            {ConfigName.DockClearance,"DockClearance" },
+            {ConfigName.PersonalKey,"PersonalKey" },
+            {ConfigName.FactionKey,"FactionKey" },
+            {ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
+            {ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
+            {ConfigName.EnableSuicide,"EnableSuicide" },
+            {ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"}
         };
 
-        private static readonly Dictionary<Program.Mode, string> modeDecodes = new Dictionary<Program.Mode, string>
+        private static readonly Dictionary<Mode, string> modeDecodes = new Dictionary<Mode, string>
         {
-            {Program.Mode.Patrol,"Patrol" },
-            {Program.Mode.Defend,"Defend" },
-            {Program.Mode.TargetOnly,"TargetOnly" }
+            {Mode.Patrol,"Patrol" },
+            {Mode.Defend,"Defend" },
+            {Mode.TargetOnly,"TargetOnly" }
         };
 
-        private static readonly Dictionary<Program.Status, string> statusDecodes = new Dictionary<Program.Status, string> {
-            {Program.Status.Waiting,"Waiting" },
-            {Program.Status.Attacking,"Attacking" },
-            {Program.Status.Returning,"Returning" },
-            {Program.Status.Docking,"Docking" },
-            {Program.Status.Patrolling,"Patrolling" },
-            {Program.Status.PreparingToAttack,"Preparing to Attack" }
+        private static readonly Dictionary<Status, string> statusDecodes = new Dictionary<Status, string> {
+            {Status.Waiting,"Waiting" },
+            {Status.Attacking,"Attacking" },
+            {Status.Returning,"Returning" },
+            {Status.Docking,"Docking" },
+            {Status.Patrolling,"Patrolling" },
+            {Status.PreparingToAttack,"Preparing to Attack" }
         };
 
-        private static readonly Dictionary<Program.NavigationModel, string> navigationModelDecodes = new Dictionary<Program.NavigationModel, string> 
+        private static readonly Dictionary<NavigationModel, string> navigationModelDecodes = new Dictionary<NavigationModel, string> 
         {
-            {Program.NavigationModel.Keen,"Keen" },
-            {Program.NavigationModel.SAM,"SAM" }
+            {NavigationModel.Keen,"Keen" },
+            {NavigationModel.SAM,"SAM" }
         };
 
-        private static readonly Dictionary<Program.CommandType, string> manaualCommandDecodes = new Dictionary<Program.CommandType, string>
+        private static readonly Dictionary<CommandType, string> manaualCommandDecodes = new Dictionary<CommandType, string>
         {
-            {Program.CommandType.Return, "Return" },
-            {Program.CommandType.Setup, "Setup" }
+            {CommandType.Return, "Return" },
+            {CommandType.Setup, "Setup" }
         };
 
-         public static string ToHumanReadableName(this Program.ConfigName config)
+         public static string ToHumanReadableName(this ConfigName config)
         {
             return configDecodes[config];
            
         }
 
-        public static Program.ConfigName ConfigFromHumanReadableName(this string input)
+        public static ConfigName ConfigFromHumanReadableName(this string input)
         {
             return configDecodes.Single(x => x.Value == input).Key;
         }
 
-        public static string ToHumanReadableName(this Program.Mode mode)
+        public static string ToHumanReadableName(this Mode mode)
         {
             return modeDecodes[mode];
         }
 
-        public static Program.Mode ModeFromHumanReadableName(this string input)
+        public static Mode ModeFromHumanReadableName(this string input)
         {
             return modeDecodes.Single(x => x.Value == input).Key;
         }
 
-        public static string ToHumanReadableName(this Program.Status status)
+        public static string ToHumanReadableName(this Status status)
         {
             return statusDecodes[status];
         }
 
-        public static string ToHumanReadableName(this Program.NavigationModel model)
+        public static string ToHumanReadableName(this NavigationModel model)
         {
             return navigationModelDecodes[model];
         }
 
-        public static string ToHumanReadableName(this Program.CommandType commandType)
+        public static string ToHumanReadableName(this CommandType commandType)
         {
             return manaualCommandDecodes[commandType];
         }
 
-        public static Program.CommandType CommandTypeFromHumanReadableName(this string input)
+        public static CommandType CommandTypeFromHumanReadableName(this string input)
         {
             return manaualCommandDecodes.Single(x => x.Value == input).Key;
         }

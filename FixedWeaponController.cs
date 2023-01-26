@@ -20,9 +20,9 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public static class FixedWeaponsHandler
     {
-        public List<IMySmallMissileLauncher> GetFixedWeapons(MyGridProgram mgp)
+        public static List<IMySmallMissileLauncher> GetFixedWeapons(MyGridProgram mgp)
         {
             var weapons = new List<IMySmallMissileLauncher>();
             mgp.GridTerminalSystem.GetBlocksOfType(weapons, block => block.IsSameConstructAs(mgp.Me) && block.IsTaggedForUse("FIXEDREF"));
@@ -30,7 +30,7 @@ namespace IngameScript
             return weapons;
         }
 
-        public void CheckAndFireFixedWeapons(MyGridProgram mgp)
+        public static void CheckAndFireFixedWeapons(MyGridProgram mgp)
         {
             var weapons = GetFixedWeapons(mgp);
             if (!weapons.Any())
@@ -45,8 +45,8 @@ namespace IngameScript
             if (!target.HasValue)
                 return;
 
-            var range = DistanceBetween(camera.GetPosition(), target.Value);
-            foreach(var weapon in weapons)
+            var range = NavigationFunctions.DistanceBetween(camera.GetPosition(), target.Value);
+            foreach (var weapon in weapons)
             {
                 weapon.ShootOnce();
             }

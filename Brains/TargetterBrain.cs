@@ -20,8 +20,6 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
-    {
         public class TargetterBrain : IAiBrain
         {
             public MyGridProgram GridProgram { get; set; }
@@ -33,7 +31,7 @@ namespace IngameScript
             }
             public void Process(string argument)
             {
-                EnemyCheck(GridProgram, configuration, new List<IMyBatteryBlock>(), new List<IMyReactor>(), new List<IMyGasTank>(), null);
+                CombatFunctions.EnemyCheck(GridProgram, configuration, new List<IMyBatteryBlock>(), new List<IMyReactor>(), new List<IMyGasTank>(), null);
             }
 
             public void StatusReport()
@@ -53,7 +51,7 @@ namespace IngameScript
                 return true;
             }
 
-            public bool HandleCommand(Program.CommandType commandType) {
+            public bool HandleCommand(CommandType commandType) {
                 switch (commandType)
                 {
                     default:
@@ -72,5 +70,4 @@ namespace IngameScript
                 return true;
             }
         }
-    }
 }

@@ -20,7 +20,7 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public static class ServiceFunctions
     {
         public static bool NeedsService(MyGridProgram mgp, Configuration configuration, List<IMyBatteryBlock> batteries, List<IMyReactor> reactors, List<IMyGasTank> h2Tanks)
         {
