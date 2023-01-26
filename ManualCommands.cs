@@ -20,16 +20,24 @@ using VRageMath;
 
 namespace IngameScript
 {
+    partial class Program
+    {
+        public enum CommandType
+        {
+            Return,
+            Setup
+        }
+    }
     static class ManualCommands
     {
-        public static bool SetManualOverride(this Program.AiBrain brain, string argument){
-            if (brain.configuration.CurrentMode() == Program.Mode.TargetOnly)
+        public static bool SetManualOverride(this Program.IAiBrain brain, string argument){
+            if (brain.configuration.For<Program.Mode>(Program.ConfigName.Mode) == Program.Mode.TargetOnly)
                 return true;
 
-            return (brain as Program.AdvancedAiBrain).SetManualOverride(argument);
+            return (brain as Program.IAdvancedAiBrain).SetManualOverride(argument);
         }
 
-        public static bool SetManualOverride(this Program.AdvancedAiBrain brain, string argument)
+        public static bool SetManualOverride(this Program.IAdvancedAiBrain brain, string argument)
         {
             if (argument.Contains(Special.Debug_ArgFlag))
             {
@@ -41,7 +49,7 @@ namespace IngameScript
                 else if (argument.Contains(Special.Debug_StateFlag))
                 {
                     var cmd = argument.Replace($"{Special.Debug_ArgFlag}{Special.Debug_StateFlag}", "");
-                    Status status;
+                    Program.Status status;
                     if (Enum.TryParse(cmd, out status))
                     {
                         brain.state.Status = status;

@@ -22,7 +22,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public void ScanForTarget(string cameraName, AiBrain brain)
+        public void ScanForTarget(string cameraName, IAiBrain brain)
         {
             brain.GridProgram.Echo("Searching for targets");
             var cameras = new List<IMyCameraBlock>();

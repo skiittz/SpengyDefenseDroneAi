@@ -32,7 +32,7 @@ namespace IngameScript
         //public List<IMyReactor> reactors;
         //private Configuration configuration;
         public bool isAuthorized;
-        public AiBrain myBrain;
+        public IAiBrain myBrain;
         public Program()
         {
             var configuration = new Configuration();
@@ -58,13 +58,9 @@ namespace IngameScript
             else
                 MyState = new State();
 
-            GetBasicBlocks();
-            //reset dock approach in case clearance setting was changeed
-            MyState.DockApproach = MyState.DockApproach + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
+            myBrain = GetBrain(MyState, this, configuration);
 
-            MyState.SetControllers(remote, sam_controller);
-
-            if (!MyState.IsSetUpFor(CurrentMode()))
+            if (!myBrain.IsSetUp())
                 Runtime.UpdateFrequency = UpdateFrequency.None;
             else
                 Runtime.UpdateFrequency = UpdateFrequency.Update100;
@@ -76,15 +72,13 @@ namespace IngameScript
             var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), OwnerId(), FactionTag());
             string authorizationMessage;
             isAuthorized = authenticator.IsAuthorized(out authorizationMessage);
-            Echo(authorizationMessage);
-
-            myBrain = GetBrain(MyState, this, configuration);
+            Echo(authorizationMessage);            
         }
 
         public void Save()
         {
-            if(MyState.IsSetUpFor(CurrentMode()))
-                Storage = MyState.Serialize();                
+            if(myBrain.IsSetUp())
+                Storage = myBrain.SerializeState();                
         }
 
 
@@ -126,7 +120,7 @@ namespace IngameScript
             if (argument.ToUpper() == Prompts.SETUP) 
             {
                 Echo(Prompts.AttemptingAutoSetUp);              
-                if (SetUp())
+                if (myBrain.HandleCommand(CommandType.Setup))
                 {
                     Runtime.UpdateFrequency = UpdateFrequency.Update100;
                     Echo(Prompts.SetupSuccessfulDroneIsReady);
@@ -140,36 +134,33 @@ namespace IngameScript
             }
             if(argument.ToUpper() == Prompts.RETURN)
             {
-                MyState.Status = Status.Returning;
-                Go(MyState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), MyState, this, sam_controller, remote);
+                myBrain.HandleCommand(CommandType.Return);
             }
 
-            if (!MyState.IsSetUpFor(CurrentMode()))
+            if (!myBrain.IsSetUp())
             {
                 Echo(Prompts.DockAndRunSetup);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
 
-            CheckScuttle();
+            CheckScuttle(myBrain.configuration);
 
-            if(configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
+            if(myBrain.configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
             {
                 var packet = listeners[0].AcceptMessage();
-                var antenna = this.FirstTaggedOrDefault<IMyRadioAntenna>(configuration.For(ConfigName.Tag));
+                var antenna = this.FirstTaggedOrDefault<IMyRadioAntenna>(myBrain.configuration.For(ConfigName.Tag));
                 antenna.EnableBroadcasting = true;
-                IGC.Relay(packet, configuration.For(ConfigName.RadioChannel));
+                IGC.Relay(packet, myBrain.configuration.For(ConfigName.RadioChannel));
             }
 
             myBrain.StatusReport();
-            myBrain.Process(argument);
-            Runtime.UpdateFrequency = MyState.Enroute && DistanceToWaypoint(MyState) < 1000
-                ? UpdateFrequency.Update10 
-                : UpdateFrequency.Update100;
+            myBrain.Process(argument);            
         }
 
         void ClearData()
         {
+            Storage = string.Empty;
             myBrain.ClearData();            
             Save();
         }

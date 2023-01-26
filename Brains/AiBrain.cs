@@ -22,31 +22,35 @@ namespace IngameScript
 {
     partial class Program
     {
-        public AiBrain GetBrain(State state, MyGridProgram mgp, Configuration configuration)
+        public IAiBrain GetBrain(State state, MyGridProgram mgp, Configuration configuration)
         {
-            switch (CurrentMode())
+            switch (configuration.For<Mode>(ConfigName.Mode))
             {
                 case Mode.Defend:
                     return new DefenderBrain(state, mgp, configuration).GetBasicBlocks();
                 case Mode.Patrol:
                     return new PatrollerBrain(state, mgp, configuration).GetBasicBlocks();
                 default:
-                    return new TargetterBrain();
+                    return new TargetterBrain(mgp);
             }
         }
 
-        public interface AiBrain
+        public interface IAiBrain
         {
-            MyGridProgram GridProgram { get; set; }
             Configuration configuration { get; set; }
+            MyGridProgram GridProgram { get; set; }
 
             void Process(string argument);
             void StatusReport();
             void ClearData();
             void TurnOff();
+            bool IsSetUp();
+            bool HandleCommand(Program.CommandType commandType);
+            string SerializeState();
+            bool SetUp();            
         }
 
-        public interface AdvancedAiBrain : AiBrain
+        public interface IAdvancedAiBrain : IAiBrain
         {
             IMyRemoteControl remote { get; set; }
             IMyShipConnector connector { get; set; }
@@ -56,6 +60,7 @@ namespace IngameScript
             List<IMyGasTank> h2Tanks { get; set; }           
             NavigationModel navigationModel { get; set; }
             State state { get; set; }
+            void RefreshDockApproach();
         }
     }
 }

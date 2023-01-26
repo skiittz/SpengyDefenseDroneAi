@@ -22,7 +22,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public class TargetterBrain : AiBrain
+        public class TargetterBrain : IAiBrain
         {
             public MyGridProgram GridProgram { get; set; }
             public Configuration configuration { get; set; }
@@ -33,12 +33,12 @@ namespace IngameScript
             }
             public void Process(string argument)
             {
-                EnemyCheck();
+                EnemyCheck(GridProgram, configuration, new List<IMyBatteryBlock>(), new List<IMyReactor>(), new List<IMyGasTank>(), null);
             }
 
             public void StatusReport()
             {
-                GridProgram.Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
+                GridProgram.Echo($"{Prompts.CurrentMode}: Targetting");
             }
 
             public void ClearData() { }
@@ -46,6 +46,30 @@ namespace IngameScript
             public void TurnOff()
             {
                 GridProgram.Runtime.UpdateFrequency = UpdateFrequency.None;
+            }
+
+            public bool IsSetUp()
+            {
+                return true;
+            }
+
+            public bool HandleCommand(Program.CommandType commandType) {
+                switch (commandType)
+                {
+                    default:
+                        GridProgram.Echo("I do not know that command!");
+                        return false;
+                }
+            }
+
+            public string SerializeState()
+            {
+                return string.Empty;
+            }
+
+            public bool SetUp() { 
+                GridProgram.Echo("Targetting set up complete");
+                return true;
             }
         }
     }

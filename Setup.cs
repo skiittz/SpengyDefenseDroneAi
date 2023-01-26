@@ -22,43 +22,43 @@ namespace IngameScript
 {
     partial class Program
     {
-        public bool SetUp()
-        {
-            GetBasicBlocks();
-            switch (CurrentMode())
-            {
-                case Mode.TargetOnly:
-                    return true;
-                case Mode.Patrol:
-                    var waypoints = new List<MyWaypointInfo>();
-                    remote.GetWaypointInfo(waypoints);
-                    if (!waypoints.Any())
-                    {
-                        Echo(Prompts.RemoteNeedsWaypointsToPatrol);
-                        return false;
-                    }
-                    else
-                    {
-                        foreach (var waypoint in waypoints)
-                        {
-                            MyState.PatrolRoute.Add(waypoint.Coords);
-                        }
-                    }
-                    break;
-            }
+        //public bool SetUp()
+        //{
+        //    GetBasicBlocks();
+        //    switch (CurrentMode())
+        //    {
+        //        case Mode.TargetOnly:
+        //            return true;
+        //        case Mode.Patrol:
+        //            var waypoints = new List<MyWaypointInfo>();
+        //            remote.GetWaypointInfo(waypoints);
+        //            if (!waypoints.Any())
+        //            {
+        //                Echo(Prompts.RemoteNeedsWaypointsToPatrol);
+        //                return false;
+        //            }
+        //            else
+        //            {
+        //                foreach (var waypoint in waypoints)
+        //                {
+        //                    MyState.PatrolRoute.Add(waypoint.Coords);
+        //                }
+        //            }
+        //            break;
+        //    }
 
-            if (connector.Status != MyShipConnectorStatus.Connected)
-            {
-                Echo(Prompts.MustBeDockedToHomeConnectorToRunSetup);
-                return false;
-            }
+        //    if (connector.Status != MyShipConnectorStatus.Connected)
+        //    {
+        //        Echo(Prompts.MustBeDockedToHomeConnectorToRunSetup);
+        //        return false;
+        //    }
 
-            MyState.DockPos = remote.GetPosition();
-            MyState.DockApproach = remote.GetPosition() + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
-            Save();
-            Runtime.UpdateFrequency = UpdateFrequency.Update100;
-            return true;
-        }
+        //    MyState.DockPos = remote.GetPosition();
+        //    MyState.DockApproach = remote.GetPosition() + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
+        //    Save();
+        //    Runtime.UpdateFrequency = UpdateFrequency.Update100;
+        //    return true;
+        //}
 
         //public static void GetBasicBlocks(MyGridProgram mgp)
         //{

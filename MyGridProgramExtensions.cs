@@ -23,14 +23,18 @@ namespace IngameScript
     public static class MyGridProgramExtensions
     {
 
-        public static T FirstTaggedOrDefault<T>(this MyGridProgram mgp, string tag) where T : IMyTerminalBlock
+        public static T FirstTaggedOrDefault<T>(this MyGridProgram mgp, string tag) where T : class,IMyTerminalBlock
         {
             var list = new List<T>();
             mgp.GridTerminalSystem.GetBlocksOfType(list, block => block.IsSameConstructAs(mgp.Me));
-            return list.FirstOrDefault(x => IsTaggedForUse(x, tag)) ?? list.FirstOrDefault();
+
+            var result = list.FirstOrDefault(x => x.IsTaggedForUse(tag));
+            if (result == null)
+                return list.FirstOrDefault();
+            return result;
         }
 
-        public static T SingleTagged<T>(this MyGridProgram mgp, string tag, out bool found) where T : IMyTerminalBlock
+        public static T SingleTagged<T>(this MyGridProgram mgp, string tag, out bool found) where T : class,IMyTerminalBlock
         {
             var list = new List<T>();
             mgp.GridTerminalSystem
@@ -38,7 +42,7 @@ namespace IngameScript
 
             list = list.Where(x => IsTaggedForUse(x, tag)).ToList();
             found = list.Count == 1;
-            return found ? list.Single() : null;
+            return found ? list.Single() : default(T);
         }
 
         public static T FirstTaggedOrDefault<T>(this IEnumerable<T> obj, string tag) where T : IMyTerminalBlock

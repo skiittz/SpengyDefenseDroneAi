@@ -22,13 +22,13 @@ namespace IngameScript
 {
     partial class Program
     {
-        public static void EnemyCheck(MyGridProgram mgp, Configuration configuration, List<IMyBatteryBlock> batteries, List<IMyReactor> reactors, List<IMyGasTank> h2Tanks)
+        public static void EnemyCheck(MyGridProgram mgp, Configuration configuration, List<IMyBatteryBlock> batteries, List<IMyReactor> reactors, List<IMyGasTank> h2Tanks, IAdvancedAiBrain brain)
         {
             if(NeedsService(mgp,configuration, batteries,reactors,h2Tanks))
                 return;
 
             var turrets = new List<IMyLargeTurretBase>();
-            var antennae = mgp.FirstTaggedOrDefault<IMyRadioAntenna>();
+            var antenna = mgp.FirstTaggedOrDefault<IMyRadioAntenna>(configuration.For(ConfigName.Tag));
 
             mgp.GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(mgp.Me));
             bool targetDetected = false;
@@ -39,11 +39,14 @@ namespace IngameScript
                     targetDetected = true;
                     var target = turret.GetTargetedEntity();
                     mgp.Echo($"{Prompts.EnemyDetected}: " + target.Position);
-                    antennae.EnableBroadcasting = true;
+                    antenna.EnableBroadcasting = true;
                     mgp.IGC.BroadcastTarget(target, configuration.For(ConfigName.RadioChannel));
 
-                    if (CurrentMode() != Mode.TargetOnly)
-                        Attack(target.Position);
+                    if (brain != null)
+                    {
+                        brain.state.PendingTarget = target.Position;
+                        Attack(brain.state, int.Parse(configuration.For(ConfigName.AttackSpeedLimit)), brain.remote, brain);
+                    }
                     break;
                 }
             }
@@ -51,7 +54,7 @@ namespace IngameScript
             if (!targetDetected)
             {
                 var sensors = new List<IMySensorBlock>();
-                GridTerminalSystem.GetBlocksOfType(sensors, block => block.IsSameConstructAs(Me));
+                mgp.GridTerminalSystem.GetBlocksOfType(sensors, block => block.IsSameConstructAs(mgp.Me));
 
                 foreach(var sensor in sensors)
                 {
@@ -62,29 +65,29 @@ namespace IngameScript
                     if (!targets.Any())
                         return;
 
-                    IGC.BroadcastTarget(targets.First(), configuration.For(ConfigName.RadioChannel));
+                    mgp.IGC.BroadcastTarget(targets.First(), configuration.For(ConfigName.RadioChannel));
                 }
             }
 
             if (!targetDetected && configuration.IsEnabled(ConfigName.UseBurstTransmissions))
-                antennae.EnableBroadcasting = false;
+                antenna.EnableBroadcasting = false;
         }
 
-        public static void Attack(State MyState, float attackSpeedLimit)
+        public static void Attack(State MyState, float attackSpeedLimit, IMyRemoteControl remote, IAdvancedAiBrain brain)
         {
             var target = MyState.PendingTarget;
-            Echo(Prompts.Attacking);
+            brain.GridProgram.Echo(Prompts.Attacking);
             MyState.Status = Status.Attacking;
 
-            var distance = DistanceToWaypoint(target);
+            var distance = DistanceToWaypoint(target, remote, brain.GridProgram);
             var vmulti = distance / 600;
             var targetDir = Vector3D.Subtract(target, remote.GetPosition());
             targetDir = Vector3D.Multiply(targetDir, vmulti);
             var attackPos = Vector3D.Add(remote.GetPosition(), targetDir);
 
             var speedLimit = distance < 600 ? (float)Math.Pow(distance / 600, 4) * attackSpeedLimit : attackSpeedLimit;
-            speedLimit = Math.Max(float.Parse(configuration.For(ConfigName.DockSpeedLimit)), speedLimit);
-            Go(attackPos, false, (int)speedLimit);
+            speedLimit = Math.Max(5, speedLimit);
+            Go(attackPos, false, (int)speedLimit,brain);
         }
     }
 }

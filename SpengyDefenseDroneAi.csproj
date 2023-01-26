@@ -45,7 +45,6 @@
     <Compile Include="Brains\TargetterBrain.cs" />
     <Compile Include="Brain_Combat.cs" />
     <Compile Include="Brains\DefenderBrain.cs" />
-    <Compile Include="ConfigExtensions.cs" />
     <Compile Include="FixedWeaponController.cs" />
     <Compile Include="ManualCommands.cs" />
     <Compile Include="MyGridProgramExtensions.cs" />

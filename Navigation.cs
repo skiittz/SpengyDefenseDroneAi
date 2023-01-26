@@ -22,64 +22,53 @@ namespace IngameScript
 {  
     partial class Program
     {
-        public static void Go(Vector3D destination, bool docking, int speedLimit, State MyState, MyGridProgram mgp, IMyProgrammableBlock sam_controller, IMyRemoteControl remote)
+        public static void Go(Vector3D destination, bool docking, int speedLimit, IAdvancedAiBrain brain)
         {
-            mgp.Runtime.UpdateFrequency = UpdateFrequency.Update10;
+            brain.GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update10;
             string msg = string.Empty;
-            switch (MyState.NavigationModel)
+            switch (brain.navigationModel)
             {
                 case NavigationModel.Keen:
-                    MyState.Enroute = KeenNav_Controller.Go(remote, destination, docking, speedLimit, out msg);
+                    brain.state.Enroute = KeenNav_Controller.Go(brain.remote, destination, docking, speedLimit, out msg);
                     break;
                 case NavigationModel.SAM:
-                    MyState.Enroute = SAM_Controller.Go(sam_controller, destination, out msg);
+                    brain.state.Enroute = SAM_Controller.Go(brain.samController, destination, out msg);
                     break;
             }
-            mgp.Echo(msg);
-            if (MyState.Enroute)
-                MyState.CurrentDestination = destination;
+            brain.GridProgram.Echo(msg);
+            if (brain.state.Enroute)
+                brain.state.CurrentDestination = destination;
         }
        
-        public static void UnDock(MyGridProgram mgp, int speedLimit, State MyState, IMyShipConnector connector, IMyProgrammableBlock sam_controller, IMyRemoteControl remote)
+        public static void UnDock(int speedLimit, IAdvancedAiBrain brain)
         {
-            var batteries = new List<IMyBatteryBlock>();
-            var h2Tanks = new List<IMyGasTank>();
+            brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
+            brain.h2Tanks.ForEach(x => x.Stockpile = false);
 
-            mgp.GridTerminalSystem.GetBlocksOfType(batteries, block => block.IsSameConstructAs(mgp.Me));
-            mgp.GridTerminalSystem.GetBlocksOfType(h2Tanks, block => block.IsSameConstructAs(mgp.Me) && block.BlockDefinition.SubtypeName.Contains("Hydro"));
+            brain.connector.Disconnect();
 
-            batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
-            h2Tanks.ForEach(x => x.Stockpile = false);
-
-            connector.Disconnect();
-
-            Go(MyState.DockApproach, false, speedLimit, MyState, mgp, sam_controller, remote);
+            Go(brain.state.DockApproach, false, speedLimit, brain);
         }
 
-        public void Dock(State MyState)
+        public static void Dock(Program.IAdvancedAiBrain brain)
         {
-            connector.Connect();
-            var batteries = new List<IMyBatteryBlock>();
-            var h2Tanks = new List<IMyGasTank>();
+            brain.connector.Connect();
 
-            GridTerminalSystem.GetBlocksOfType(batteries, block => block.IsSameConstructAs(Me));
-            GridTerminalSystem.GetBlocksOfType(h2Tanks, block => block.IsSameConstructAs(Me) && block.BlockDefinition.SubtypeName.Contains("Hydro"));
+            brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Recharge);
+            brain.h2Tanks.ForEach(x => x.Stockpile = true);
 
-            batteries.ForEach(x => x.ChargeMode = ChargeMode.Recharge);
-            h2Tanks.ForEach(x => x.Stockpile = true);
-
-            MyState.CompleteStateAndChangeTo(Status.Waiting);
+            brain.state.CompleteStateAndChangeTo(Status.Waiting);
         }
 
-        public double DistanceToWaypoint(State MyState)
+        public static double DistanceToWaypoint(IAdvancedAiBrain brain)
         {
-            return DistanceToWaypoint(MyState.CurrentDestination);
+            return DistanceToWaypoint(brain.state.CurrentDestination, brain.remote, brain.GridProgram);
         }
 
-        public double DistanceToWaypoint(Vector3D destination)
+        public static double DistanceToWaypoint(Vector3D destination, IMyRemoteControl remote, MyGridProgram mgp)
         {
             var distance = Math.Sqrt(Math.Pow(remote.GetPosition().X - destination.X, 2) + Math.Pow(remote.GetPosition().Y - destination.Y, 2) + Math.Pow(remote.GetPosition().Z - destination.Z, 2));
-            Echo($"{Prompts.DistanceToWaypoint}: {distance}");
+            mgp.Echo($"{Prompts.DistanceToWaypoint}: {distance}");
             return distance;
         }
 

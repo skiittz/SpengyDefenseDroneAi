@@ -130,6 +130,13 @@ namespace IngameScript
             {Program.NavigationModel.Keen,"Keen" },
             {Program.NavigationModel.SAM,"SAM" }
         };
+
+        private static readonly Dictionary<Program.CommandType, string> manaualCommandDecodes = new Dictionary<Program.CommandType, string>
+        {
+            {Program.CommandType.Return, "Return" },
+            {Program.CommandType.Setup, "Setup" }
+        };
+
          public static string ToHumanReadableName(this Program.ConfigName config)
         {
             return configDecodes[config];
@@ -159,6 +166,16 @@ namespace IngameScript
         public static string ToHumanReadableName(this Program.NavigationModel model)
         {
             return navigationModelDecodes[model];
+        }
+
+        public static string ToHumanReadableName(this Program.CommandType commandType)
+        {
+            return manaualCommandDecodes[commandType];
+        }
+
+        public static Program.CommandType CommandTypeFromHumanReadableName(this string input)
+        {
+            return manaualCommandDecodes.Single(x => x.Value == input).Key;
         }
     }
 }

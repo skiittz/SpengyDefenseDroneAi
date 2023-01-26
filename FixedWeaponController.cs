@@ -32,7 +32,7 @@ namespace IngameScript
 
         public void CheckAndFireFixedWeapons(MyGridProgram mgp)
         {
-            var weapons = GetFixedWeapons();
+            var weapons = GetFixedWeapons(mgp);
             if (!weapons.Any())
                 return;
 

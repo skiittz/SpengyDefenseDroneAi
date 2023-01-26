@@ -22,7 +22,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public void CheckScuttle()
+        public void CheckScuttle(Configuration configuration)
         {
             if (!configuration.IsEnabled(ConfigName.EnableSuicide))
                 return;
