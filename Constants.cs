@@ -63,13 +63,6 @@ namespace IngameScript
         public static string WaitingForSignal = "Waiting for signal";
     } 
 
-    static class Special
-    {
-        public static string Debug_ArgFlag = "_dbg";
-        public static string Debug_StateFlag = "_State_";
-        public static string Debug_Enroute = "_Enroute";        
-    }
-
     static class AuthConst
     {
         public static readonly int shift1 = 13;
@@ -128,10 +121,16 @@ namespace IngameScript
             {NavigationModel.SAM,"SAM" }
         };
 
-        private static readonly Dictionary<CommandType, string> manaualCommandDecodes = new Dictionary<CommandType, string>
+        private static readonly Dictionary<CommandType, string> commandTypeDecodes = new Dictionary<CommandType, string>
         {
-            {CommandType.Return, "Return" },
-            {CommandType.Setup, "Setup" }
+            {CommandType.Return, "RETURN" },
+            {CommandType.Setup, "SETUP" },
+            {CommandType.DebugEnroute,"DEBUG ENROUTE" },
+            {CommandType.DebugStatus,"DEBUG STATUS" },
+            {CommandType.Off,"OFF" },
+            {CommandType.On,"ON" },
+            {CommandType.Scan,"SCAN" },
+            {CommandType.Reset,"RESET" }
         };
 
          public static string ToHumanReadableName(this ConfigName config)
@@ -160,6 +159,11 @@ namespace IngameScript
             return statusDecodes[status];
         }
 
+        public static Status StatusFromHumanReadableName(this string input)
+        {
+            return statusDecodes.Single(x => x.Value == input).Key;
+        }
+
         public static string ToHumanReadableName(this NavigationModel model)
         {
             return navigationModelDecodes[model];
@@ -167,12 +171,12 @@ namespace IngameScript
 
         public static string ToHumanReadableName(this CommandType commandType)
         {
-            return manaualCommandDecodes[commandType];
+            return commandTypeDecodes[commandType];
         }
 
         public static CommandType CommandTypeFromHumanReadableName(this string input)
         {
-            return manaualCommandDecodes.Single(x => x.Value == input).Key;
+            return commandTypeDecodes.Single(x => x.Value == input).Key;
         }
     }
 }

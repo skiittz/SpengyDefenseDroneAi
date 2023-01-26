@@ -171,7 +171,7 @@ namespace IngameScript
             return !state.DockPos.IsZero() && !state.DockApproach.IsZero() && state.PatrolRoute.Any();
         }
 
-        public bool HandleCommand(CommandType commandType, string additionalData = "")
+        public bool HandleCommand(CommandType commandType, string[] args = default(string[]))
         {
             switch (commandType)
             {
@@ -182,7 +182,31 @@ namespace IngameScript
                     TurnOff();
                     return true;
                 case CommandType.Scan:
-                    this.ScanForTarget(additionalData);
+                    try
+                    {
+                        this.ScanForTarget(args[0], int.Parse(args[1]));
+                        return true;
+                    }
+                    catch { return false; }
+                case CommandType.DebugEnroute:
+                    bool value;
+                    if (bool.TryParse(args[0], out value))
+                    {
+                        this.state.Enroute = value;
+                        return true;
+                    }
+                    else
+                        return false;
+                case CommandType.DebugStatus:
+                    try
+                    {
+                        this.state.Status = args[0].StatusFromHumanReadableName();
+                    }
+                    catch
+                    {
+                        GridProgram.Echo("I dont recognize that value....");
+                        return false;
+                    }
                     return true;
                 case CommandType.Return:
                     state.Status = Status.Returning;
@@ -190,6 +214,10 @@ namespace IngameScript
                     return true;
                 case CommandType.Setup:
                     SetUp();
+                    return true;
+                case CommandType.Reset:
+                    ClearData();
+                    TurnOff();
                     return true;
                 default:
                     GridProgram.Echo("I do not know that command!");

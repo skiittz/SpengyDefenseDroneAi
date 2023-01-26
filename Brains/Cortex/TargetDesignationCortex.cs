@@ -22,7 +22,7 @@ namespace IngameScript
 {
     public static class TargetDesignationCortex
     {
-        public static void ScanForTarget(this IAiBrain brain, string cameraName)
+        public static void ScanForTarget(this IAiBrain brain, string cameraName, int range)
         {
             brain.GridProgram.Echo("Searching for targets");
             var cameras = new List<IMyCameraBlock>();
@@ -36,7 +36,7 @@ namespace IngameScript
             }
 
             var camera = cameras.Single();
-            var target = camera.Scan().EnemyPosition();
+            var target = camera.Scan(range).EnemyPosition();
             if (!target.HasValue)
             {
                 brain.GridProgram.Echo("No Target");

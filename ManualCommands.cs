@@ -26,7 +26,10 @@ namespace IngameScript
             Setup,
             On,
             Off,
-            Scan
+            Scan,
+            DebugEnroute,
+            DebugStatus,
+            Reset
         }
     static class ManualCommands
     {

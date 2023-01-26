@@ -51,7 +51,7 @@ namespace IngameScript
                 return true;
             }
 
-        public bool HandleCommand(CommandType commandType, string additionalData = "")
+        public bool HandleCommand(CommandType commandType, string[] args = default(string[]))
         {
             switch (commandType)
             {
@@ -62,7 +62,15 @@ namespace IngameScript
                     TurnOff();
                     return true;
                 case CommandType.Scan:
-                    this.ScanForTarget(additionalData);
+                    try
+                    {
+                        this.ScanForTarget(args[0], int.Parse(args[1]));
+                        return true;
+                    }
+                    catch { return false; }
+                case CommandType.Reset:
+                    ClearData();
+                    TurnOff();
                     return true;
                 default:
                     GridProgram.Echo("I do not know that command!");

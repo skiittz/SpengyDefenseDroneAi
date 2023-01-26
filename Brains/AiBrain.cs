@@ -51,7 +51,7 @@ namespace IngameScript
             void ClearData();
             void TurnOff();
             bool IsSetUp();
-            bool HandleCommand(CommandType commandType, string additionalData = "");
+            bool HandleCommand(CommandType commandType, string[] args = default(string[]));
             string SerializeState();
             bool SetUp();            
         }

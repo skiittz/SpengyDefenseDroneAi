@@ -80,47 +80,25 @@ namespace IngameScript
                 Storage = myBrain.SerializeState();
         }
 
-
         public void Main(string argument, UpdateType updateSource)
         {
-            Echo($"Running: {argument}");
-            if (argument.ToUpper() == Prompts.RESET)
+            if (argument != "")
             {
-                Echo(Prompts.ResettingInternalData);
-                ClearData();
-                return;
-            }
-            if (argument.ToUpper() == Prompts.SETUP)
-            {
-                Echo(Prompts.AttemptingAutoSetUp);
-                if (myBrain.HandleCommand(CommandType.Setup))
+                Echo($"Running: {argument}");
+                var args = argument.Split(' ');
+
+                CommandType cmd;
+                if (Enum.TryParse(args[0], out cmd))
                 {
-                    Runtime.UpdateFrequency = UpdateFrequency.Update100;
-                    Echo(Prompts.SetupSuccessfulDroneIsReady);
+                    var success = myBrain.HandleCommand(cmd, args.Skip(1).ToArray());
+                    if (cmd == CommandType.Reset && success)
+                        ClearProgramData();
+
+                    Echo($"{argument}: {(success ? "Success" : "Failed")}");
                 }
                 else
-                {
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Echo(Prompts.SetupFailedDroneIsNotOperational);
-                    return;
-                }
-            }
+                    Echo("I do not recognize that command");
 
-            FixedWeaponsHandler.CheckAndFireFixedWeapons(this);
-
-            if (argument.ToUpper().Contains("SCAN "))
-            {
-                var cameraName = argument.ToUpper().Replace("SCAN ", "");
-                myBrain.HandleCommand(CommandType.Scan, cameraName);
-                return;
-            }
-
-            if (myBrain.SetManualOverride(argument))
-                return;
-
-            if(argument.ToUpper() == Prompts.OFF)
-            {
-                myBrain.HandleCommand(CommandType.Off);
                 return;
             }
             if (!isAuthorized)
@@ -130,15 +108,9 @@ namespace IngameScript
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
-            if (argument.ToUpper() == Prompts.ON)
-            {
-                myBrain.HandleCommand(CommandType.On);
-            }
-            
-            if(argument.ToUpper() == Prompts.RETURN)
-            {
-                myBrain.HandleCommand(CommandType.Return);
-            }
+
+            FixedWeaponsHandler.CheckAndFireFixedWeapons(this);
+
 
             if (!myBrain.IsSetUp())
             {
@@ -161,11 +133,9 @@ namespace IngameScript
             myBrain.Process(argument);            
         }
 
-        void ClearData()
+        void ClearProgramData()
         {
             Storage = string.Empty;
-            if(myBrain != null)
-                myBrain.ClearData();            
             Save();
         }
     }
