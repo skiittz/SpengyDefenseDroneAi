@@ -31,7 +31,7 @@ namespace IngameScript
             }
             public void Process(string argument)
             {
-                CombatFunctions.EnemyCheck(GridProgram, configuration, new List<IMyBatteryBlock>(), new List<IMyReactor>(), new List<IMyGasTank>(), null);
+                this.EnemyCheck();
             }
 
             public void StatusReport()

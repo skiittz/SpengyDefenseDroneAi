@@ -47,7 +47,7 @@ namespace IngameScript
         {
             if (connector.Status == MyShipConnectorStatus.Connected)
             {
-                if (!ServiceFunctions.NeedsService(GridProgram, configuration, batteries, reactors, h2Tanks))
+                if (!this.NeedsService())
                 {
                     state.Status = Status.Patrolling;
                     NavigationFunctions.UnDock(int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
@@ -58,7 +58,7 @@ namespace IngameScript
             else
             {
                 if ((state.Status == Status.Patrolling || state.Status == Status.Waiting || state.Status == Status.Attacking))
-                    CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                    this.EnemyCheck();
                 if (state.Enroute)
                 {
                     var distanceToWaypoint = NavigationFunctions.DistanceToWaypoint(this);
@@ -74,7 +74,7 @@ namespace IngameScript
                                 state.CompleteStateAndChangeTo(Status.Docking, this);
                                 break;
                             case Status.Waiting:
-                                if (ServiceFunctions.NeedsService(GridProgram, configuration, batteries, reactors, h2Tanks))
+                                if (this.NeedsService())
                                     state.CompleteStateAndChangeTo(Status.Returning, this);
                                 else
                                     state.CompleteStateAndChangeTo(Status.Waiting, this);
@@ -84,7 +84,7 @@ namespace IngameScript
                                 break;
                             case Status.Attacking:
                                 state.CompleteStateAndChangeTo(Status.Waiting, this);
-                                CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                                this.EnemyCheck();
                                 break;
                         }
                     }
@@ -107,7 +107,7 @@ namespace IngameScript
                             break;
                         case Status.Waiting:
                             if (connector.Status == MyShipConnectorStatus.Unconnected)
-                                if (ServiceFunctions.NeedsService(GridProgram, configuration, batteries, reactors, h2Tanks))
+                                if (this.NeedsService())
                                     state.CompleteStateAndChangeTo(Status.Returning, this);
                                 else
                                 {
@@ -115,10 +115,10 @@ namespace IngameScript
                                     ResumePatrol(GridProgram, state, samController);
                                 }
                             else
-                                CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                                this.EnemyCheck();
                             break;
                         case Status.PreparingToAttack:
-                            CombatFunctions.Attack(state, float.Parse(configuration.For(ConfigName.AttackSpeedLimit)), remote, this);
+                            this.Attack();
                             break;
                     }
                 }

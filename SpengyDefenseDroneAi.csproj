@@ -41,9 +41,10 @@
     <Compile Include="Brains\AiBrain.cs" />
     <Compile Include="Authenticator.cs" />
     <Compile Include="Brains\AiBrainExtensions.cs" />
+    <Compile Include="Brains\Cortex\CombatCortex.cs" />
+    <Compile Include="Brains\Cortex\MaintenanceCortex.cs" />
     <Compile Include="Brains\PatrollerBrain.cs" />
     <Compile Include="Brains\TargetterBrain.cs" />
-    <Compile Include="Brain_Combat.cs" />
     <Compile Include="Brains\DefenderBrain.cs" />
     <Compile Include="FixedWeaponController.cs" />
     <Compile Include="ManualCommands.cs" />
@@ -58,7 +59,6 @@
     <Compile Include="DateExtensions.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Navigation.cs" />
-    <Compile Include="ServiceChecks.cs" />
     <Compile Include="State.cs" />
     <Compile Include="MDK\Bootstrapper.cs" />
     <AdditionalFiles Include="MDK\MDK.options.props">

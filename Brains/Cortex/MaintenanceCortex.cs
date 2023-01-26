@@ -20,97 +20,97 @@ using VRageMath;
 
 namespace IngameScript
 {
-    public static class ServiceFunctions
-    {
-        public static bool NeedsService(MyGridProgram mgp, Configuration configuration, List<IMyBatteryBlock> batteries, List<IMyReactor> reactors, List<IMyGasTank> h2Tanks)
+        public static class MaintenanceCortex
         {
-            return LowAmmo(mgp, bool.Parse(configuration.For(ConfigName.EnableLowAmmoCheck))) || 
-                LowH2(mgp, h2Tanks, decimal.Parse(configuration.For(ConfigName.LowH2Threshold))) || 
-                LowPower(mgp,batteries, decimal.Parse(configuration.For(ConfigName.LowPowerThreshold))) || 
-                LowReactorFuel(mgp, reactors, decimal.Parse(configuration.For(ConfigName.LowReactorThreshold)));
+        public static bool NeedsService(this IAdvancedAiBrain brain)
+        {
+            return brain.LowAmmo() || brain.LowH2() || brain.LowPower() || brain.LowReactorFuel();
         }
 
-        public static bool LowAmmo(MyGridProgram mgp, bool enableLowAmmoCheck)
+        private static bool LowAmmo(this IAdvancedAiBrain brain)
         {
-            if (!enableLowAmmoCheck)
+            if (!brain.configuration.IsEnabled(ConfigName.EnableLowAmmoCheck))
                 return false;
 
             var turrets = new List<IMyLargeTurretBase>();
-            mgp.GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(mgp.Me));
+            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(brain.GridProgram.Me));
             foreach (var turret in turrets)
             {
                 var inventory = new List<MyInventoryItem>();
                 turret.GetInventory().GetItems(inventory);
                 if (!inventory.Any())
                 {
-                    mgp.Echo(Prompts.LowAmmo);
+                    brain.GridProgram.Echo(Prompts.LowAmmo);
                     return true;
                 }
             }
 
-            mgp.Echo(Prompts.AmmoGood);
+            brain.GridProgram.Echo(Prompts.AmmoGood);
             return false;
         }
 
-        public static bool LowPower(MyGridProgram mgp, List<IMyBatteryBlock> batteries, decimal powerThreshold)
+        private static bool LowPower(this IAdvancedAiBrain brain)
         {
-            if (batteries == null || !batteries.Any())
+            if (brain.batteries == null || !brain.batteries.Any())
                 return false;
 
             var currentPower = 0f;
             var maxPower = 0f;
 
-            foreach (var battery in batteries)
+            foreach (var battery in brain.batteries)
             {
                 currentPower += battery.CurrentStoredPower;
                 maxPower += battery.MaxStoredPower;
             }
 
+            var powerThreshold = decimal.Parse(brain.configuration.For(ConfigName.LowPowerThreshold));
             var powerLevel = Math.Round((decimal)(currentPower / maxPower) * 100, 2);
             if (powerLevel < powerThreshold)
-                mgp.Echo(Prompts.LowPower);
+                brain.GridProgram.Echo(Prompts.LowPower);
             else
-                mgp.Echo(Prompts.PowerGood);
+                brain.GridProgram.Echo(Prompts.PowerGood);
             return powerLevel < powerThreshold;
         }
 
-        public static bool LowH2(MyGridProgram mgp, List<IMyGasTank> h2Tanks, decimal lowH2Threshold)
+        private static bool LowH2(this IAdvancedAiBrain brain)
         {
-            if (h2Tanks == null || !h2Tanks.Any())
+            if (brain.h2Tanks == null || !brain.h2Tanks.Any())
                 return false;
 
-            var averageFuel = (decimal)h2Tanks.Select(x => x.FilledRatio).Average() * 100;
+            var averageFuel = (decimal)brain.h2Tanks.Select(x => x.FilledRatio).Average() * 100;
 
+            var lowH2Threshold = decimal.Parse(brain.configuration.For(ConfigName.LowH2Threshold));
             if (averageFuel < lowH2Threshold)
-                mgp.Echo(Prompts.LowH2);
+                brain.GridProgram.Echo(Prompts.LowH2);
             else
-                mgp.Echo(Prompts.H2Good);
+                brain.GridProgram.Echo(Prompts.H2Good);
 
             return averageFuel < lowH2Threshold;
         }
 
-        public static bool LowReactorFuel(MyGridProgram mgp, List<IMyReactor> reactors, decimal lowReactorThreshold)
-        {            
-            if (reactors == null || !reactors.Any())
+        private static bool LowReactorFuel(this IAdvancedAiBrain brain)
+        {
+            if (brain.reactors == null || !brain.reactors.Any())
                 return false;
 
-            foreach (var reactor in reactors)
+            foreach (var reactor in brain.reactors)
             {
                 var inventory = new List<MyInventoryItem>();
                 reactor.GetInventory().GetItems(inventory);
                 if (!inventory.Any())
                 {
-                    mgp.Echo(Prompts.ReactorsLowOnFuel);
+                    brain.GridProgram.Echo(Prompts.ReactorsLowOnFuel);
                     return true;
                 }
                 var fuel = (decimal)inventory.First().Amount;
+                var lowReactorThreshold = decimal.Parse(brain.configuration.For(ConfigName.LowReactorThreshold));
                 if (fuel < lowReactorThreshold)
                 {
-                    mgp.Echo(Prompts.ReactorsLowOnFuel);
+                    brain.GridProgram.Echo(Prompts.ReactorsLowOnFuel);
                     return true;
                 }
             }
-            mgp.Echo(Prompts.ReactorFuelGood);
+            brain.GridProgram.Echo(Prompts.ReactorFuelGood);
             return false;
         }
     }

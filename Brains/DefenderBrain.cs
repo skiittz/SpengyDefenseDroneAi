@@ -48,7 +48,7 @@ namespace IngameScript
         {
 
             if (state.Status == Status.Attacking)
-                CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                this.EnemyCheck();
 
             if (state.Enroute)
             {
@@ -63,7 +63,7 @@ namespace IngameScript
                         if (connector.Status == MyShipConnectorStatus.Connected)
                             state.CompleteStateAndChangeTo(Status.Waiting, this);
 
-                        CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                        this.EnemyCheck();
 
                         if (distanceToWaypoint < 3)
                             state.CompleteStateAndChangeTo(Status.Docking, this);
@@ -77,14 +77,14 @@ namespace IngameScript
                     case Status.PreparingToAttack:
                         if (distanceToWaypoint < 3)
                         {
-                            CombatFunctions.Attack(state, float.Parse(configuration.For(ConfigName.AttackSpeedLimit)), remote, this);
+                            this.Attack();
                             state.PendingTarget = Vector3D.Zero;
                         }
                         break;
                     case Status.Attacking:
                         if (distanceToWaypoint < 50)
                             state.CompleteStateAndChangeTo(Status.Returning, this);
-                        CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                        this.EnemyCheck();
                         break;
                 }
             }
@@ -97,7 +97,7 @@ namespace IngameScript
                         if (connector.Status == MyShipConnectorStatus.Connected)
                         {
                             GridProgram.Echo(argument);
-                            if (argument.Equals("NewTarget") && !ServiceFunctions.NeedsService(GridProgram, configuration, batteries, reactors, h2Tanks))
+                            if (argument.Equals("NewTarget") && !this.NeedsService())
                             {
                                 var packet = listeners[0].AcceptMessage();
                                 GridProgram.Echo(packet.ToString());
@@ -112,7 +112,7 @@ namespace IngameScript
                             else
                             {
                                 GridProgram.Echo(Prompts.WaitingForSignal);
-                                CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                                this.EnemyCheck();
                             }
                         }
                         else
@@ -130,7 +130,7 @@ namespace IngameScript
                 }
             }
             if (state.Status == Status.Attacking)
-                CombatFunctions.EnemyCheck(GridProgram, configuration, batteries, reactors, h2Tanks, this);
+                this.EnemyCheck();
 
             this.SetRuntimeFrequency();
         }
