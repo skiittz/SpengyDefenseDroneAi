@@ -88,7 +88,7 @@ namespace IngameScript
         private static readonly Dictionary<ConfigName, string> configDecodes = new Dictionary<ConfigName, string>
         {
             {ConfigName.Tag,"Tag"},
-            {ConfigName.Mode, "Mode"},
+            {ConfigName.BrainType, "Mode"},
             {ConfigName.RadioChannel,"RadioChannel" },
             {ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
             {ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
@@ -106,11 +106,11 @@ namespace IngameScript
             {ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"}
         };
 
-        private static readonly Dictionary<Mode, string> modeDecodes = new Dictionary<Mode, string>
+        private static readonly Dictionary<BrainType, string> brainTypeDecodes = new Dictionary<BrainType, string>
         {
-            {Mode.Patrol,"Patrol" },
-            {Mode.Defend,"Defend" },
-            {Mode.TargetOnly,"TargetOnly" }
+            {BrainType.Patrol,"Patrol" },
+            {BrainType.Defend,"Defend" },
+            {BrainType.TargetOnly,"TargetOnly" }
         };
 
         private static readonly Dictionary<Status, string> statusDecodes = new Dictionary<Status, string> {
@@ -145,14 +145,14 @@ namespace IngameScript
             return configDecodes.Single(x => x.Value == input).Key;
         }
 
-        public static string ToHumanReadableName(this Mode mode)
+        public static string ToHumanReadableName(this BrainType mode)
         {
-            return modeDecodes[mode];
+            return brainTypeDecodes[mode];
         }
 
-        public static Mode ModeFromHumanReadableName(this string input)
+        public static BrainType BrainTypeFromHumanReadableName(this string input)
         {
-            return modeDecodes.Single(x => x.Value == input).Key;
+            return brainTypeDecodes.Single(x => x.Value == input).Key;
         }
 
         public static string ToHumanReadableName(this Status status)

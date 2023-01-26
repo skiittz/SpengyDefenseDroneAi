@@ -45,7 +45,7 @@ namespace IngameScript
             if (!target.HasValue)
                 return;
 
-            var range = NavigationFunctions.DistanceBetween(camera.GetPosition(), target.Value);
+            var range = NavigationCortex.DistanceBetween(camera.GetPosition(), target.Value);
             foreach (var weapon in weapons)
             {
                 weapon.ShootOnce();

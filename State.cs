@@ -20,6 +20,16 @@ using VRageMath;
 
 namespace IngameScript
 {
+    public enum Status
+    {
+        Waiting,
+        Attacking,
+        Returning,
+        Docking,
+        Patrolling,
+        PreparingToAttack
+    }
+
     public class State
     {
         public Vector3D DockPos { get; set; }
@@ -31,12 +41,12 @@ namespace IngameScript
         public bool Enroute { get; set; }
         public int CurrentPatrolPoint { get; set; }
 
-        public bool IsSetUpFor(Mode currentMode)
+        public bool IsSetUpFor(BrainType currentMode)
         {
-            if (currentMode == Mode.TargetOnly)
+            if (currentMode == BrainType.TargetOnly)
                 return true;
 
-            if (currentMode == Mode.Patrol && !PatrolRoute.Any())
+            if (currentMode == BrainType.Patrol && !PatrolRoute.Any())
                 return false;
 
             return !DockPos.IsZero() && !DockApproach.IsZero();

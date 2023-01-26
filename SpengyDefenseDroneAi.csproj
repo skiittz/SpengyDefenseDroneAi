@@ -43,6 +43,7 @@
     <Compile Include="Brains\AiBrainExtensions.cs" />
     <Compile Include="Brains\Cortex\CombatCortex.cs" />
     <Compile Include="Brains\Cortex\MaintenanceCortex.cs" />
+    <Compile Include="Brains\Cortex\NavigationCortex.cs" />
     <Compile Include="Brains\PatrollerBrain.cs" />
     <Compile Include="Brains\TargetterBrain.cs" />
     <Compile Include="Brains\DefenderBrain.cs" />
@@ -52,13 +53,11 @@
     <Compile Include="TargetBroadcaster.cs" />
     <Compile Include="TargetDesignator.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="Enums.cs" />
     <Compile Include="KeenNavIntegration.cs" />
     <Compile Include="SAMIntegration.cs" />
     <Compile Include="Scuttle.cs" />
     <Compile Include="DateExtensions.cs" />
     <Compile Include="Configuration.cs" />
-    <Compile Include="Navigation.cs" />
     <Compile Include="State.cs" />
     <Compile Include="MDK\Bootstrapper.cs" />
     <AdditionalFiles Include="MDK\MDK.options.props">

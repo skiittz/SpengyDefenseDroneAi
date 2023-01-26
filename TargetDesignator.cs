@@ -44,7 +44,7 @@ namespace IngameScript
             }
 
 
-            brain.GridProgram.Echo($"Target found: {NavigationFunctions.DistanceBetween(camera.GetPosition(), target.Value)}");
+            brain.GridProgram.Echo($"Target found: {NavigationCortex.DistanceBetween(camera.GetPosition(), target.Value)}");
             brain.GridProgram.Echo(target.Value.ToString());
             brain.GridProgram.IGC.BroadcastTarget(target.Value, brain.configuration.For(ConfigName.RadioChannel));
         }

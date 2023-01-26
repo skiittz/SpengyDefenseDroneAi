@@ -48,7 +48,7 @@ namespace IngameScript
 
         public static void SetRuntimeFrequency(this IAdvancedAiBrain brain)
         {
-            brain.GridProgram.Runtime.UpdateFrequency = brain.state.Enroute && NavigationFunctions.DistanceToWaypoint(brain) < 1000
+            brain.GridProgram.Runtime.UpdateFrequency = brain.state.Enroute && brain.DistanceToWaypoint() < 1000
                 ? UpdateFrequency.Update1
                 : UpdateFrequency.Update10;
         }

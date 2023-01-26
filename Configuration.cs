@@ -20,12 +20,33 @@ using VRageMath;
 
 namespace IngameScript
 {
+    public enum ConfigName
+    {
+        Tag,
+        BrainType,
+        RadioChannel,
+        SAMAutoPilotTag,
+        AttackSpeedLimit,
+        DockSpeedLimit,
+        GeneralSpeedLimit,
+        LowPowerThreshold,
+        LowH2Threshold,
+        LowReactorThreshold,
+        DockClearance,
+        PersonalKey,
+        FactionKey,
+        EnableLowAmmoCheck,
+        UseBurstTransmissions,
+        EnableSuicide,
+        EnableRelayBroadcast
+    }
+
     public class Configuration
     {
         private Dictionary<ConfigName, string> configs;
         public static readonly Dictionary<ConfigName, string> Defaults = new Dictionary<ConfigName, string> {
                         {ConfigName.Tag,"SDDS"},
-                        {ConfigName.Mode, "TargetOnly"},
+                        {ConfigName.BrainType, "TargetOnly"},
                         {ConfigName.RadioChannel,"SDDS" },
                         {ConfigName.SAMAutoPilotTag,"SAM" },
                         {ConfigName.AttackSpeedLimit, "100" },

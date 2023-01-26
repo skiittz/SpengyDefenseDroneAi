@@ -19,10 +19,15 @@ using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
 namespace IngameScript
-{  
-    public static class NavigationFunctions
+{
+    public enum NavigationModel
     {
-        public static void Go(Vector3D destination, bool docking, int speedLimit, IAdvancedAiBrain brain)
+        Keen,
+        SAM
+    }
+    public static class NavigationCortex
+    {
+        public static void Go(this IAdvancedAiBrain brain, Vector3D destination, bool docking, int speedLimit)
         {
             string msg = string.Empty;
             switch (brain.navigationModel)
@@ -38,18 +43,18 @@ namespace IngameScript
             if (brain.state.Enroute)
                 brain.state.CurrentDestination = destination;
         }
-       
-        public static void UnDock(int speedLimit, IAdvancedAiBrain brain)
+
+        public static void UnDock(this IAdvancedAiBrain brain)
         {
             brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
             brain.h2Tanks.ForEach(x => x.Stockpile = false);
 
             brain.connector.Disconnect();
 
-            Go(brain.state.DockApproach, false, speedLimit, brain);
+            brain.Go(brain.state.DockApproach, false, int.Parse(brain.configuration.For(ConfigName.GeneralSpeedLimit)));
         }
 
-        public static void Dock(IAdvancedAiBrain brain)
+        public static void Dock(this IAdvancedAiBrain brain)
         {
             brain.connector.Connect();
 
@@ -59,15 +64,14 @@ namespace IngameScript
             brain.state.CompleteStateAndChangeTo(Status.Waiting, brain);
         }
 
-        public static double DistanceToWaypoint(IAdvancedAiBrain brain)
+        public static double DistanceToWaypoint(this IAdvancedAiBrain brain)
         {
-            return DistanceToWaypoint(brain.state.CurrentDestination, brain.remote, brain.GridProgram);
+            return brain.DistanceToWaypoint(brain.state.CurrentDestination);
         }
 
-        public static double DistanceToWaypoint(Vector3D destination, IMyRemoteControl remote, MyGridProgram mgp)
+        public static double DistanceToWaypoint(this IAdvancedAiBrain brain, Vector3D destination)
         {
-            var distance = Math.Sqrt(Math.Pow(remote.GetPosition().X - destination.X, 2) + Math.Pow(remote.GetPosition().Y - destination.Y, 2) + Math.Pow(remote.GetPosition().Z - destination.Z, 2));
-            return distance;
+            return DistanceBetween(brain.remote.GetPosition(), destination);
         }
 
         public static double DistanceBetween(Vector3D p1, Vector3D p2)

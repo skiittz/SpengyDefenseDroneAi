@@ -28,7 +28,7 @@ namespace IngameScript
     static class ManualCommands
     {
         public static bool SetManualOverride(this IAiBrain brain, string argument){            
-            if (brain.configuration.For<Mode>(ConfigName.Mode) == Mode.TargetOnly)
+            if (brain.configuration.For<BrainType>(ConfigName.BrainType) == BrainType.TargetOnly)
                 return true;
 
             return (brain as IAdvancedAiBrain).SetManualOverride(argument);

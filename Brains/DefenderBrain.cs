@@ -52,12 +52,12 @@ namespace IngameScript
 
             if (state.Enroute)
             {
-                var distanceToWaypoint = NavigationFunctions.DistanceToWaypoint(this);
+                var distanceToWaypoint = this.DistanceToWaypoint();
                 switch (state.Status)
                 {
                     case Status.Docking:
                         if (connector.Status == MyShipConnectorStatus.Connectable)
-                            NavigationFunctions.Dock(this);
+                            this.Dock();
                         break;
                     case Status.Returning:
                         if (connector.Status == MyShipConnectorStatus.Connected)
@@ -106,7 +106,7 @@ namespace IngameScript
                                 {
                                     state.PendingTarget = targetPosition;
                                     state.Status = Status.PreparingToAttack;
-                                    NavigationFunctions.UnDock(int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
+                                    this.UnDock();
                                 }
                             }
                             else
@@ -119,7 +119,7 @@ namespace IngameScript
                             state.CompleteStateAndChangeTo(Status.Docking, this);
                         break;
                     case Status.Returning:
-                        NavigationFunctions.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
+                        this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                         break;
                     case Status.Docking:
                         string msg;
@@ -142,7 +142,7 @@ namespace IngameScript
             GridProgram.Echo($"{Prompts.NavigationModel}: {navigationModel.ToHumanReadableName()}");
             GridProgram.Echo($"{Prompts.Enroute}: {state.Enroute}");
             if (state.Enroute)
-                GridProgram.Echo($"{Prompts.DistanceToWaypoint}: {Math.Round(NavigationFunctions.DistanceToWaypoint(this))}");
+                GridProgram.Echo($"{Prompts.DistanceToWaypoint}: {Math.Round(this.DistanceToWaypoint())}");
         }
 
         public void ClearData()
@@ -178,7 +178,7 @@ namespace IngameScript
             {
                 case CommandType.Return:
                     state.Status = Status.Returning;
-                    NavigationFunctions.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
+                    this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                     return true;
                 case CommandType.Setup:
                     SetUp();

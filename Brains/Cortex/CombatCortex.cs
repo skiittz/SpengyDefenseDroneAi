@@ -98,7 +98,7 @@ namespace IngameScript
             brain.GridProgram.Echo(Prompts.Attacking);
             brain.state.Status = Status.Attacking;
 
-            var distance = NavigationFunctions.DistanceToWaypoint(target, brain.remote, brain.GridProgram);
+            var distance = brain.DistanceToWaypoint(target);
             var vmulti = distance / 600;
             var targetDir = Vector3D.Subtract(target, brain.remote.GetPosition());
             targetDir = Vector3D.Multiply(targetDir, vmulti);
@@ -107,7 +107,7 @@ namespace IngameScript
             var attackSpeedLimit = float.Parse(brain.configuration.For(ConfigName.AttackSpeedLimit));
             var speedLimit = distance < 600 ? (float)Math.Pow(distance / 600, 4) * attackSpeedLimit : attackSpeedLimit;
             speedLimit = Math.Max(5, speedLimit);
-            NavigationFunctions.Go(attackPos, false, (int)speedLimit, brain);
+            brain.Go(attackPos, false, (int)speedLimit);
         }
     }
 }

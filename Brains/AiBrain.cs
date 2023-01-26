@@ -20,15 +20,22 @@ using VRageMath;
 
 namespace IngameScript
 {
+    public enum BrainType
+    {
+        Patrol,
+        Defend,
+        TargetOnly
+    }
+
     public static class BrainFunctions
     {
         public static IAiBrain GetBrain(State state, MyGridProgram mgp, Configuration configuration, List<IMyBroadcastListener> listeners)
         {
-            switch (configuration.For(ConfigName.Mode).ModeFromHumanReadableName())
+            switch (configuration.For(ConfigName.BrainType).BrainTypeFromHumanReadableName())
             {
-                case Mode.Defend:
+                case BrainType.Defend:
                     return new DefenderBrain(state, mgp, configuration, listeners).GetBasicBlocks();
-                case Mode.Patrol:
+                case BrainType.Patrol:
                     return new PatrollerBrain(state, mgp, configuration, listeners).GetBasicBlocks();
                 default:
                     return new TargetterBrain(mgp);

@@ -50,7 +50,7 @@ namespace IngameScript
                 if (!this.NeedsService())
                 {
                     state.Status = Status.Patrolling;
-                    NavigationFunctions.UnDock(int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
+                    this.UnDock();
                 }
                 else
                     state.Status = Status.Waiting;
@@ -61,14 +61,14 @@ namespace IngameScript
                     this.EnemyCheck();
                 if (state.Enroute)
                 {
-                    var distanceToWaypoint = NavigationFunctions.DistanceToWaypoint(this);
+                    var distanceToWaypoint = this.DistanceToWaypoint();
                     if (distanceToWaypoint < 3)
                     {
                         switch (state.Status)
                         {
                             case Status.Docking:
                                 if (connector.Status == MyShipConnectorStatus.Connectable)
-                                    NavigationFunctions.Dock(this);
+                                    this.Dock();
                                 break;
                             case Status.Returning:
                                 state.CompleteStateAndChangeTo(Status.Docking, this);
@@ -94,7 +94,7 @@ namespace IngameScript
                     switch (state.Status)
                     {
                         case Status.Returning:
-                            NavigationFunctions.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
+                            this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                             break;
                         case Status.Docking:
                             state.CurrentDestination = state.DockPos;
@@ -131,7 +131,7 @@ namespace IngameScript
         {
             GridProgram.Echo($"{Prompts.PatrolPoint} {state.CurrentPatrolPoint}");
             state.CompleteStateAndChangeTo(Status.Patrolling, this);
-            NavigationFunctions.Go(state.PatrolRoute[state.CurrentPatrolPoint], false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
+            this.Go(state.PatrolRoute[state.CurrentPatrolPoint], false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
         }
 
         public void StatusReport()
@@ -141,7 +141,7 @@ namespace IngameScript
             GridProgram.Echo($"{Prompts.NavigationModel}: {navigationModel.ToHumanReadableName()}");
             GridProgram.Echo($"{Prompts.Enroute}: {state.Enroute}");
             if (state.Enroute)
-                GridProgram.Echo($"{Prompts.DistanceToWaypoint}: {Math.Round(NavigationFunctions.DistanceToWaypoint(this))}");
+                GridProgram.Echo($"{Prompts.DistanceToWaypoint}: {Math.Round(this.DistanceToWaypoint())}");
         }
 
         public void ClearData()
@@ -177,7 +177,7 @@ namespace IngameScript
             {
                 case CommandType.Return:
                     state.Status = Status.Returning;
-                    NavigationFunctions.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)), this);
+                    this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                     return true;
                 case CommandType.Setup:
                     SetUp();
