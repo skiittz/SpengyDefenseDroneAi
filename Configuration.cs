@@ -20,14 +20,34 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public enum ConfigName
     {
-        public class Configuration
-        {
-            private Dictionary<ConfigName, string> configs;
-            public static readonly Dictionary<ConfigName, string> Defaults = new Dictionary<ConfigName, string> {
+        Tag,
+        BrainType,
+        RadioChannel,
+        SAMAutoPilotTag,
+        AttackSpeedLimit,
+        DockSpeedLimit,
+        GeneralSpeedLimit,
+        LowPowerThreshold,
+        LowH2Threshold,
+        LowReactorThreshold,
+        DockClearance,
+        PersonalKey,
+        FactionKey,
+        EnableLowAmmoCheck,
+        UseBurstTransmissions,
+        EnableSuicide,
+        EnableRelayBroadcast,
+        FixedWeaponReferenceTag
+    }
+
+    public class Configuration
+    {
+        private Dictionary<ConfigName, string> configs;
+        public static readonly Dictionary<ConfigName, string> Defaults = new Dictionary<ConfigName, string> {
                         {ConfigName.Tag,"SDDS"},
-                        {ConfigName.Mode, "TargetOnly"},
+                        {ConfigName.BrainType, "TargetOnly"},
                         {ConfigName.RadioChannel,"SDDS" },
                         {ConfigName.SAMAutoPilotTag,"SAM" },
                         {ConfigName.AttackSpeedLimit, "100" },
@@ -39,7 +59,10 @@ namespace IngameScript
                         {ConfigName.DockClearance,"40" },
                         {ConfigName.PersonalKey,"None" },
                         {ConfigName.FactionKey,"None" },
-                        {ConfigName.EnableLowAmmoCheck,"true"}
+                        {ConfigName.EnableLowAmmoCheck,"true"},
+                        {ConfigName.UseBurstTransmissions,"true" },
+                        {ConfigName.EnableSuicide,"true" },
+                        {ConfigName.EnableRelayBroadcast,"true" }
             };
 
             public static IEnumerable<ConfigName> ApplicableConfigs(Mode mode, NavigationModel navModel)
@@ -78,39 +101,39 @@ namespace IngameScript
                     return;
                 }
 
-                var lines = customData.Split('\n');
-                configs.Clear();
-                foreach (var line in lines)
-                {
-                    var config = line.Split(':');    
-                    configs.Add(config[0].ConfigFromHumanReadableName(), config[1]);
-                }
-            }
-
-            public override string ToString()
+            var lines = customData.Split('\n');
+            configs.Clear();
+            foreach (var line in lines)
             {
-                var customData = string.Empty;
-                foreach (var config in configs)
-                {
-                    customData += $"{config.Key.ToHumanReadableName()}:{config.Value}\n";
-                }
-                customData = customData.TrimEnd('\r').TrimEnd('\n');
-
-                return customData;
+                var config = line.Split(':');
+                configs.Add(config[0].ConfigFromHumanReadableName(), config[1]);
             }
+        }
 
-            public string For(ConfigName configName)
+        public override string ToString()
+        {
+            var customData = string.Empty;
+            foreach (var config in configs)
             {
-                if (!configs.ContainsKey(configName))
-                    return string.Empty;
-                return configs[configName];
+                customData += $"{config.Key.ToHumanReadableName()}:{config.Value}\n";
             }
+            customData = customData.TrimEnd('\r').TrimEnd('\n');
 
-            public bool IsEnabled(ConfigName configName)
-            {
-                bool output;
-                return bool.TryParse(For(configName), out output) && output;
-            }              
+            return customData;
+        }
+
+        public string For(ConfigName configName)
+        {
+            if (!configs.ContainsKey(configName))
+                return string.Empty;
+            return configs[configName];
+        }
+
+        public bool IsEnabled(ConfigName configName)
+        {
+            bool output;
+            return bool.TryParse(For(configName), out output) && output;
+        }
 
             public T For<T>(ConfigName configName) where T:struct
             {

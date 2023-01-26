@@ -20,26 +20,26 @@ using VRageMath;
 
 namespace IngameScript
 {
-    partial class Program
+    public static class SuicideCortex
     {
-        public void CheckScuttle()
+        public static void CheckScuttle(this IAiBrain brain)
         {
-            if (!configuration.IsEnabled(ConfigName.EnableSuicide))
+            if (!brain.configuration.IsEnabled(ConfigName.EnableSuicide))
                 return;
 
-            if (Me.IsBeingHacked)
-                Scuttle();
+            if (brain.GridProgram.Me.IsBeingHacked)
+                brain.Scuttle();
 
             var warheads = new List<IMyWarhead>();
-            GridTerminalSystem.GetBlocksOfType(warheads, block => block.IsSameConstructAs(Me));
-            
+            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(warheads, block => block.IsSameConstructAs(brain.GridProgram.Me));
+
             if (warheads.Any(x => x.IsBeingHacked))
-                Scuttle();
+                brain.Scuttle();
         }
-        public void Scuttle()
+        public static void Scuttle(this IAiBrain brain)
         {
             var warheads = new List<IMyWarhead>();
-            GridTerminalSystem.GetBlocksOfType(warheads, block => block.IsSameConstructAs(Me));
+            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(warheads, block => block.IsSameConstructAs(brain.GridProgram.Me));
             warheads.ForEach(x => { x.IsArmed = true; x.Detonate(); });
         }
     }
