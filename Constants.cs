@@ -96,7 +96,8 @@ namespace IngameScript
             {ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
             {ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
             {ConfigName.EnableSuicide,"EnableSuicide" },
-            {ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"}
+            {ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"},
+            {ConfigName.FixedWeaponReferenceTag, "FixedWeaponGroupPrefix" }
         };
 
         private static readonly Dictionary<BrainType, string> brainTypeDecodes = new Dictionary<BrainType, string>

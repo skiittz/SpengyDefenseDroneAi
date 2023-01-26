@@ -109,17 +109,12 @@ namespace IngameScript
                 return;
             }
 
-            FixedWeaponsHandler.CheckAndFireFixedWeapons(this);
-
-
             if (!myBrain.IsSetUp())
             {
                 Echo(Prompts.DockAndRunSetup);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
-
-            CheckScuttle(myBrain.configuration);
 
             if(myBrain.configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
             {

@@ -49,7 +49,7 @@ namespace IngameScript
             brain.GridProgram.IGC.BroadcastTarget(target.Value, brain.configuration.For(ConfigName.RadioChannel));
         }
 
-        private static MyDetectedEntityInfo Scan(this IMyCameraBlock camera, int range = 10000)
+        public static MyDetectedEntityInfo Scan(this IMyCameraBlock camera, int range = 10000)
         {
             camera.EnableRaycast = true;
             return camera.Raycast(range);

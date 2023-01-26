@@ -38,7 +38,8 @@ namespace IngameScript
         EnableLowAmmoCheck,
         UseBurstTransmissions,
         EnableSuicide,
-        EnableRelayBroadcast
+        EnableRelayBroadcast,
+        FixedWeaponReferenceTag
     }
 
     public class Configuration

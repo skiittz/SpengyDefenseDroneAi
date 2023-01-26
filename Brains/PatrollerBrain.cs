@@ -45,6 +45,9 @@ namespace IngameScript
 
         public void Process(string argument)
         {
+            this.CheckAndFireFixedWeapons();
+            this.CheckScuttle();
+
             if (connector.Status == MyShipConnectorStatus.Connected)
             {
                 if (!this.NeedsService())
