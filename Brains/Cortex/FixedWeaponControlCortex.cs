@@ -22,11 +22,11 @@ namespace IngameScript
 {
     public static class FixedWeaponControlCortex
     {
-        public static void CheckAndFireFixedWeapons(this IAdvancedAiBrain brain)
+        public static void CheckAndFireFixedWeapons(this IAiBrain brain)
         {
             brain.GetWeaponGroups().ForEach(g => g.CheckAndFireFixedWeaponsInGroup());
         }
-        private static List<IMyBlockGroup> GetWeaponGroups(this IAdvancedAiBrain brain)
+        private static List<IMyBlockGroup> GetWeaponGroups(this IAiBrain brain)
         {
             var groups = new List<IMyBlockGroup>();
             brain.GridProgram.GridTerminalSystem

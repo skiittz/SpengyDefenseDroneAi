@@ -38,7 +38,7 @@ namespace IngameScript
                 case BrainType.Patrol:
                     return new PatrollerBrain(state, mgp, configuration, listeners).GetBasicBlocks();
                 default:
-                    return new TargetterBrain(mgp);
+                    return new TargetterBrain(mgp, configuration);
             }
         }
     }

@@ -26,13 +26,15 @@ namespace IngameScript
             public MyGridProgram GridProgram { get; set; }
             public Configuration configuration { get; set; }
 
-            public TargetterBrain(MyGridProgram gridProgram)
+            public TargetterBrain(MyGridProgram gridProgram, Configuration configuration)
             {
                 this.GridProgram = gridProgram;
+                this.configuration = configuration;
                 this.MyBrainType = BrainType.TargetOnly;
             }
             public void Process(string argument)
             {
+                this.CheckAndFireFixedWeapons();
                 this.CheckScuttle();
                 this.EnemyCheck();
                 this.ManageAntennas();
