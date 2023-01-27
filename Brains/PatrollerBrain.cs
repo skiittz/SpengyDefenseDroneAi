@@ -181,6 +181,9 @@ namespace IngameScript
         {
             switch (commandType)
             {
+                case CommandType.NewTarget:
+                    Process(commandType.ToHumanReadableName());
+                    return true;
                 case CommandType.On:
                     GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
                     return true;
@@ -262,6 +265,7 @@ namespace IngameScript
                 }
             }
 
+            GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
             return true;
         }
 

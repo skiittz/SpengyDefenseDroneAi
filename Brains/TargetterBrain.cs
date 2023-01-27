@@ -59,6 +59,9 @@ namespace IngameScript
         {
             switch (commandType)
             {
+                case CommandType.NewTarget:
+                    Process(commandType.ToHumanReadableName());
+                    return true;
                 case CommandType.On:
                     GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
                     return true;
@@ -76,6 +79,9 @@ namespace IngameScript
                     ClearData();
                     TurnOff();
                     return true;
+                case CommandType.Setup:
+                    SetUp();
+                    return true;
                 default:
                     GridProgram.Echo("I do not know that command!");
                     return false;
@@ -89,6 +95,7 @@ namespace IngameScript
 
             public bool SetUp() { 
                 GridProgram.Echo("Targetting set up complete");
+                GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
                 return true;
             }
         }

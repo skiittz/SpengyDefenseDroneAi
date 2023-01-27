@@ -100,7 +100,7 @@ namespace IngameScript
                         if (connector.Status == MyShipConnectorStatus.Connected)
                         {
                             GridProgram.Echo(argument);
-                            if (argument.Equals("NewTarget") && !this.NeedsService())
+                            if (argument.Equals("NEWTARGET") && !this.NeedsService())
                             {
                                 var packet = listeners[0].AcceptMessage();
                                 GridProgram.Echo(packet.ToString());
@@ -180,6 +180,9 @@ namespace IngameScript
         {
             switch (commandType)
             {
+                case CommandType.NewTarget:
+                    Process(commandType.ToHumanReadableName());
+                    return true;
                 case CommandType.On:
                     GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
                     return true;
@@ -246,6 +249,7 @@ namespace IngameScript
             state.DockPos = remote.GetPosition();
             RefreshDockApproach();
 
+            GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
             return true;
         }
 

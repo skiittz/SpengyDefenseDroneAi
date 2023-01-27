@@ -131,7 +131,8 @@ namespace IngameScript
             {CommandType.Off,"OFF" },
             {CommandType.On,"ON" },
             {CommandType.Scan,"SCAN" },
-            {CommandType.Reset,"RESET" }
+            {CommandType.Reset,"RESET" },
+            {CommandType.NewTarget,"NEWTARGET" }
         };
 
          public static string ToHumanReadableName(this ConfigName config)
@@ -178,6 +179,17 @@ namespace IngameScript
         public static CommandType CommandTypeFromHumanReadableName(this string input)
         {
             return commandTypeDecodes.Single(x => x.Value == input).Key;
+        }
+
+        public static bool TryCommandTypeFromHumanReadableName(this string input, out CommandType cmd)
+        {
+            cmd = default(CommandType);
+            
+            if (!commandTypeDecodes.Select(x => x.Value).Contains(input))
+                return false;
+
+            cmd = input.CommandTypeFromHumanReadableName();
+            return true;
         }
     }
 }

@@ -46,7 +46,6 @@
     <Compile Include="Brains\Cortex\FixedWeaponControlCortex.cs" />
     <Compile Include="Brains\Cortex\MaintenanceCortex.cs" />
     <Compile Include="Brains\Cortex\NavigationCortex.cs" />
-    <Compile Include="Brains\Cortex\SuicideCortex.cs" />
     <Compile Include="Brains\Cortex\TargetDesignationCortex.cs" />
     <Compile Include="Brains\PatrollerBrain.cs" />
     <Compile Include="Brains\TargetterBrain.cs" />

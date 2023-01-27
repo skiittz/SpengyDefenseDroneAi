@@ -29,6 +29,7 @@ namespace IngameScript
             Scan,
             DebugEnroute,
             DebugStatus,
-            Reset
+            Reset,
+            NewTarget
         }    
 }
