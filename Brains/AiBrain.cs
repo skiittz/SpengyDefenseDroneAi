@@ -59,9 +59,9 @@ namespace IngameScript
 
         public interface IAdvancedAiBrain : IAiBrain
         {
-        List<IMyBroadcastListener> listeners { get; set; }
+            List<IMyBroadcastListener> listeners { get; set; }
 
-        IMyRemoteControl remote { get; set; }
+            IMyRemoteControl remote { get; set; }
             IMyShipConnector connector { get; set; }
             IMyProgrammableBlock samController { get; set; }
             List<IMyBatteryBlock> batteries { get; set; }
