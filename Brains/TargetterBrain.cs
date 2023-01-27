@@ -35,9 +35,7 @@ namespace IngameScript
             public void Process(string argument)
             {
                 this.CheckAndFireFixedWeapons();
-                this.CheckScuttle();
                 this.EnemyCheck();
-                this.ManageAntennas();
             }
 
             public void StatusReport()

@@ -48,7 +48,6 @@ namespace IngameScript
         public void Process(string argument)
         {
             this.CheckAndFireFixedWeapons();
-            this.CheckScuttle();
 
             if (connector.Status == MyShipConnectorStatus.Connected)
             {
@@ -130,7 +129,6 @@ namespace IngameScript
             }
 
             this.SetRuntimeFrequency();
-            this.ManageAntennas();
         }
 
         public void ResumePatrol(MyGridProgram GridProgram, State state, IMyProgrammableBlock sam_controller)

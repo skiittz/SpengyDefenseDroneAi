@@ -49,7 +49,6 @@ namespace IngameScript
         public void Process(string argument)
         {
             this.CheckAndFireFixedWeapons();
-            this.CheckScuttle();
             if (state.Status == Status.Attacking)
                 this.EnemyCheck();
 
@@ -136,7 +135,6 @@ namespace IngameScript
                 this.EnemyCheck();
 
             this.SetRuntimeFrequency();
-            this.ManageAntennas();
         }
 
         public void StatusReport()

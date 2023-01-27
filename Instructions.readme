@@ -1,7 +1,7 @@
 ﻿R e a d m e
 -----------
 Setup Guide
-Version 1.07.04
+Version 1.07.04_Limited
 
 Section 1: Minimum requirements
 	All grids must have 1 or more turrets.  For "TargetOnly" mode, this is the only requirement.
@@ -77,8 +77,6 @@ Section 3: Custom Data
 		License key that enables the owner of the programmable block to use this program.*
 	FactionKey: (Default = None)
 		License key that enables any member of the faction it is registered to run this program in any programmable block owned by the faction.*
-	*You need a valid personal key OR a valid faction key.  Without one or the other this program will not run.  You do not need both.
-
 	*You need a valid personal key OR a valid faction key.  Without one or the other this program will not run.  You do not need both.
 
 	EnableLowAmmoCheck: (Default = true)

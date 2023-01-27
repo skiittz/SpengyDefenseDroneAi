@@ -125,7 +125,6 @@ namespace IngameScript
                 var packet = listeners[0].AcceptMessage();
                 var antenna = this.FirstTaggedOrDefault<IMyRadioAntenna>(myBrain.configuration.For(ConfigName.Tag));
                 antenna.EnableBroadcasting = true;
-                myBrain.Relay(packet);
             }
 
             myBrain.StatusReport();
