@@ -87,16 +87,16 @@ namespace IngameScript
                     
                     if (cmd == CommandType.Reset && success)
                         ClearProgramData();
-                    if (cmd == CommandType.Setup && success)
-                    {
-                        NavigationModel navModel;
-                        if (myBrain.MyBrainType != BrainType.TargetOnly)
-                            navModel = (myBrain as IAdvancedAiBrain).navigationModel;
-                        else
-                            navModel = NavigationModel.Keen;
+                    //if (cmd == CommandType.Setup && success)
+                    //{
+                    //    NavigationModel navModel;
+                    //    if (myBrain.MyBrainType != BrainType.TargetOnly)
+                    //        navModel = (myBrain as IAdvancedAiBrain).navigationModel;
+                    //    else
+                    //        navModel = NavigationModel.Keen;
 
-                        //myBrain.configuration = myBrain.configuration.CleanUp(myBrain.configuration.For<BrainType>(ConfigName.BrainType), navModel);
-                    }
+                    //    myBrain.configuration = myBrain.configuration.CleanUp(myBrain.configuration.For<BrainType>(ConfigName.BrainType), navModel);
+                    //}
                         
                     Echo($"{argument.ToUpper()}: {(success ? "Success" : "Failed")}");
                 }
