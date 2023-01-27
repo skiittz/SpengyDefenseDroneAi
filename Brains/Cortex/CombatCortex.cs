@@ -33,7 +33,7 @@ namespace IngameScript
 
         public static void EnemyCheck(this IAiBrain brain)
         {
-            FindTarget(brain);
+            brain.FindTarget();
         }
 
         private static void SetPendingTarget(this IAdvancedAiBrain brain, MyDetectedEntityInfo? target)
