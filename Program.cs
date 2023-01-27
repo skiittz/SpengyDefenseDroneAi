@@ -22,15 +22,7 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
-        //public State MyState;
         static List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
-        //public IMyProgrammableBlock sam_controller;
-        //public IMyRemoteControl remote;
-        //public IMyShipConnector connector;
-        //public List<IMyGasTank> h2Tanks;
-        //public List<IMyBatteryBlock> batteries;
-        //public List<IMyReactor> reactors;
-        //private Configuration configuration;
         public bool isAuthorized;
         public IAiBrain myBrain;
         public Program()
@@ -66,7 +58,7 @@ namespace IngameScript
 
             IGC.RegisterBroadcastListener(configuration.For(ConfigName.RadioChannel));
             IGC.GetBroadcastListeners(listeners);
-            listeners[0].SetMessageCallback("NewTarget");
+            listeners[0].SetMessageCallback("NEWTARGET");
 
             var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), Authenticator.OwnerId(Me), Authenticator.FactionTag(Me));
             string authorizationMessage;
@@ -84,13 +76,14 @@ namespace IngameScript
         {
             if (argument != "")
             {
-                Echo($"Running: {argument}");
+                Echo($"Running: {argument.ToUpper()}");
                 var args = argument.Split(' ');
 
                 CommandType cmd;
-                if (Enum.TryParse(args[0], out cmd))
+                if (args[0].ToUpper().TryCommandTypeFromHumanReadableName(out cmd))
                 {
-                    var success = myBrain.HandleCommand(cmd, args.Skip(1).ToArray());
+                    var remainingArgs = args.Skip(1).ToArray();
+                    var success = myBrain.HandleCommand(cmd, remainingArgs);
                     
                     if (cmd == CommandType.Reset && success)
                         ClearProgramData();
@@ -102,10 +95,10 @@ namespace IngameScript
                         else
                             navModel = NavigationModel.Keen;
 
-                        myBrain.configuration.CleanUp(myBrain.configuration.For<BrainType>(ConfigName.BrainType), navModel);
+                        //myBrain.configuration = myBrain.configuration.CleanUp(myBrain.configuration.For<BrainType>(ConfigName.BrainType), navModel);
                     }
                         
-                    Echo($"{argument}: {(success ? "Success" : "Failed")}");
+                    Echo($"{argument.ToUpper()}: {(success ? "Success" : "Failed")}");
                 }
                 else
                     Echo("I do not recognize that command");

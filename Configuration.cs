@@ -139,13 +139,14 @@ namespace IngameScript
             return parseResult;
         }
 
-        public void CleanUp(BrainType mode, NavigationModel navModel)
-        {
-            foreach (var config in configs.Select(x => x.Key))
-            {
-                if (!ApplicableConfigs(mode, navModel).Contains(config))
-                    configs.Remove(config);
-            }
-        }
+        //causing more trouble than it is worth.  may revisit later.
+        //public Configuration CleanUp(BrainType mode, NavigationModel navModel)
+        //{
+        //    return new Configuration
+        //    {
+        //        configs = configs.Where(x => ApplicableConfigs(mode, navModel).Contains(x.Key)).ToDictionary(x => x.Key, x => x.Value)
+        //    };
+                
+        //}
     }
 }
