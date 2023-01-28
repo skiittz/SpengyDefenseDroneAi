@@ -93,10 +93,10 @@ namespace IngameScript
         //private Func<Sandbox.ModAPI.Ingame.IMyTerminalBlock, int, Matrix> _getWeaponElevationMatrix;
         //private Func<Sandbox.ModAPI.Ingame.IMyTerminalBlock, long, bool, bool, bool> _isTargetValid;
         //private Func<Sandbox.ModAPI.Ingame.IMyTerminalBlock, int, MyTuple<Vector3D, Vector3D>> _getWeaponScope;
-        private Func<IMyTerminalBlock, MyTuple<bool, bool>> _isInRange;
+        //private Func<IMyTerminalBlock, MyTuple<bool, bool>> _isInRange;
 
         //private Action<IMyTerminalBlock, bool, bool, int> _toggleWeaponFire;
-        private Func<IMyTerminalBlock, int, bool, bool, bool> _isWeaponReadyToFire;
+        //private Func<IMyTerminalBlock, int, bool, bool, bool> _isWeaponReadyToFire;
 
         /*
          *  Tries to setup the Api if WC is loaded
@@ -122,7 +122,7 @@ namespace IngameScript
             if (delegates == null)
                 return false;
             //AssignMethod(delegates, "GetCoreWeapons", ref _getCoreWeapons);
-            AssignMethod(delegates, "GetCoreStaticLaunchers", ref _getCoreStaticLaunchers);
+            //AssignMethod(delegates, "GetCoreStaticLaunchers", ref _getCoreStaticLaunchers);
             //AssignMethod(delegates, "GetCoreTurrets", ref _getCoreTurrets);
             //AssignMethod(delegates, "GetBlockWeaponMap", ref _getBlockWeaponMap);
             //AssignMethod(delegates, "GetProjectilesLockedOn", ref _getProjectilesLockedOn);
@@ -133,8 +133,8 @@ namespace IngameScript
             //AssignMethod(delegates, "SetWeaponTarget", ref _setWeaponTarget);
             AssignMethod(delegates, "FireWeaponOnce", ref _fireWeaponOnce);
             //AssignMethod(delegates, "ToggleWeaponFire", ref _toggleWeaponFire);
-            AssignMethod(delegates, "IsWeaponReadyToFire", ref _isWeaponReadyToFire);
-            AssignMethod(delegates, "GetMaxWeaponRange", ref _getMaxWeaponRange);
+           // AssignMethod(delegates, "IsWeaponReadyToFire", ref _isWeaponReadyToFire);
+            //AssignMethod(delegates, "GetMaxWeaponRange", ref _getMaxWeaponRange);
             //AssignMethod(delegates, "GetTurretTargetTypes", ref _getTurretTargetTypes);
             //AssignMethod(delegates, "SetTurretTargetTypes", ref _setTurretTargetTypes);
             //AssignMethod(delegates, "SetBlockTrackingRange", ref _setBlockTrackingRange);
@@ -157,7 +157,7 @@ namespace IngameScript
             //AssignMethod(delegates, "GetWeaponElevationMatrix", ref _getWeaponElevationMatrix);
             //AssignMethod(delegates, "IsTargetValid", ref _isTargetValid);
             //AssignMethod(delegates, "GetWeaponScope", ref _getWeaponScope);
-            AssignMethod(delegates, "IsInRange", ref _isInRange);
+            //AssignMethod(delegates, "IsInRange", ref _isInRange);
             return true;
         }
 
@@ -187,10 +187,7 @@ namespace IngameScript
         }
 
         //public void GetAllCoreWeapons(ICollection<MyDefinitionId> collection) => _getCoreWeapons?.Invoke(collection);
-        public void GetAllCoreStaticLaunchers(ICollection<MyDefinitionId> collection)
-        {
-            _getCoreStaticLaunchers?.Invoke(collection);
-        }
+        //public void GetAllCoreStaticLaunchers(ICollection<MyDefinitionId> collection) { _getCoreStaticLaunchers?.Invoke(collection); }
 
         //public void GetAllCoreTurrets(ICollection<MyDefinitionId> collection) => _getCoreTurrets?.Invoke(collection);
         //public bool GetBlockWeaponMap(IMyTerminalBlock weaponBlock, IDictionary<string, int> collection) =>
@@ -219,16 +216,9 @@ namespace IngameScript
 
         //public void ToggleWeaponFire(IMyTerminalBlock weapon, bool on, bool allWeapons, int weaponId = 0) =>
         //    _toggleWeaponFire?.Invoke(weapon, on, allWeapons, weaponId);
-        public bool IsWeaponReadyToFire(IMyTerminalBlock weapon, int weaponId = 0, bool anyWeaponReady = true,
-            bool shootReady = false)
-        {
-            return _isWeaponReadyToFire?.Invoke(weapon, weaponId, anyWeaponReady, shootReady) ?? false;
-        }
+        //public bool IsWeaponReadyToFire(IMyTerminalBlock weapon, int weaponId = 0, bool anyWeaponReady = true, bool shootReady = false) { return _isWeaponReadyToFire?.Invoke(weapon, weaponId, anyWeaponReady, shootReady) ?? false; }
 
-        public float GetMaxWeaponRange(IMyTerminalBlock weapon, int weaponId)
-        {
-            return _getMaxWeaponRange?.Invoke(weapon, weaponId) ?? 0f;
-        }
+        //public float GetMaxWeaponRange(IMyTerminalBlock weapon, int weaponId) { return _getMaxWeaponRange?.Invoke(weapon, weaponId) ?? 0f; }
 
         //public bool GetTurretTargetTypes(IMyTerminalBlock weapon, IList<string> collection, int weaponId = 0) =>
         //    _getTurretTargetTypes?.Invoke(weapon, collection, weaponId) ?? false;
@@ -269,9 +259,6 @@ namespace IngameScript
         //    _isTargetValid?.Invoke(weapon, targetId, onlyThreats, checkRelations) ?? false;
         //public MyTuple<Vector3D, Vector3D> GetWeaponScope(Sandbox.ModAPI.Ingame.IMyTerminalBlock weapon, int weaponId) =>
         //    _getWeaponScope?.Invoke(weapon, weaponId) ?? new MyTuple<Vector3D, Vector3D>();
-        public MyTuple<bool, bool> IsInRange(IMyTerminalBlock block)
-        {
-            return _isInRange?.Invoke(block) ?? new MyTuple<bool, bool>();
-        }
+        //public MyTuple<bool, bool> IsInRange(IMyTerminalBlock block) { return _isInRange?.Invoke(block) ?? new MyTuple<bool, bool>(); }
     }
 }

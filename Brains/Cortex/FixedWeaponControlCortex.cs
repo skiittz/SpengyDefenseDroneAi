@@ -7,7 +7,7 @@ namespace IngameScript
     {
         public static void CheckAndFireFixedWeapons(this IAiBrain brain)
         {
-            brain.GetWeaponGroups().ForEach(g => g.CheckAndFireFixedWeaponsInGroup());
+            brain.GetWeaponGroups().ForEach(brain.CheckAndFireFixedWeaponsInGroup);
         }
 
         private static List<IMyBlockGroup> GetWeaponGroups(this IAiBrain brain)
@@ -20,7 +20,7 @@ namespace IngameScript
             return groups;
         }
 
-        private static void CheckAndFireFixedWeaponsInGroup(this IMyBlockGroup group)
+        private static void CheckAndFireFixedWeaponsInGroup(this IAiBrain brain, IMyBlockGroup group)
         {
             var cameras = new List<IMyCameraBlock>();
             group.GetBlocksOfType(cameras);
@@ -33,8 +33,18 @@ namespace IngameScript
                     var weapons = new List<IMySmallMissileLauncher>();
                     group.GetBlocksOfType(weapons);
 
-                    foreach (var weapon in weapons)
-                        weapon.ShootOnce();
+                    if (brain.weaponCoreIsActive)
+                    {
+                        foreach (var weapon in weapons)
+                        {
+                            brain.wcPbApi.FireWeaponOnce(weapon);
+                        }
+                    }
+                    else
+                    {
+                        foreach (var weapon in weapons)
+                            weapon.ShootOnce();
+                    }
                 }
             }
         }
