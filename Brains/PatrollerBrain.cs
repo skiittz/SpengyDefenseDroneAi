@@ -1,27 +1,25 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
-using VRageMath;
+using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
 {
     public class PatrollerBrain : IAdvancedAiBrain
     {
+        public PatrollerBrain(State state, MyGridProgram GridProgram, Configuration configuration,
+            List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
+        {
+            this.state = state;
+            this.GridProgram = GridProgram;
+            this.configuration = configuration;
+            this.listeners = listeners;
+            this.GetBasicBlocks();
+            MyBrainType = BrainType.Patrol;
+            this.wcPbApi = wcPbApi;
+            this.weaponCoreIsActive = weaponCoreIsActive;
+        }
+
         public BrainType MyBrainType { get; set; }
         public IMyRemoteControl remote { get; set; }
         public IMyShipConnector connector { get; set; }
@@ -37,17 +35,6 @@ namespace IngameScript
         public List<IMyBroadcastListener> listeners { get; set; }
         public bool weaponCoreIsActive { get; set; }
         public WcPbApi wcPbApi { get; set; }
-        public PatrollerBrain(State state, MyGridProgram GridProgram, Configuration configuration, List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
-        {
-            this.state = state;
-            this.GridProgram = GridProgram;
-            this.configuration = configuration;
-            this.listeners = listeners;
-            this.GetBasicBlocks();
-            this.MyBrainType = BrainType.Patrol;
-            this.wcPbApi = wcPbApi;
-            this.weaponCoreIsActive = weaponCoreIsActive;
-        }
 
         public void Process(string argument)
         {
@@ -62,17 +49,19 @@ namespace IngameScript
                     this.UnDock();
                 }
                 else
+                {
                     state.Status = Status.Waiting;
+                }
             }
             else
             {
-                if ((state.Status == Status.Patrolling || state.Status == Status.Waiting || state.Status == Status.Attacking))
+                if (state.Status == Status.Patrolling || state.Status == Status.Waiting ||
+                    state.Status == Status.Attacking)
                     this.EnemyCheck();
                 if (state.Enroute)
                 {
                     var distanceToWaypoint = this.DistanceToWaypoint();
                     if (distanceToWaypoint < 3)
-                    {
                         switch (state.Status)
                         {
                             case Status.Docking:
@@ -96,19 +85,20 @@ namespace IngameScript
                                 this.EnemyCheck();
                                 break;
                         }
-                    }
                 }
                 else
                 {
                     switch (state.Status)
                     {
                         case Status.Returning:
-                            this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+                            this.Go(state.DockApproach, false,
+                                int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
                             break;
                         case Status.Docking:
                             state.CurrentDestination = state.DockPos;
                             string msg;
-                            state.Enroute = KeenNav_Controller.Go(remote, state.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
+                            state.Enroute = KeenNav_Controller.Go(remote, state.DockPos, true,
+                                int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
                             GridProgram.Echo(msg);
                             break;
                         case Status.Patrolling:
@@ -117,7 +107,9 @@ namespace IngameScript
                         case Status.Waiting:
                             if (connector.Status == MyShipConnectorStatus.Unconnected)
                                 if (this.NeedsService())
+                                {
                                     state.CompleteStateAndChangeTo(Status.Returning, this);
+                                }
                                 else
                                 {
                                     state.SetNextPatrolWaypoint(this);
@@ -125,6 +117,7 @@ namespace IngameScript
                                 }
                             else
                                 this.EnemyCheck();
+
                             break;
                         case Status.PreparingToAttack:
                             this.Attack();
@@ -135,13 +128,6 @@ namespace IngameScript
 
             this.SetRuntimeFrequency();
             this.ManageAntennas();
-        }
-
-        public void ResumePatrol(MyGridProgram GridProgram, State state, IMyProgrammableBlock sam_controller)
-        {
-            GridProgram.Echo($"{Prompts.PatrolPoint} {state.CurrentPatrolPoint}");
-            state.CompleteStateAndChangeTo(Status.Patrolling, this);
-            this.Go(state.PatrolRoute[state.CurrentPatrolPoint], false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
         }
 
         public void StatusReport()
@@ -177,7 +163,7 @@ namespace IngameScript
 
         public bool IsSetUp()
         {
-            RefreshDockApproach();//refresh in case clearance config has been changed
+            RefreshDockApproach(); //refresh in case clearance config has been changed
             return !state.DockPos.IsZero() && !state.DockApproach.IsZero() && state.PatrolRoute.Any();
         }
 
@@ -200,26 +186,30 @@ namespace IngameScript
                         this.ScanForTarget(args[0], int.Parse(args[1]));
                         return true;
                     }
-                    catch { return false; }
+                    catch
+                    {
+                        return false;
+                    }
                 case CommandType.DebugEnroute:
                     bool value;
                     if (bool.TryParse(args[0], out value))
                     {
-                        this.state.Enroute = value;
+                        state.Enroute = value;
                         return true;
                     }
-                    else
-                        return false;
+
+                    return false;
                 case CommandType.DebugStatus:
                     try
                     {
-                        this.state.Status = args[0].StatusFromHumanReadableName();
+                        state.Status = args[0].StatusFromHumanReadableName();
                     }
                     catch
                     {
                         GridProgram.Echo("I dont recognize that value....");
                         return false;
                     }
+
                     return true;
                 case CommandType.Return:
                     state.Status = Status.Returning;
@@ -261,13 +251,8 @@ namespace IngameScript
                 GridProgram.Echo(Prompts.RemoteNeedsWaypointsToPatrol);
                 return false;
             }
-            else
-            {
-                foreach (var waypoint in waypoints)
-                {
-                    state.PatrolRoute.Add(waypoint.Coords);
-                }
-            }
+
+            foreach (var waypoint in waypoints) state.PatrolRoute.Add(waypoint.Coords);
 
             GridProgram.Runtime.UpdateFrequency = UpdateFrequency.Update100;
             return true;
@@ -275,8 +260,17 @@ namespace IngameScript
 
         public void RefreshDockApproach()
         {
-            state.DockApproach = state.DockPos + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
+            state.DockApproach = state.DockPos +
+                                 connector.WorldMatrix.Backward *
+                                 int.Parse(configuration.For(ConfigName.DockClearance));
         }
 
+        public void ResumePatrol(MyGridProgram GridProgram, State state, IMyProgrammableBlock sam_controller)
+        {
+            GridProgram.Echo($"{Prompts.PatrolPoint} {state.CurrentPatrolPoint}");
+            state.CompleteStateAndChangeTo(Status.Patrolling, this);
+            this.Go(state.PatrolRoute[state.CurrentPatrolPoint], false,
+                int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+        }
     }
 }

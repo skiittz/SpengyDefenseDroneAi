@@ -1,21 +1,6 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
 namespace IngameScript
@@ -32,6 +17,14 @@ namespace IngameScript
 
     public class State
     {
+        public State()
+        {
+            DockPos = Vector3D.Zero;
+            DockApproach = Vector3D.Zero;
+            PendingTarget = Vector3D.Zero;
+            PatrolRoute = new List<Vector3D>();
+        }
+
         public Vector3D DockPos { get; set; }
         public Vector3D DockApproach { get; set; }
         public Vector3D PendingTarget { get; set; }
@@ -51,13 +44,6 @@ namespace IngameScript
 
             return !DockPos.IsZero() && !DockApproach.IsZero();
         }
-        public State()
-        {
-            DockPos = Vector3D.Zero;
-            DockApproach = Vector3D.Zero;
-            PendingTarget = Vector3D.Zero;
-            PatrolRoute = new List<Vector3D>();
-        }
 
         public string Serialize()
         {
@@ -67,10 +53,7 @@ namespace IngameScript
             result += $"{nameof(Enroute)}|{Enroute};";
             result += $"{nameof(CurrentPatrolPoint)}|{CurrentPatrolPoint};";
             result += $"{nameof(CurrentDestination)}|{CurrentDestination};";
-            for (int i = 0; i < PatrolRoute.Count; i++)
-            {
-                result += $"{nameof(PatrolRoute)}{i}|{PatrolRoute[i]};";
-            }
+            for (var i = 0; i < PatrolRoute.Count; i++) result += $"{nameof(PatrolRoute)}{i}|{PatrolRoute[i]};";
             result = result.TrimEnd(';');
 
             return result;
@@ -92,7 +75,7 @@ namespace IngameScript
             result.PatrolRoute = new List<Vector3D>();
             foreach (var waypoint in values.Where(x => x.Key.Contains(nameof(PatrolRoute))))
             {
-                Vector3D vector = new Vector3D();
+                var vector = new Vector3D();
                 if (Vector3D.TryParse(waypoint.Value, out vector))
                     result.PatrolRoute.Add(vector);
             }
@@ -115,9 +98,9 @@ namespace IngameScript
 
         public void SetNextPatrolWaypoint(IAdvancedAiBrain brain)
         {
-            CurrentPatrolPoint = CurrentPatrolPoint == (PatrolRoute.Count() - 1)
+            CurrentPatrolPoint = CurrentPatrolPoint == PatrolRoute.Count() - 1
                 ? 0
-                : (CurrentPatrolPoint + 1);
+                : CurrentPatrolPoint + 1;
 
             CompleteStateAndChangeTo(Status.Waiting, brain);
         }
@@ -130,8 +113,7 @@ namespace IngameScript
             T parseResult;
             if (values.ContainsKey(name) && Enum.TryParse(values[name], out parseResult))
                 return parseResult;
-            else
-                return default(T);
+            return default(T);
         }
 
         public static Vector3D Parse(this Dictionary<string, string> values, string name)
@@ -139,8 +121,7 @@ namespace IngameScript
             Vector3D vector;
             if (values.ContainsKey(name) && Vector3D.TryParse(values[name], out vector))
                 return vector;
-            else
-                return Vector3D.Zero;
+            return Vector3D.Zero;
         }
 
         public static int ParseInt(this Dictionary<string, string> values, string name)

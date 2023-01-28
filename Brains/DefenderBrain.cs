@@ -1,27 +1,25 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
+using Sandbox.ModAPI.Ingame;
 using VRageMath;
 
 namespace IngameScript
 {
     public class DefenderBrain : IAdvancedAiBrain
     {
+        public DefenderBrain(State state, MyGridProgram gridProgram, Configuration configuration,
+            List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
+        {
+            GridProgram = gridProgram;
+            this.configuration = configuration;
+            this.state = state;
+            this.listeners = listeners;
+            this.GetBasicBlocks();
+            MyBrainType = BrainType.Defend;
+            this.wcPbApi = wcPbApi;
+            this.weaponCoreIsActive = weaponCoreIsActive;
+        }
+
         public BrainType MyBrainType { get; set; }
         public IMyRemoteControl remote { get; set; }
         public IMyShipConnector connector { get; set; }
@@ -36,18 +34,6 @@ namespace IngameScript
         public List<IMyBroadcastListener> listeners { get; set; }
         public bool weaponCoreIsActive { get; set; }
         public WcPbApi wcPbApi { get; set; }
-
-        public DefenderBrain(State state, MyGridProgram gridProgram, Configuration configuration, List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
-        {
-            this.GridProgram = gridProgram;
-            this.configuration = configuration;
-            this.state = state;
-            this.listeners = listeners;
-            this.GetBasicBlocks();
-            this.MyBrainType = BrainType.Defend;
-            this.wcPbApi = wcPbApi;
-            this.weaponCoreIsActive = weaponCoreIsActive;
-        }
 
         public void Process(string argument)
         {
@@ -86,6 +72,7 @@ namespace IngameScript
                             this.Attack();
                             state.PendingTarget = Vector3D.Zero;
                         }
+
                         break;
                     case Status.Attacking:
                         if (distanceToWaypoint < 50)
@@ -122,7 +109,10 @@ namespace IngameScript
                             }
                         }
                         else
+                        {
                             state.CompleteStateAndChangeTo(Status.Docking, this);
+                        }
+
                         break;
                     case Status.Returning:
                         this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
@@ -130,11 +120,13 @@ namespace IngameScript
                     case Status.Docking:
                         string msg;
                         state.CurrentDestination = state.DockPos;
-                        state.Enroute = KeenNav_Controller.Go(remote, state.DockPos, true, int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
+                        state.Enroute = KeenNav_Controller.Go(remote, state.DockPos, true,
+                            int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
                         GridProgram.Echo(msg);
                         break;
                 }
             }
+
             if (state.Status == Status.Attacking)
                 this.EnemyCheck();
 
@@ -160,6 +152,7 @@ namespace IngameScript
                 remote.ClearWaypoints();
                 remote.SetAutoPilotEnabled(false);
             }
+
             GridProgram.Echo("Ive cleared the data!");
         }
 
@@ -176,7 +169,7 @@ namespace IngameScript
 
         public bool IsSetUp()
         {
-            RefreshDockApproach();//refresh in case clearance config has been changed
+            RefreshDockApproach(); //refresh in case clearance config has been changed
             return !state.DockPos.IsZero() && !state.DockApproach.IsZero();
         }
 
@@ -199,26 +192,30 @@ namespace IngameScript
                         this.ScanForTarget(args[0], int.Parse(args[1]));
                         return true;
                     }
-                    catch { return false; }
+                    catch
+                    {
+                        return false;
+                    }
                 case CommandType.DebugEnroute:
                     bool value;
                     if (bool.TryParse(args[0], out value))
                     {
-                        this.state.Enroute = value;
+                        state.Enroute = value;
                         return true;
                     }
-                    else
-                        return false;
+
+                    return false;
                 case CommandType.DebugStatus:
                     try
                     {
-                        this.state.Status = args[0].StatusFromHumanReadableName();
+                        state.Status = args[0].StatusFromHumanReadableName();
                     }
                     catch
                     {
                         GridProgram.Echo("I dont recognize that value....");
                         return false;
                     }
+
                     return true;
                 case CommandType.Return:
                     state.Status = Status.Returning;
@@ -260,7 +257,9 @@ namespace IngameScript
 
         public void RefreshDockApproach()
         {
-            state.DockApproach = state.DockPos + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
+            state.DockApproach = state.DockPos +
+                                 connector.WorldMatrix.Backward *
+                                 int.Parse(configuration.For(ConfigName.DockClearance));
         }
     }
 }

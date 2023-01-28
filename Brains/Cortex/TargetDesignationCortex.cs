@@ -1,21 +1,7 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
+using Sandbox.ModAPI.Ingame;
 using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
 namespace IngameScript
@@ -44,7 +30,8 @@ namespace IngameScript
             }
 
 
-            brain.GridProgram.Echo($"Target found: {NavigationCortex.DistanceBetween(camera.GetPosition(), target.Value)}");
+            brain.GridProgram.Echo(
+                $"Target found: {NavigationCortex.DistanceBetween(camera.GetPosition(), target.Value)}");
             brain.GridProgram.Echo(target.Value.ToString());
             brain.BroadcastTarget(target.Value);
         }
@@ -57,7 +44,9 @@ namespace IngameScript
 
         public static Vector3D? EnemyPosition(this MyDetectedEntityInfo detected)
         {
-            return detected.Relationship == MyRelationsBetweenPlayerAndBlock.Enemies ? detected.Position : (Vector3D?)null;
+            return detected.Relationship == MyRelationsBetweenPlayerAndBlock.Enemies
+                ? detected.Position
+                : (Vector3D?)null;
         }
     }
 }

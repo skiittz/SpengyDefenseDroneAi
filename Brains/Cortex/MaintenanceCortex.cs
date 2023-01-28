@@ -1,27 +1,13 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
+using Sandbox.ModAPI.Ingame;
 using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
-using VRageMath;
 
 namespace IngameScript
 {
-        public static class MaintenanceCortex
-        {
+    public static class MaintenanceCortex
+    {
         public static bool NeedsService(this IAdvancedAiBrain brain)
         {
             return brain.LowAmmo() || brain.LowH2() || brain.LowPower() || brain.LowReactorFuel();
@@ -33,7 +19,8 @@ namespace IngameScript
                 return false;
 
             var turrets = new List<IMyLargeTurretBase>();
-            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(brain.GridProgram.Me));
+            brain.GridProgram.GridTerminalSystem.GetBlocksOfType(turrets,
+                block => block.IsSameConstructAs(brain.GridProgram.Me));
             foreach (var turret in turrets)
             {
                 var inventory = new List<MyInventoryItem>();
@@ -102,6 +89,7 @@ namespace IngameScript
                     brain.GridProgram.Echo(Prompts.ReactorsLowOnFuel);
                     return true;
                 }
+
                 var fuel = (decimal)inventory.First().Amount;
                 var lowReactorThreshold = decimal.Parse(brain.configuration.For(ConfigName.LowReactorThreshold));
                 if (fuel < lowReactorThreshold)
@@ -110,6 +98,7 @@ namespace IngameScript
                     return true;
                 }
             }
+
             brain.GridProgram.Echo(Prompts.ReactorFuelGood);
             return false;
         }

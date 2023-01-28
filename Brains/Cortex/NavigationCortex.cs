@@ -1,21 +1,5 @@
-﻿using Sandbox.Game.EntityComponents;
+﻿using System;
 using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
 using VRageMath;
 
 namespace IngameScript
@@ -25,20 +9,23 @@ namespace IngameScript
         Keen,
         SAM
     }
+
     public static class NavigationCortex
     {
         public static void Go(this IAdvancedAiBrain brain, Vector3D destination, bool docking, int speedLimit)
         {
-            string msg = string.Empty;
+            var msg = string.Empty;
             switch (brain.navigationModel)
             {
                 case NavigationModel.Keen:
-                    brain.state.Enroute = KeenNav_Controller.Go(brain.remote, destination, docking, speedLimit, out msg);
+                    brain.state.Enroute =
+                        KeenNav_Controller.Go(brain.remote, destination, docking, speedLimit, out msg);
                     break;
                 case NavigationModel.SAM:
-                    brain.state.Enroute = SAM_Controller.Go(brain.samController, destination, out msg);
+                    brain.state.Enroute = brain.samController.Go(destination, out msg);
                     break;
             }
+
             brain.GridProgram.Echo(msg);
             if (brain.state.Enroute)
                 brain.state.CurrentDestination = destination;

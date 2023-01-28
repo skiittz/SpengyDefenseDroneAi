@@ -1,26 +1,9 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
-using VRageMath;
 
 namespace IngameScript
 {
-    static class Prompts
+    internal static class Prompts
     {
         public static string CouldNotParseDateFrom = "could not parse date from";
         public static string IsNotFormattedProperly = "is not formatted properly";
@@ -61,9 +44,9 @@ namespace IngameScript
         public static string DaysLeft = "Days left";
         public static string Invalid = "Invalid";
         public static string WaitingForSignal = "Waiting for signal";
-    } 
+    }
 
-    static class AuthConst
+    internal static class AuthConst
     {
         public static readonly int shift1 = 13;
         public static readonly int shift3 = 5;
@@ -76,69 +59,70 @@ namespace IngameScript
         public static readonly string saltObfuscation2 = "=M*n@";
     }
 
-    static class ConfigNameExtensions
+    internal static class ConfigNameExtensions
     {
         private static readonly Dictionary<ConfigName, string> configDecodes = new Dictionary<ConfigName, string>
         {
-            {ConfigName.Tag,"Tag"},
-            {ConfigName.BrainType, "Mode"},
-            {ConfigName.RadioChannel,"RadioChannel" },
-            {ConfigName.SAMAutoPilotTag,"SAMAutoPilotTag" },
-            {ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
-            {ConfigName.DockSpeedLimit, "DockSpeedLimit" },
-            {ConfigName.GeneralSpeedLimit,"GeneralSpeedLimit" },
-            {ConfigName.LowPowerThreshold,"LowPowerThreshold" },
-            {ConfigName.LowH2Threshold,"LowH2Threshold" },
-            {ConfigName.LowReactorThreshold,"LowReactorThreshold" },
-            {ConfigName.DockClearance,"DockClearance" },
-            {ConfigName.PersonalKey,"PersonalKey" },
-            {ConfigName.FactionKey,"FactionKey" },
-            {ConfigName.EnableLowAmmoCheck,"EnableLowAmmoCheck"},
-            {ConfigName.UseBurstTransmissions,"UseBurstTransmissions" },
-            {ConfigName.EnableSuicide,"EnableSuicide" },
-            {ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast"},
-            {ConfigName.FixedWeaponReferenceTag, "FixedWeaponGroupPrefix" }
+            { ConfigName.Tag, "Tag" },
+            { ConfigName.BrainType, "Mode" },
+            { ConfigName.RadioChannel, "RadioChannel" },
+            { ConfigName.SAMAutoPilotTag, "SAMAutoPilotTag" },
+            { ConfigName.AttackSpeedLimit, "AttackSpeedLimit" },
+            { ConfigName.DockSpeedLimit, "DockSpeedLimit" },
+            { ConfigName.GeneralSpeedLimit, "GeneralSpeedLimit" },
+            { ConfigName.LowPowerThreshold, "LowPowerThreshold" },
+            { ConfigName.LowH2Threshold, "LowH2Threshold" },
+            { ConfigName.LowReactorThreshold, "LowReactorThreshold" },
+            { ConfigName.DockClearance, "DockClearance" },
+            { ConfigName.PersonalKey, "PersonalKey" },
+            { ConfigName.FactionKey, "FactionKey" },
+            { ConfigName.EnableLowAmmoCheck, "EnableLowAmmoCheck" },
+            { ConfigName.UseBurstTransmissions, "UseBurstTransmissions" },
+            { ConfigName.EnableSuicide, "EnableSuicide" },
+            { ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast" },
+            { ConfigName.FixedWeaponReferenceTag, "FixedWeaponGroupPrefix" }
         };
 
         private static readonly Dictionary<BrainType, string> brainTypeDecodes = new Dictionary<BrainType, string>
         {
-            {BrainType.Patrol,"Patrol" },
-            {BrainType.Defend,"Defend" },
-            {BrainType.TargetOnly,"TargetOnly" }
+            { BrainType.Patrol, "Patrol" },
+            { BrainType.Defend, "Defend" },
+            { BrainType.TargetOnly, "TargetOnly" }
         };
 
-        private static readonly Dictionary<Status, string> statusDecodes = new Dictionary<Status, string> {
-            {Status.Waiting,"Waiting" },
-            {Status.Attacking,"Attacking" },
-            {Status.Returning,"Returning" },
-            {Status.Docking,"Docking" },
-            {Status.Patrolling,"Patrolling" },
-            {Status.PreparingToAttack,"Preparing to Attack" }
-        };
-
-        private static readonly Dictionary<NavigationModel, string> navigationModelDecodes = new Dictionary<NavigationModel, string> 
+        private static readonly Dictionary<Status, string> statusDecodes = new Dictionary<Status, string>
         {
-            {NavigationModel.Keen,"Keen" },
-            {NavigationModel.SAM,"SAM" }
+            { Status.Waiting, "Waiting" },
+            { Status.Attacking, "Attacking" },
+            { Status.Returning, "Returning" },
+            { Status.Docking, "Docking" },
+            { Status.Patrolling, "Patrolling" },
+            { Status.PreparingToAttack, "Preparing to Attack" }
         };
+
+        private static readonly Dictionary<NavigationModel, string> navigationModelDecodes =
+            new Dictionary<NavigationModel, string>
+            {
+                { NavigationModel.Keen, "Keen" },
+                { NavigationModel.SAM, "SAM" }
+            };
 
         private static readonly Dictionary<CommandType, string> commandTypeDecodes = new Dictionary<CommandType, string>
         {
-            {CommandType.Return, "RETURN" },
-            {CommandType.Setup, "SETUP" },
-            {CommandType.DebugEnroute,"DEBUG ENROUTE" },
-            {CommandType.DebugStatus,"DEBUG STATUS" },
-            {CommandType.Off,"OFF" },
-            {CommandType.On,"ON" },
-            {CommandType.Scan,"SCAN" },
-            {CommandType.Reset,"RESET" },
-            {CommandType.NewTarget,"NEWTARGET" }
+            { CommandType.Return, "RETURN" },
+            { CommandType.Setup, "SETUP" },
+            { CommandType.DebugEnroute, "DEBUG ENROUTE" },
+            { CommandType.DebugStatus, "DEBUG STATUS" },
+            { CommandType.Off, "OFF" },
+            { CommandType.On, "ON" },
+            { CommandType.Scan, "SCAN" },
+            { CommandType.Reset, "RESET" },
+            { CommandType.NewTarget, "NEWTARGET" }
         };
 
-         public static string ToHumanReadableName(this ConfigName config)
+        public static string ToHumanReadableName(this ConfigName config)
         {
             return configDecodes[config];
-           
         }
 
         public static ConfigName ConfigFromHumanReadableName(this string input)
@@ -184,7 +168,7 @@ namespace IngameScript
         public static bool TryCommandTypeFromHumanReadableName(this string input, out CommandType cmd)
         {
             cmd = default(CommandType);
-            
+
             if (!commandTypeDecodes.Select(x => x.Value).Contains(input))
                 return false;
 
