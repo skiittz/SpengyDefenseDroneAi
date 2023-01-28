@@ -25,17 +25,22 @@ namespace IngameScript
             public BrainType MyBrainType { get; set; }
             public MyGridProgram GridProgram { get; set; }
             public Configuration configuration { get; set; }
+            public bool weaponCoreIsActive { get; set; }
+            public WcPbApi wcPbApi { get; set; }
 
-            public TargetterBrain(MyGridProgram gridProgram, Configuration configuration)
+        public TargetterBrain(MyGridProgram gridProgram, Configuration configuration, bool weaponCoreIsActive, WcPbApi wcPbApi)
             {
                 this.GridProgram = gridProgram;
                 this.configuration = configuration;
                 this.MyBrainType = BrainType.TargetOnly;
+                this.wcPbApi = wcPbApi;
+                this.weaponCoreIsActive = weaponCoreIsActive;
             }
             public void Process(string argument)
             {
                 this.CheckAndFireFixedWeapons();
                 this.CheckScuttle();
+                GridProgram.Echo("Checking for enemies");
                 this.EnemyCheck();
                 this.ManageAntennas();
             }

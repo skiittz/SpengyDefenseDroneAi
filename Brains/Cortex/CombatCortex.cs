@@ -53,19 +53,36 @@ namespace IngameScript
             brain.GridProgram.GridTerminalSystem.GetBlocksOfType(turrets, block => block.IsSameConstructAs(brain.GridProgram.Me));
             bool targetDetected = false;
             MyDetectedEntityInfo? target = null;
-            foreach (var turret in turrets)
+            brain.GridProgram.Echo("Number of turrets: " + turrets.Count());
+            if (brain.weaponCoreIsActive)
             {
-                if (turret.HasTarget)
+                var potentialTargets = new Dictionary<MyDetectedEntityInfo, float>();
+                brain.wcPbApi.GetSortedThreats(brain.GridProgram.Me, potentialTargets);
+                if (potentialTargets.Any())
                 {
                     targetDetected = true;
-                    target = turret.GetTargetedEntity();
-                    brain.GridProgram.Echo($"{Prompts.EnemyDetected}: " + target.Value.Position);
-                    brain.BroadcastTarget(target.Value);                  
-                    break;
+                    target = potentialTargets.First().Key;
+                }
+            }
+            else
+            {
+                foreach (var turret in turrets)
+                {
+                    if (turret.HasTarget)
+                    {
+                        targetDetected = true;
+                        target = turret.GetTargetedEntity();
+                        break;
+                    }
                 }
             }
 
-            if (!targetDetected)
+            if (targetDetected)
+            {
+                brain.GridProgram.Echo($"{Prompts.EnemyDetected}: " + target.Value.Position);
+                brain.BroadcastTarget(target.Value);               
+            }
+            else
             {
                 var sensors = new List<IMySensorBlock>();
                 brain.GridProgram.GridTerminalSystem.GetBlocksOfType(sensors, block => block.IsSameConstructAs(brain.GridProgram.Me));

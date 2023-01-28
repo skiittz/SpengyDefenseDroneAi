@@ -25,6 +25,8 @@ namespace IngameScript
         static List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
         public bool isAuthorized;
         public IAiBrain myBrain;
+        public WcPbApi wcPbApi;
+        public bool weaponCoreIsActive;
         public Program()
         {
             var configuration = new Configuration();
@@ -49,7 +51,19 @@ namespace IngameScript
             else
                 MyState = new State();
 
-            myBrain = BrainFunctions.GetBrain(MyState, this, configuration, listeners);
+            wcPbApi = new WcPbApi();
+            weaponCoreIsActive = wcPbApi.Activate(Me);
+            Echo($"WeaponCore is {(weaponCoreIsActive ? "Active" : "Inactive")}");
+            
+            var targets = new Dictionary<MyDetectedEntityInfo, float>();
+            wcPbApi.GetSortedThreats(Me, targets);
+            Echo($"Targets found: {targets.Count}");
+            foreach (var target in targets)
+            {
+                Echo($"Target({target.Value}: {target.Key.Position}");
+            }
+
+            myBrain = BrainFunctions.GetBrain(MyState, this, configuration, listeners, weaponCoreIsActive, wcPbApi);
 
             if (!myBrain.IsSetUp())
                 Runtime.UpdateFrequency = UpdateFrequency.None;
@@ -83,6 +97,7 @@ namespace IngameScript
                 if (args[0].ToUpper().TryCommandTypeFromHumanReadableName(out cmd))
                 {
                     var remainingArgs = args.Skip(1).ToArray();
+                    Echo("Preparing to handle command!");
                     var success = myBrain.HandleCommand(cmd, remainingArgs);
                     
                     if (cmd == CommandType.Reset && success)
@@ -134,6 +149,7 @@ namespace IngameScript
 
         void ClearProgramData()
         {
+            Echo("Clearing program storage");
             Storage = string.Empty;
             Save();
         }

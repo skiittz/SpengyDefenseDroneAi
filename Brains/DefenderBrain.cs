@@ -34,9 +34,10 @@ namespace IngameScript
         public NavigationModel navigationModel { get; set; }
         public State state { get; set; }
         public List<IMyBroadcastListener> listeners { get; set; }
+        public bool weaponCoreIsActive { get; set; }
+        public WcPbApi wcPbApi { get; set; }
 
-
-        public DefenderBrain(State state, MyGridProgram gridProgram, Configuration configuration, List<IMyBroadcastListener> listeners)
+        public DefenderBrain(State state, MyGridProgram gridProgram, Configuration configuration, List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
         {
             this.GridProgram = gridProgram;
             this.configuration = configuration;
@@ -44,6 +45,8 @@ namespace IngameScript
             this.listeners = listeners;
             this.GetBasicBlocks();
             this.MyBrainType = BrainType.Defend;
+            this.wcPbApi = wcPbApi;
+            this.weaponCoreIsActive = weaponCoreIsActive;
         }
 
         public void Process(string argument)
@@ -157,6 +160,7 @@ namespace IngameScript
                 remote.ClearWaypoints();
                 remote.SetAutoPilotEnabled(false);
             }
+            GridProgram.Echo("Ive cleared the data!");
         }
 
         public void TurnOff()
@@ -224,6 +228,7 @@ namespace IngameScript
                     SetUp();
                     return true;
                 case CommandType.Reset:
+                    GridProgram.Echo("Inside command handler/reset");
                     ClearData();
                     TurnOff();
                     return true;

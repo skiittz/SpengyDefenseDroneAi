@@ -35,7 +35,9 @@ namespace IngameScript
         public NavigationModel navigationModel { get; set; }
         public State state { get; set; }
         public List<IMyBroadcastListener> listeners { get; set; }
-        public PatrollerBrain(State state, MyGridProgram GridProgram, Configuration configuration, List<IMyBroadcastListener> listeners)
+        public bool weaponCoreIsActive { get; set; }
+        public WcPbApi wcPbApi { get; set; }
+        public PatrollerBrain(State state, MyGridProgram GridProgram, Configuration configuration, List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
         {
             this.state = state;
             this.GridProgram = GridProgram;
@@ -43,6 +45,8 @@ namespace IngameScript
             this.listeners = listeners;
             this.GetBasicBlocks();
             this.MyBrainType = BrainType.Patrol;
+            this.wcPbApi = wcPbApi;
+            this.weaponCoreIsActive = weaponCoreIsActive;
         }
 
         public void Process(string argument)
