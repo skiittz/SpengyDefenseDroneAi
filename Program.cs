@@ -40,7 +40,16 @@ namespace IngameScript
                 MyState = new State();
 
             wcPbApi = new WcPbApi();
-            weaponCoreIsActive = wcPbApi.Activate(Me);
+            try
+            {
+                weaponCoreIsActive = wcPbApi.Activate(Me);
+            }
+            catch
+            {
+                weaponCoreIsActive = false;
+            }
+
+
             Echo($"WeaponCore is {(weaponCoreIsActive ? "Active" : "Inactive")}");
 
             var targets = new Dictionary<MyDetectedEntityInfo, float>();
