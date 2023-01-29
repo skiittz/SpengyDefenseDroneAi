@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using IngameScript.Brains;
 using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
@@ -7,22 +8,23 @@ namespace IngameScript
     {
         Patrol,
         Defend,
-        TargetOnly
+        TargetOnly,
+        Carrier
     }
 
     public static class BrainFunctions
     {
-        public static IAiBrain GetBrain(State state, MyGridProgram mgp, Configuration configuration,
+        public static IAiBrain GetBrain(string storage, MyGridProgram mgp, Configuration configuration,
             List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
         {
             switch (configuration.For(ConfigName.BrainType).BrainTypeFromHumanReadableName())
             {
                 case BrainType.Defend:
-                    return new DefenderBrain(state, mgp, configuration, listeners, weaponCoreIsActive, wcPbApi)
-                        .GetBasicBlocks();
+                    return new DefenderBrain(storage, mgp, configuration, listeners, weaponCoreIsActive, wcPbApi);
                 case BrainType.Patrol:
-                    return new PatrollerBrain(state, mgp, configuration, listeners, weaponCoreIsActive, wcPbApi)
-                        .GetBasicBlocks();
+                    return new PatrollerBrain(storage, mgp, configuration, listeners, weaponCoreIsActive, wcPbApi);
+                case BrainType.Carrier:
+                    return new CarrierBrain(storage, mgp, configuration, weaponCoreIsActive, wcPbApi);
                 default:
                     return new TargetterBrain(mgp, configuration, weaponCoreIsActive, wcPbApi);
             }

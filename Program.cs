@@ -22,23 +22,6 @@ namespace IngameScript
             else
                 Me.CustomData = configuration.ToString();
 
-            State MyState;
-            if (Storage != string.Empty)
-                try
-                {
-                    MyState = State.Deserialize(Storage);
-                }
-                catch (Exception e)
-                {
-                    Echo($"{Prompts.CouldNotDeserializeState}: {e.Message}");
-                    Echo(Storage);
-                    Storage = string.Empty;
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                    return;
-                }
-            else
-                MyState = new State();
-
             wcPbApi = new WcPbApi();
             try
             {
@@ -57,7 +40,7 @@ namespace IngameScript
             Echo($"Targets found: {targets.Count}");
             foreach (var target in targets) Echo($"Target({target.Value}: {target.Key.Position}");
 
-            myBrain = BrainFunctions.GetBrain(MyState, this, configuration, listeners, weaponCoreIsActive, wcPbApi);
+            myBrain = BrainFunctions.GetBrain(Storage, this, configuration, listeners, weaponCoreIsActive, wcPbApi);
 
             if (!myBrain.IsSetUp())
                 Runtime.UpdateFrequency = UpdateFrequency.None;

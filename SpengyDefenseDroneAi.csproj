@@ -41,6 +41,7 @@
     <Compile Include="Brains\AiBrain.cs" />
     <Compile Include="Authenticator.cs" />
     <Compile Include="Brains\AiBrainExtensions.cs" />
+    <Compile Include="Brains\CarrierBrain.cs" />
     <Compile Include="Brains\Cortex\BroadcastingCortex.cs" />
     <Compile Include="Brains\Cortex\CombatCortex.cs" />
     <Compile Include="Brains\Cortex\FixedWeaponControlCortex.cs" />

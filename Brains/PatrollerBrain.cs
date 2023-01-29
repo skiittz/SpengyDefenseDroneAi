@@ -7,10 +7,19 @@ namespace IngameScript
 {
     public class PatrollerBrain : IAdvancedAiBrain
     {
-        public PatrollerBrain(State state, MyGridProgram GridProgram, Configuration configuration,
+        public PatrollerBrain(string storage, MyGridProgram GridProgram, Configuration configuration,
             List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
         {
-            this.state = state;
+            State _state;
+            try
+            {
+                _state = storage == string.Empty ? new State() : State.Deserialize(storage);
+            }
+            catch
+            {
+                _state = new State();
+            }
+            this.state = _state;
             this.GridProgram = GridProgram;
             this.configuration = configuration;
             this.listeners = listeners;

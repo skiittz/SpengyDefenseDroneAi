@@ -22,7 +22,9 @@ namespace IngameScript
         UseBurstTransmissions,
         EnableSuicide,
         EnableRelayBroadcast,
-        FixedWeaponReferenceTag
+        FixedWeaponReferenceTag,
+        DroneDockTag,
+        DroneIdentifier
     }
 
     public class Configuration

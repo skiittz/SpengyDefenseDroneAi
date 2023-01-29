@@ -7,12 +7,22 @@ namespace IngameScript
 {
     public class DefenderBrain : IAdvancedAiBrain
     {
-        public DefenderBrain(State state, MyGridProgram gridProgram, Configuration configuration,
+        public DefenderBrain(string storage, MyGridProgram gridProgram, Configuration configuration,
             List<IMyBroadcastListener> listeners, bool weaponCoreIsActive, WcPbApi wcPbApi)
         {
+            State _state;
+            try
+            {
+                _state = storage == string.Empty ? new State() : State.Deserialize(storage);
+            }
+            catch
+            {
+                _state = new State();
+            }
+
             GridProgram = gridProgram;
             this.configuration = configuration;
-            this.state = state;
+            this.state = _state;
             this.listeners = listeners;
             this.GetBasicBlocks();
             MyBrainType = BrainType.Defend;

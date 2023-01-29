@@ -80,14 +80,17 @@ namespace IngameScript
             { ConfigName.UseBurstTransmissions, "UseBurstTransmissions" },
             { ConfigName.EnableSuicide, "EnableSuicide" },
             { ConfigName.EnableRelayBroadcast, "EnableRelayBroadcast" },
-            { ConfigName.FixedWeaponReferenceTag, "FixedWeaponGroupPrefix" }
+            { ConfigName.FixedWeaponReferenceTag, "FixedWeaponGroupPrefix" },
+            {ConfigName.DroneDockTag, "DroneDockTag"},
+            {ConfigName.DroneIdentifier, "DroneIdentifier"}
         };
 
         private static readonly Dictionary<BrainType, string> brainTypeDecodes = new Dictionary<BrainType, string>
         {
             { BrainType.Patrol, "Patrol" },
             { BrainType.Defend, "Defend" },
-            { BrainType.TargetOnly, "TargetOnly" }
+            { BrainType.TargetOnly, "TargetOnly" },
+            { BrainType.Carrier, "Carrier"}
         };
 
         private static readonly Dictionary<Status, string> statusDecodes = new Dictionary<Status, string>
