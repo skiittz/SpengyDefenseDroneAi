@@ -51,6 +51,7 @@
     <Compile Include="Brains\PatrollerBrain.cs" />
     <Compile Include="Brains\TargetterBrain.cs" />
     <Compile Include="Brains\DefenderBrain.cs" />
+    <Compile Include="AimbotExample.cs" />
     <Compile Include="ManualCommands.cs" />
     <Compile Include="MyGridProgramExtensions.cs" />
     <Compile Include="Constants.cs" />
