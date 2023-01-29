@@ -20,12 +20,8 @@ namespace IngameScript
             }
 
             brain.GridProgram.IGC.GetBroadcastListeners(brain.listeners);
-            brain.listeners.ForEach(x =>
-            {
-                var command = brain.ParseRadioCommand(x.Tag);
-                if(command.HasValue)
-                    x.SetMessageCallback(command.Value.ToHumanReadableName());
-            });
+            // ReSharper disable once PossibleInvalidOperationException 
+            brain.listeners.ForEach(x => x.SetMessageCallback(brain.ParseRadioCommand(x.Tag).Value.ToHumanReadableName()));
         }
 
         private static string FormatCommandWithMyName(this IAdvancedAiBrain brain, string command)
@@ -37,8 +33,7 @@ namespace IngameScript
         public static CommandType? ParseRadioCommand(this IAdvancedAiBrain brain, string argument)
         {
             CommandType command;
-            var valueToRemove = $"{brain.configuration.For(ConfigName.DroneIdentifier)}: ";
-            if (Enum.TryParse(argument.Replace(valueToRemove,"").Trim(), out command))
+            if (Enum.TryParse(argument.Replace(brain.configuration.For(ConfigName.DroneIdentifier),"").Trim(), out command))
                 return command;
 
             return null;

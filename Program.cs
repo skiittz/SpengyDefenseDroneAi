@@ -57,7 +57,7 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            if (argument != "")
+            if (argument != string.Empty)
             {
                 Echo($"Running: {argument.ToUpper()}");
                 var args = argument.Split(' ');
