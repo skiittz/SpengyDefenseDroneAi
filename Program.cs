@@ -1,75 +1,56 @@
-﻿using Sandbox.Game.EntityComponents;
-using Sandbox.ModAPI.Ingame;
-using Sandbox.ModAPI.Interfaces;
-using SpaceEngineers.Game.ModAPI.Ingame;
-using System;
-using System.Collections;
+﻿using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
-using System.Text;
-using VRage;
-using VRage.Collections;
-using VRage.Game;
-using VRage.Game.Components;
-using VRage.Game.GUI.TextPanel;
-using VRage.Game.ModAPI.Ingame;
-using VRage.Game.ModAPI.Ingame.Utilities;
-using VRage.Game.ObjectBuilders.Definitions;
-using VRageMath;
+using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
 {
-    partial class Program : MyGridProgram
+    internal class Program : MyGridProgram
     {
-        public State MyState;
-        List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
-        public IMyProgrammableBlock sam_controller;
-        public IMyRemoteControl remote;
-        public IMyShipConnector connector;
-        public List<IMyGasTank> h2Tanks;
-        public List<IMyBatteryBlock> batteries;
-        public List<IMyReactor> reactors;
-        private readonly Configuration configuration;
+        private static readonly List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
         public bool isAuthorized;
+        public IAiBrain myBrain;
+        public WcPbApi wcPbApi;
+        public bool weaponCoreIsActive;
+
         public Program()
         {
-            configuration = new Configuration();
-            
+            var configuration = new Configuration();
+
             if (Me.CustomData != string.Empty)
                 configuration.LoadFrom(Me.CustomData);
             else
                 Me.CustomData = configuration.ToString();
 
-            if (Storage != string.Empty)
-                try {
-                    MyState = State.Deserialize(Storage); 
-                }catch(Exception e)
-                {
-                    Echo($"{Prompts.CouldNotDeserializeState}: {e.Message}");
-                    Echo(Storage);
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
+            wcPbApi = new WcPbApi();
+            try
+            {
+                weaponCoreIsActive = wcPbApi.Activate(Me);
+            }
+            catch
+            {
+                weaponCoreIsActive = false;
+            }
 
-                    MyState = new State();
-                    return;
-                }
-            else
-                MyState = new State();
 
-            GetBasicBlocks();
-            //reset dock approach in case clearance setting was changeed
-            MyState.DockApproach = MyState.DockApproach + (connector.WorldMatrix.Backward * int.Parse(configuration.For(ConfigName.DockClearance)));
+            Echo($"WeaponCore is {(weaponCoreIsActive ? "Active" : "Inactive")}");
 
-            MyState.SetControllers(remote, sam_controller);
+            var targets = new Dictionary<MyDetectedEntityInfo, float>();
+            wcPbApi.GetSortedThreats(Me, targets);
+            Echo($"Targets found: {targets.Count}");
+            foreach (var target in targets) Echo($"Target({target.Value}: {target.Key.Position}");
 
-            if (!MyState.IsSetUpFor(CurrentMode()))
+            myBrain = BrainFunctions.GetBrain(Storage, this, configuration, listeners, weaponCoreIsActive, wcPbApi);
+
+            if (!myBrain.IsSetUp())
                 Runtime.UpdateFrequency = UpdateFrequency.None;
             else
                 Runtime.UpdateFrequency = UpdateFrequency.Update100;
 
             SetUpRadioListeners();          
 
-            var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey), configuration.For(ConfigName.FactionKey), OwnerId(), FactionTag());
+            var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey),
+                configuration.For(ConfigName.FactionKey), Authenticator.OwnerId(Me), Authenticator.FactionTag(Me));
             string authorizationMessage;
             isAuthorized = authenticator.IsAuthorized(out authorizationMessage);
             Echo(authorizationMessage);
@@ -77,134 +58,78 @@ namespace IngameScript
 
         public void Save()
         {
-            if(MyState.IsSetUpFor(CurrentMode()))
-                Storage = MyState.Serialize();                
+            if (myBrain != null && myBrain.IsSetUp())
+                Storage = myBrain.SerializeState();
         }
-
 
         public void Main(string argument, UpdateType updateSource)
         {
-            CheckAndFireFixedWeapons();
-
-            if (CheckCommandIssuedViaRadio(argument))
-                return;
-
-            if (argument.ToUpper().Contains("SCAN "))
+            if (argument != "")
             {
-                ScanForTarget(argument.ToUpper().Replace("SCAN ", ""));
-                return;
-            }
+                Echo($"Running: {argument.ToUpper()}");
+                var args = argument.Split(' ');
 
-            if (argument.Contains(Special.Debug_ArgFlag))
-            {
-                if (argument == $"{Special.Debug_ArgFlag}{Special.Debug_Enroute}")
-                    MyState.Enroute = !MyState.Enroute;
-                else if(argument.Contains(Special.Debug_StateFlag))
+                CommandType cmd;
+                if (args[0].ToUpper().TryCommandTypeFromHumanReadableName(out cmd))
                 {
-                    var cmd = argument.Replace($"{Special.Debug_ArgFlag}{Special.Debug_StateFlag}", "");                   
-                    Status status;
-                    if(Enum.TryParse(cmd, out status))
-                        MyState.Status = status;
-                }
-            }
+                    var remainingArgs = args.Skip(1).ToArray();
+                    Echo("Preparing to handle command!");
+                    var success = myBrain.HandleCommand(cmd, remainingArgs);
 
-            if (argument.ToUpper() == Prompts.RESET)
-            {
-                Echo(Prompts.ResettingInternalData);
-                ClearData();
-                return;
-            }
-            if(argument.ToUpper() == Prompts.OFF)
-            {
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-                if (CurrentMode() != Mode.TargetOnly)
-                {
-                    remote.ClearWaypoints();
-                    remote.SetAutoPilotEnabled(false);
-                }
-                return;
-            }
-            if (!isAuthorized)
-            {
-                Echo($"{Prompts.Invalid} {WordKey()}");
-                Echo($"{Prompts.YourOwnerIdFactionTag}: {OwnerId()}/{FactionTag()}");
-                Runtime.UpdateFrequency = UpdateFrequency.None;
-                return;
-            }
-            if (argument.ToUpper() == Prompts.ON)
-            {
-                Runtime.UpdateFrequency = UpdateFrequency.Update100;
-            }
-            if (argument.ToUpper() == Prompts.SETUP) 
-            {
-                Echo(Prompts.AttemptingAutoSetUp);              
-                if (SetUp())
-                {
-                    Runtime.UpdateFrequency = UpdateFrequency.Update100;
-                    Echo(Prompts.SetupSuccessfulDroneIsReady);
+                    if (cmd == CommandType.Reset && success)
+                        ClearProgramData();
+                    //if (cmd == CommandType.Setup && success)
+                    //{
+                    //    NavigationModel navModel;
+                    //    if (myBrain.MyBrainType != BrainType.TargetOnly)
+                    //        navModel = (myBrain as IAdvancedAiBrain).navigationModel;
+                    //    else
+                    //        navModel = NavigationModel.Keen;
+
+                    //    myBrain.configuration = myBrain.configuration.CleanUp(myBrain.configuration.For<BrainType>(ConfigName.BrainType), navModel);
+                    //}
+
+                    Echo($"{argument.ToUpper()}: {(success ? "Success" : "Failed")}");
                 }
                 else
                 {
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                    Echo(Prompts.SetupFailedDroneIsNotOperational);
-                    return; 
+                    Echo("I do not recognize that command");
                 }
-            }
-            if(argument.ToUpper() == Prompts.RETURN)
-            {
-                MyState.Status = Status.Returning;
-                Go(MyState.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+
+                return;
             }
 
-            if (!MyState.IsSetUpFor(CurrentMode()))
+            if (!isAuthorized)
+            {
+                Echo($"{Prompts.Invalid} {Authenticator.WordKey()}");
+                Echo($"{Prompts.YourOwnerIdFactionTag}: {Authenticator.OwnerId(Me)}/{Authenticator.FactionTag(Me)}");
+                Runtime.UpdateFrequency = UpdateFrequency.None;
+                return;
+            }
+
+            if (!myBrain.IsSetUp())
             {
                 Echo(Prompts.DockAndRunSetup);
                 Runtime.UpdateFrequency = UpdateFrequency.None;
                 return;
             }
 
-            CheckScuttle();
-
-            Echo($"{Prompts.CurrentMode}: {CurrentMode().ToHumanReadableName()}");
-            Echo($"{Prompts.CurrentStatus}: {MyState.Status.ToHumanReadableName()}");
-            Echo($"{Prompts.NavigationModel}: {MyState.NavigationModel.ToHumanReadableName()}");
-            Echo($"{Prompts.Enroute}: {MyState.Enroute}");
-
-            if(configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
+            if (myBrain.configuration.IsEnabled(ConfigName.EnableRelayBroadcast) && argument == "NewTarget")
             {
                 var packet = listeners[0].AcceptMessage();
-                var antenna = FirstTaggedOrDefault<IMyRadioAntenna>();
+                var antenna = this.FirstTaggedOrDefault<IMyRadioAntenna>(myBrain.configuration.For(ConfigName.Tag));
                 antenna.EnableBroadcasting = true;
-                IGC.Relay(packet, configuration.For(ConfigName.MyName));
+                myBrain.Relay(packet);
             }
-           
-            if (MyState.Enroute)
-                Echo($"{Prompts.MovingTo} : {(remote?.CurrentWaypoint == null ? Prompts._null : remote.CurrentWaypoint.ToString())}");            
 
-            if ( CurrentMode() == Mode.TargetOnly)
-            {
-                EnemyCheck();
-                return;
-            }           
-            else if (CurrentMode() == Mode.Defend)
-            {
-                DeployLogic(argument);
-            }
-            else if(CurrentMode() == Mode.Patrol)
-            {
-                PatrolLogic();
-            }
+            myBrain.StatusReport();
+            myBrain.Process(argument);
         }
 
-        void ClearData()
+        private void ClearProgramData()
         {
+            Echo("Clearing program storage");
             Storage = string.Empty;
-            MyState = new State();
-            if (remote != null)
-            {
-                remote.ClearWaypoints();
-                remote.SetAutoPilotEnabled(false);
-            }
             Save();
         }
     }
