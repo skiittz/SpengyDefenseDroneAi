@@ -57,9 +57,9 @@ namespace IngameScript
         private Action<IMyTerminalBlock, bool, int> _fireWeaponOnce;
 
         //private Action<ICollection<MyDefinitionId>> _getCoreWeapons;
-        private Action<ICollection<MyDefinitionId>> _getCoreStaticLaunchers;
+        //private Action<ICollection<MyDefinitionId>> _getCoreStaticLaunchers;
 
-        private Func<IMyTerminalBlock, int, float> _getMaxWeaponRange;
+        //private Func<IMyTerminalBlock, int, float> _getMaxWeaponRange;
 
         //private Func<IMyTerminalBlock, ICollection<string>, int, bool> _getTurretTargetTypes;
         //private Action<IMyTerminalBlock, ICollection<string>, int> _setTurretTargetTypes;

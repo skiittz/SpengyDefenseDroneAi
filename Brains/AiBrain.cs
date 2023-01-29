@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using IngameScript.Brains;
 using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript

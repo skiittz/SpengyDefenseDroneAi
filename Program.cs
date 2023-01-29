@@ -35,19 +35,12 @@ namespace IngameScript
 
             Echo($"WeaponCore is {(weaponCoreIsActive ? "Active" : "Inactive")}");
 
-            var targets = new Dictionary<MyDetectedEntityInfo, float>();
-            wcPbApi.GetSortedThreats(Me, targets);
-            Echo($"Targets found: {targets.Count}");
-            foreach (var target in targets) Echo($"Target({target.Value}: {target.Key.Position}");
-
             myBrain = BrainFunctions.GetBrain(Storage, this, configuration, listeners, weaponCoreIsActive, wcPbApi);
 
             if (!myBrain.IsSetUp())
                 Runtime.UpdateFrequency = UpdateFrequency.None;
             else
                 Runtime.UpdateFrequency = UpdateFrequency.Update100;
-
-            SetUpRadioListeners();          
 
             var authenticator = new Authenticator(configuration.For(ConfigName.PersonalKey),
                 configuration.For(ConfigName.FactionKey), Authenticator.OwnerId(Me), Authenticator.FactionTag(Me));

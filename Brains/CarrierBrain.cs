@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Sandbox.ModAPI.Ingame;
 
-namespace IngameScript.Brains
+namespace IngameScript
 {
     public class CarrierBrain : IAiBrain
     {

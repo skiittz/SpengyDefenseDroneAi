@@ -28,6 +28,7 @@ namespace IngameScript
             MyBrainType = BrainType.Defend;
             this.wcPbApi = wcPbApi;
             this.weaponCoreIsActive = weaponCoreIsActive;
+            this.SetUpRadioListeners();
         }
 
         public BrainType MyBrainType { get; set; }
