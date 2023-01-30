@@ -66,7 +66,7 @@ namespace IngameScript
                 if (state.Enroute)
                 {
                     var distanceToWaypoint = this.DistanceToWaypoint();
-                    if (distanceToWaypoint < 3)
+                    if (distanceToWaypoint < 50)
                     {
                         switch (state.Status)
                         {
@@ -75,7 +75,8 @@ namespace IngameScript
                                     this.Dock();
                                 break;
                             case Status.Returning:
-                                state.CompleteStateAndChangeTo(Status.Docking, this);
+                                if(distanceToWaypoint < 3)
+                                    state.CompleteStateAndChangeTo(Status.Docking, this);
                                 break;
                             case Status.Waiting:
                                 if (this.NeedsService())
