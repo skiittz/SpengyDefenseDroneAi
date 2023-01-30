@@ -1,7 +1,7 @@
 ﻿R e a d m e
 -----------
 Setup Guide
-Version 1.07.05_Limited
+Version 1.07.06_Limited
 
 Section 1: Minimum requirements
 	All grids must have 1 or more turrets.  For "TargetOnly" mode, this is the only requirement.
@@ -40,7 +40,7 @@ Section 3: Custom Data
 		With this config you can override the Keen Remote Control Navigation Model, using SAM Autopilot Manager v2 instead!  This is highly recommended as the keen model tends to be extremely inefficient and wastes tons of power/fuel.
 		Simply install his script (link below) in a seperate programmable block, setting up per the SAM instructions.  Then, update this value to the same tag used by the SAM script.
 
-		SAM Autopilot Manager v2: https://steamcommunity.com/sharedfiles/filedetails/?id=1653875433
+		SAM Autopilot Manager v2 (TechCoder patch): https://steamcommunity.com/sharedfiles/filedetails/?id=2892105352
 
 	AttackSpeedLimit: (Default = 100)
 		Maximum speed a drone may travel at when responding to an enemy.
