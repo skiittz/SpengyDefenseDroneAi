@@ -47,7 +47,6 @@
     <Compile Include="Brains\Cortices\FixedWeaponControlCortex.cs" />
     <Compile Include="Brains\Cortices\ICortex.cs" />
     <Compile Include="Brains\Cortices\MaintenanceCortex.cs" />
-    <Compile Include="Brains\Cortices\NavigationCortex.cs" />
     <Compile Include="Brains\Cortices\Navigation\INavigationCortex.cs" />
     <Compile Include="Brains\Cortices\Navigation\KeenNavigationCortex.cs" />
     <Compile Include="Brains\Cortices\Navigation\SamNavigationCortex.cs" />

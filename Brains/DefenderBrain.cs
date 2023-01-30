@@ -41,7 +41,6 @@ namespace IngameScript
         public List<IMyReactor> reactors { get; set; }
         public MyGridProgram GridProgram { get; set; }
         public Configuration configuration { get; set; }
-        public NavigationModel navigationModel { get; set; }
         public State state { get; set; }
         public List<IMyBroadcastListener> listeners { get; set; }
         public bool weaponCoreIsActive { get; set; }
@@ -146,7 +145,7 @@ namespace IngameScript
         {
             GridProgram.Echo($"{Prompts.CurrentMode}: Defending");
             GridProgram.Echo($"{Prompts.CurrentStatus}: {state.Status.ToHumanReadableName()}");
-            GridProgram.Echo($"{Prompts.NavigationModel}: {navigationModel.ToHumanReadableName()}");
+            this.Cortex<INavigationCortex>().EchoModel();
             GridProgram.Echo($"{Prompts.Enroute}: {state.Enroute}");
             if (state.Enroute)
                 GridProgram.Echo($"{Prompts.DistanceToWaypoint}: {Math.Round(this.DistanceToWaypoint())}");

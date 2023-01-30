@@ -31,7 +31,7 @@ namespace IngameScript
 
 
             brain.GridProgram.Echo(
-                $"Target found: {StaticNavigationCortex.DistanceBetween(camera.GetPosition(), target.Value)}");
+                $"Target found: {Program.DistanceBetween(camera.GetPosition(), target.Value)}");
             brain.GridProgram.Echo(target.Value.ToString());
             brain.BroadcastTarget(target.Value);
         }

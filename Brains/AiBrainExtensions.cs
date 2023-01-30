@@ -16,10 +16,6 @@ namespace IngameScript
             brain.samController =
                 brain.GridProgram.SingleTagged<IMyProgrammableBlock>(
                     brain.configuration.For(ConfigName.SAMAutoPilotTag), out samFound);
-            if (samFound && brain.samController.IsWorking)
-                brain.navigationModel = NavigationModel.SAM;
-            else
-                brain.navigationModel = NavigationModel.Keen;
 
             brain.h2Tanks = new List<IMyGasTank>();
             brain.GridProgram.GridTerminalSystem.GetBlocksOfType(brain.h2Tanks,

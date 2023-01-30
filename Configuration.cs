@@ -56,37 +56,37 @@ namespace IngameScript
         {
             configs = Defaults;
         }
+        //Part of cleanup code that caused problems.  may revisit in future.
+        //public static IEnumerable<ConfigName> ApplicableConfigs(BrainType mode, INavigationCortex navModel)
+        //{
+        //    yield return ConfigName.Tag;
+        //    yield return ConfigName.BrainType;
+        //    yield return ConfigName.RadioChannel;
+        //    yield return ConfigName.PersonalKey;
+        //    yield return ConfigName.FactionKey;
+        //    yield return ConfigName.UseBurstTransmissions;
+        //    yield return ConfigName.EnableSuicide;
+        //    yield return ConfigName.EnableRelayBroadcast;
+        //    yield return ConfigName.FixedWeaponReferenceTag;
+        //    yield return ConfigName.SAMAutoPilotTag;
 
-        public static IEnumerable<ConfigName> ApplicableConfigs(BrainType mode, NavigationModel navModel)
-        {
-            yield return ConfigName.Tag;
-            yield return ConfigName.BrainType;
-            yield return ConfigName.RadioChannel;
-            yield return ConfigName.PersonalKey;
-            yield return ConfigName.FactionKey;
-            yield return ConfigName.UseBurstTransmissions;
-            yield return ConfigName.EnableSuicide;
-            yield return ConfigName.EnableRelayBroadcast;
-            yield return ConfigName.FixedWeaponReferenceTag;
-            yield return ConfigName.SAMAutoPilotTag;
+        //    if (mode != BrainType.TargetOnly)
+        //    {
+        //        if (navModel.GetType() == typeof(KeenNavigationCortex))
+        //        {
+        //            yield return ConfigName.AttackSpeedLimit;
+        //            yield return ConfigName.GeneralSpeedLimit;
+        //        }
 
-            if (mode != BrainType.TargetOnly)
-            {
-                if (navModel == NavigationModel.Keen)
-                {
-                    yield return ConfigName.AttackSpeedLimit;
-                    yield return ConfigName.GeneralSpeedLimit;
-                }
+        //        yield return ConfigName.DockSpeedLimit;
 
-                yield return ConfigName.DockSpeedLimit;
-
-                yield return ConfigName.DockClearance;
-                yield return ConfigName.LowPowerThreshold;
-                yield return ConfigName.LowH2Threshold;
-                yield return ConfigName.LowReactorThreshold;
-                yield return ConfigName.EnableLowAmmoCheck;
-            }
-        }
+        //        yield return ConfigName.DockClearance;
+        //        yield return ConfigName.LowPowerThreshold;
+        //        yield return ConfigName.LowH2Threshold;
+        //        yield return ConfigName.LowReactorThreshold;
+        //        yield return ConfigName.EnableLowAmmoCheck;
+        //    }
+        //}
 
         public void LoadFrom(string customData)
         {

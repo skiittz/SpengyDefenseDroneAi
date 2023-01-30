@@ -63,5 +63,10 @@ namespace IngameScript
 
             return speedLimit;
         }
+
+        public void EchoModel()
+        {
+            _brain.GridProgram.Echo($"{Prompts.NavigationModel}: Keen SWH");
+        }
     }
 }

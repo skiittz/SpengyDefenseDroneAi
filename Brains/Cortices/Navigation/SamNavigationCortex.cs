@@ -49,5 +49,10 @@ namespace IngameScript
         {
             _brain.samController.TryRun("STOP");
         }
+
+        public void EchoModel()
+        {
+            _brain.GridProgram.Echo($"{Prompts.NavigationModel}: SAM Autopilot Manager");
+        }
     }
 }

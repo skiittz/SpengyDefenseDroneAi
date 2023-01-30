@@ -58,7 +58,6 @@ namespace IngameScript
         List<IMyBatteryBlock> batteries { get; set; }
         List<IMyReactor> reactors { get; set; }
         List<IMyGasTank> h2Tanks { get; set; }
-        NavigationModel navigationModel { get; set; }
         State state { get; set; }
         void RefreshDockApproach();
     }

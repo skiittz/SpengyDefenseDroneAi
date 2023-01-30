@@ -5,7 +5,7 @@ using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
 {
-    internal class Program : MyGridProgram
+    partial class Program : MyGridProgram
     {
         private static readonly List<IMyBroadcastListener> listeners = new List<IMyBroadcastListener>();
         public bool isAuthorized;

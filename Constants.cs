@@ -103,13 +103,6 @@ namespace IngameScript
             { Status.PreparingToAttack, "Preparing to Attack" }
         };
 
-        private static readonly Dictionary<NavigationModel, string> navigationModelDecodes =
-            new Dictionary<NavigationModel, string>
-            {
-                { NavigationModel.Keen, "Keen" },
-                { NavigationModel.SAM, "SAM" }
-            };
-
         private static readonly Dictionary<CommandType, string> commandTypeDecodes = new Dictionary<CommandType, string>
         {
             { CommandType.Return, "RETURN" },
@@ -151,11 +144,6 @@ namespace IngameScript
         public static Status StatusFromHumanReadableName(this string input)
         {
             return statusDecodes.Single(x => x.Value == input).Key;
-        }
-
-        public static string ToHumanReadableName(this NavigationModel model)
-        {
-            return navigationModelDecodes[model];
         }
 
         public static string ToHumanReadableName(this CommandType commandType)
