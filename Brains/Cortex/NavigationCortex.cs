@@ -29,6 +29,7 @@ namespace IngameScript
     {
         public static void Go(this IAdvancedAiBrain brain, Vector3D destination, bool docking, int speedLimit)
         {
+            brain.remote.FlightMode = FlightMode.OneWay;
             string msg = string.Empty;
             switch (brain.navigationModel)
             {
