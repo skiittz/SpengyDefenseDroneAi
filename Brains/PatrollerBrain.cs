@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Sandbox.ModAPI.Ingame;
+using VRageMath;
 
 namespace IngameScript
 {
@@ -51,7 +52,7 @@ namespace IngameScript
         {
             this.CheckAndFireFixedWeapons();
             this.CheckScuttle();
-
+            
             if (connector.Status == MyShipConnectorStatus.Connected)
             {
                 if (!this.NeedsService())
@@ -66,9 +67,20 @@ namespace IngameScript
             }
             else
             {
-                if (state.Status == Status.Patrolling || state.Status == Status.Waiting ||
-                    state.Status == Status.Attacking)
-                    this.EnemyCheck();
+                if (state.Status == Status.Patrolling || state.Status == Status.Waiting || state.Status == Status.Attacking)
+                    if (argument.Equals(CommandType.NewTarget.ToHumanReadableName()))
+                    {
+                        var packet = listeners[0].AcceptMessage();
+                        GridProgram.Echo(packet.ToString());
+                        Vector3D targetPosition;
+                        if (Vector3D.TryParse((string)packet.Data, out targetPosition))
+                        {
+                            state.PendingTarget = targetPosition;
+                            state.CompleteStateAndChangeTo(Status.PreparingToAttack, this);
+                        }
+                    }
+                    else
+                        this.EnemyCheck();
                 if (state.Enroute)
                 {
                     var distanceToWaypoint = this.DistanceToWaypoint();
@@ -127,7 +139,7 @@ namespace IngameScript
 
                             break;
                         case Status.PreparingToAttack:
-                            this.Attack();
+                            this.Attack(state.PendingTarget);
                             break;
                     }
                 }

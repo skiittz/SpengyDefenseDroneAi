@@ -88,7 +88,7 @@ namespace IngameScript
             Enroute = false;
             Status = newStatus;
             CurrentDestination = Vector3D.Zero;
-
+            
             brain.remote.ClearWaypoints();
             brain.remote.SetAutoPilotEnabled(false);
 

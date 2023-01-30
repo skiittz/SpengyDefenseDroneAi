@@ -18,14 +18,13 @@ namespace IngameScript
             return brain.cortices.Single(x => x.GetType() == typeof(T)) as T;
         }
 
-        public static T Cortex<T>(this IAdvancedAiBrain brain) where T : class, IAdvancedCortex
-        {
-            return brain.cortices.Single(x => x.GetType() == typeof(T)) as T;
-        }
-
         public static IEnumerable<ICortex> CreateCortices(this IAiBrain brain)
         {
             yield return new BroadcastingCortex(brain);
+            if (brain.weaponCoreIsActive)
+                yield return new WeaponCoreTargetFinderCortex(brain);
+            else
+                yield return new VanillaTargetFinderCortex(brain);
         }
 
         public static IEnumerable<ICortex> CreateCortices(this IAdvancedAiBrain brain)

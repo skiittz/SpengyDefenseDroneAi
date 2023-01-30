@@ -81,8 +81,7 @@ namespace IngameScript
                     case Status.PreparingToAttack:
                         if (distanceToWaypoint < 3)
                         {
-                            this.Attack();
-                            state.PendingTarget = Vector3D.Zero;
+                            this.Attack(state.PendingTarget);
                         }
 
                         break;

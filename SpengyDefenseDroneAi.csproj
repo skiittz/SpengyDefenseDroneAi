@@ -54,6 +54,9 @@
     <Compile Include="Brains\Cortices\RadioCommandCortex.cs" />
     <Compile Include="Brains\Cortices\SuicideCortex.cs" />
     <Compile Include="Brains\Cortices\TargetDesignationCortex.cs" />
+    <Compile Include="Brains\Cortices\TurretTargetFinder\ITurretTargetFinderCortex.cs" />
+    <Compile Include="Brains\Cortices\TurretTargetFinder\VanillaTargetFinderCortex.cs" />
+    <Compile Include="Brains\Cortices\TurretTargetFinder\WeaponCoreTargetFinderCortex.cs" />
     <Compile Include="Brains\PatrollerBrain.cs" />
     <Compile Include="Brains\TargetterBrain.cs" />
     <Compile Include="Brains\DefenderBrain.cs" />

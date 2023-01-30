@@ -36,22 +36,26 @@ namespace IngameScript
 
         private int GetSpeedLimit()
         {
-            string speedConfig;
+            int speedLimit;
             switch (_brain.state.Status)
             {
                 case Status.PreparingToAttack:
                 case Status.Attacking:
-                    speedConfig = _brain.configuration.For(ConfigName.AttackSpeedLimit);
+                    var target = _brain.state.PendingTarget;
+                    var distance = _brain.DistanceToWaypoint(target);
+                    var attackSpeedLimit = int.Parse(_brain.configuration.For(ConfigName.AttackSpeedLimit));
+                    speedLimit = distance < 600 ? (int)Math.Pow(distance / 600, 4) * attackSpeedLimit : attackSpeedLimit;
+                    speedLimit = Math.Max(5, speedLimit);
                     break;
                case Status.Docking:
-                   speedConfig = _brain.configuration.For(ConfigName.DockSpeedLimit);
+                   speedLimit = int.Parse(_brain.configuration.For(ConfigName.DockSpeedLimit));
                    break;
                 default:
-                    speedConfig = _brain.configuration.For(ConfigName.GeneralSpeedLimit);
+                    speedLimit = int.Parse(_brain.configuration.For(ConfigName.GeneralSpeedLimit));
                     break;
             }
 
-            return int.Parse(speedConfig);
+            return speedLimit;
         }
     }
 }

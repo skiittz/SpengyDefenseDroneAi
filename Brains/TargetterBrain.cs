@@ -5,7 +5,8 @@ namespace IngameScript
 {
     public class TargetterBrain : IAiBrain
     {
-        public TargetterBrain(MyGridProgram gridProgram, Configuration configuration, bool weaponCoreIsActive, WcPbApi wcPbApi)
+        public TargetterBrain(MyGridProgram gridProgram, Configuration configuration, bool weaponCoreIsActive,
+            WcPbApi wcPbApi)
         {
             GridProgram = gridProgram;
             this.configuration = configuration;
