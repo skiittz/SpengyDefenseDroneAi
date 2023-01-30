@@ -101,7 +101,7 @@ namespace IngameScript
                         if (connector.Status == MyShipConnectorStatus.Connected)
                         {
                             GridProgram.Echo(argument);
-                            if (argument.Equals("NEWTARGET") && !this.NeedsService())
+                            if (argument.Equals(CommandType.NewTarget.ToHumanReadableName()) && !this.NeedsService())
                             {
                                 var packet = listeners[0].AcceptMessage();
                                 GridProgram.Echo(packet.ToString());
