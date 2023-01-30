@@ -71,7 +71,7 @@ namespace IngameScript
                 if (state.Enroute)
                 {
                     var distanceToWaypoint = this.DistanceToWaypoint();
-                    if (distanceToWaypoint < 3)
+                    if (distanceToWaypoint < 50)
                         switch (state.Status)
                         {
                             case Status.Docking:
