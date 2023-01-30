@@ -45,8 +45,12 @@
     <Compile Include="Brains\Cortices\BroadcastingCortex.cs" />
     <Compile Include="Brains\Cortices\CombatCortex.cs" />
     <Compile Include="Brains\Cortices\FixedWeaponControlCortex.cs" />
+    <Compile Include="Brains\Cortices\ICortex.cs" />
     <Compile Include="Brains\Cortices\MaintenanceCortex.cs" />
     <Compile Include="Brains\Cortices\NavigationCortex.cs" />
+    <Compile Include="Brains\Cortices\Navigation\INavigationCortex.cs" />
+    <Compile Include="Brains\Cortices\Navigation\KeenNavigationCortex.cs" />
+    <Compile Include="Brains\Cortices\Navigation\SamNavigationCortex.cs" />
     <Compile Include="Brains\Cortices\RadioCommandCortex.cs" />
     <Compile Include="Brains\Cortices\SuicideCortex.cs" />
     <Compile Include="Brains\Cortices\TargetDesignationCortex.cs" />
@@ -56,8 +60,6 @@
     <Compile Include="Commands.cs" />
     <Compile Include="MyGridProgramExtensions.cs" />
     <Compile Include="Constants.cs" />
-    <Compile Include="KeenNavIntegration.cs" />
-    <Compile Include="SAMIntegration.cs" />
     <Compile Include="DateExtensions.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="State.cs" />

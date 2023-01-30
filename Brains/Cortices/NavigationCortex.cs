@@ -10,27 +10,8 @@ namespace IngameScript
         SAM
     }
 
-    public static class NavigationCortex
+    public static class StaticNavigationCortex
     {
-        public static void Go(this IAdvancedAiBrain brain, Vector3D destination, bool docking, int speedLimit)
-        {
-            var msg = string.Empty;
-            switch (brain.navigationModel)
-            {
-                case NavigationModel.Keen:
-                    brain.state.Enroute =
-                        KeenNav_Controller.Go(brain.remote, destination, docking, speedLimit, out msg);
-                    break;
-                case NavigationModel.SAM:
-                    brain.state.Enroute = brain.samController.Go(destination, out msg);
-                    break;
-            }
-
-            brain.GridProgram.Echo(msg);
-            if (brain.state.Enroute)
-                brain.state.CurrentDestination = destination;
-        }
-
         public static void UnDock(this IAdvancedAiBrain brain)
         {
             brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
@@ -38,7 +19,7 @@ namespace IngameScript
 
             brain.connector.Disconnect();
 
-            brain.Go(brain.state.DockApproach, false, int.Parse(brain.configuration.For(ConfigName.GeneralSpeedLimit)));
+            brain.Cortex<INavigationCortex>().Go(brain.state.DockApproach);
         }
 
         public static void Dock(this IAdvancedAiBrain brain)

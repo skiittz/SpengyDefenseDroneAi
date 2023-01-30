@@ -32,6 +32,7 @@ namespace IngameScript
         }
 
         public BrainType MyBrainType { get; set; }
+        public List<ICortex> cortices { get; set; }
         public IMyRemoteControl remote { get; set; }
         public IMyShipConnector connector { get; set; }
         public IMyProgrammableBlock samController { get; set; }
@@ -126,14 +127,11 @@ namespace IngameScript
 
                         break;
                     case Status.Returning:
-                        this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+                        this.Cortex<INavigationCortex>().Go(state.DockApproach);
                         break;
                     case Status.Docking:
-                        string msg;
                         state.CurrentDestination = state.DockPos;
-                        state.Enroute = KeenNav_Controller.Go(remote, state.DockPos, true,
-                            int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
-                        GridProgram.Echo(msg);
+                        this.Cortex<INavigationCortex>().Go(state.DockPos, forceKeenModel:true);
                         break;
                 }
             }
@@ -230,7 +228,7 @@ namespace IngameScript
                     return true;
                 case CommandType.Return:
                     state.Status = Status.Returning;
-                    this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+                    this.Cortex<INavigationCortex>().Go(state.DockApproach);
                     return true;
                 case CommandType.Setup:
                     SetUp();

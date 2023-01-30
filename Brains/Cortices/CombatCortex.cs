@@ -109,7 +109,7 @@ namespace IngameScript
             var attackSpeedLimit = float.Parse(brain.configuration.For(ConfigName.AttackSpeedLimit));
             var speedLimit = distance < 600 ? (float)Math.Pow(distance / 600, 4) * attackSpeedLimit : attackSpeedLimit;
             speedLimit = Math.Max(5, speedLimit);
-            brain.Go(attackPos, false, (int)speedLimit);
+            brain.Cortex<INavigationCortex>().Go(attackPos);
         }
     }
 }

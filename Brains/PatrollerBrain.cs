@@ -31,6 +31,7 @@ namespace IngameScript
         }
 
         public BrainType MyBrainType { get; set; }
+        public List<ICortex> cortices { get; set; }
         public IMyRemoteControl remote { get; set; }
         public IMyShipConnector connector { get; set; }
         public IMyProgrammableBlock samController { get; set; }
@@ -101,15 +102,11 @@ namespace IngameScript
                     switch (state.Status)
                     {
                         case Status.Returning:
-                            this.Go(state.DockApproach, false,
-                                int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+                            this.Cortex<INavigationCortex>().Go(state.DockApproach);
                             break;
                         case Status.Docking:
                             state.CurrentDestination = state.DockPos;
-                            string msg;
-                            state.Enroute = KeenNav_Controller.Go(remote, state.DockPos, true,
-                                int.Parse(configuration.For(ConfigName.DockSpeedLimit)), out msg);
-                            GridProgram.Echo(msg);
+                            this.Cortex<INavigationCortex>().Go(state.DockPos, forceKeenModel:true);
                             break;
                         case Status.Patrolling:
                             state.CompleteStateAndChangeTo(Status.Waiting, this);
@@ -123,7 +120,7 @@ namespace IngameScript
                                 else
                                 {
                                     state.SetNextPatrolWaypoint(this);
-                                    ResumePatrol(GridProgram, state, samController);
+                                    ResumePatrol();
                                 }
                             else
                                 this.EnemyCheck();
@@ -223,7 +220,7 @@ namespace IngameScript
                     return true;
                 case CommandType.Return:
                     state.Status = Status.Returning;
-                    this.Go(state.DockApproach, false, int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+                    this.Cortex<INavigationCortex>().Go(state.DockApproach);
                     return true;
                 case CommandType.Setup:
                     SetUp();
@@ -275,12 +272,11 @@ namespace IngameScript
                                  int.Parse(configuration.For(ConfigName.DockClearance));
         }
 
-        public void ResumePatrol(MyGridProgram GridProgram, State state, IMyProgrammableBlock sam_controller)
+        public void ResumePatrol()
         {
             GridProgram.Echo($"{Prompts.PatrolPoint} {state.CurrentPatrolPoint}");
             state.CompleteStateAndChangeTo(Status.Patrolling, this);
-            this.Go(state.PatrolRoute[state.CurrentPatrolPoint], false,
-                int.Parse(configuration.For(ConfigName.GeneralSpeedLimit)));
+            this.Cortex<INavigationCortex>().Go(state.PatrolRoute[state.CurrentPatrolPoint]);
         }
     }
 }

@@ -10,6 +10,7 @@ namespace IngameScript
     public class CarrierBrain : IAiBrain
     {
         public BrainType MyBrainType { get; set; }
+        public List<ICortex> cortices { get; set; }
         public Configuration configuration { get; set; }
         public MyGridProgram GridProgram { get; set; }
         public bool weaponCoreIsActive { get; set; }
@@ -23,6 +24,7 @@ namespace IngameScript
             this.wcPbApi = wcPbApi;
             this.weaponCoreIsActive = weaponCoreIsActive;
             LoadDronesFrom(storage);
+            this.CreateCortices();
         }
         public void Process(string argument)
         {

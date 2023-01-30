@@ -1,4 +1,5 @@
-﻿using Sandbox.ModAPI.Ingame;
+﻿using System.Collections.Generic;
+using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
 {
@@ -14,6 +15,7 @@ namespace IngameScript
         }
 
         public BrainType MyBrainType { get; set; }
+        public List<ICortex> cortices { get; set; }
         public MyGridProgram GridProgram { get; set; }
         public Configuration configuration { get; set; }
         public bool weaponCoreIsActive { get; set; }

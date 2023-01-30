@@ -33,6 +33,7 @@ namespace IngameScript
     public interface IAiBrain
     {
         BrainType MyBrainType { get; set; }
+        List<ICortex> cortices { get; set; }
         Configuration configuration { get; set; }
         MyGridProgram GridProgram { get; set; }
         bool weaponCoreIsActive { get; set; }

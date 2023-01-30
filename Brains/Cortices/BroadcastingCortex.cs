@@ -4,37 +4,50 @@ using VRageMath;
 
 namespace IngameScript
 {
-    public static class BroadcastingCortex
+    public interface IBroadcastingCortex : ICortex
     {
-        public static void BroadcastTarget(this IAiBrain brain, MyDetectedEntityInfo target)
+        void BroadcastTarget(MyDetectedEntityInfo target);
+        void BroadcastTarget(Vector3D target);
+        void Relay(MyIGCMessage packet);
+        void ManageAntennas();
+    }
+    public class BroadcastingCortex : IBroadcastingCortex
+    {
+        public IAiBrain brain { get; set; }
+
+        public BroadcastingCortex(IAiBrain brain)
         {
-            brain.BroadcastTarget(target.Position);
+            this.brain = brain;
         }
 
-        public static void BroadcastTarget(this IAiBrain brain, Vector3D target)
+        public void BroadcastTarget(MyDetectedEntityInfo target)
         {
-            brain.EnableAntenna();
+            BroadcastTarget(target.Position);
+        }
+
+        public void BroadcastTarget(Vector3D target)
+        {
+            EnableAntenna();
             brain.GridProgram.IGC.SendBroadcastMessage(brain.configuration.For(ConfigName.RadioChannel),
                 target.ToString());
         }
 
-        public static void Relay(this IAiBrain brain, MyIGCMessage packet)
+        public void Relay(MyIGCMessage packet)
         {
             if (!brain.configuration.IsEnabled(ConfigName.EnableRelayBroadcast))
                 return;
 
-            brain.EnableAntenna();
+            EnableAntenna();
             brain.GridProgram.IGC.SendBroadcastMessage(brain.configuration.For(ConfigName.RadioChannel), packet.Data);
         }
 
-        private static void EnableAntenna(this IAiBrain brain)
+        private void EnableAntenna()
         {
-            var antenna =
-                brain.GridProgram.FirstTaggedOrDefault<IMyRadioAntenna>(brain.configuration.For(ConfigName.Tag));
+            var antenna = brain.GridProgram.FirstTaggedOrDefault<IMyRadioAntenna>(brain.configuration.For(ConfigName.Tag));
             antenna.EnableBroadcasting = true;
         }
 
-        public static void ManageAntennas(this IAiBrain brain)
+        public void ManageAntennas()
         {
             if (!brain.configuration.IsEnabled(ConfigName.UseBurstTransmissions))
                 return;
@@ -44,6 +57,29 @@ namespace IngameScript
                 block => block.IsSameConstructAs(brain.GridProgram.Me));
 
             antennas.ForEach(x => x.EnableBroadcasting = false);
+        }
+    }
+
+    public static class BroadcastingCortexExtensions
+    {
+        public static void ManageAntennas(this IAiBrain brain)
+        {
+            brain.Cortex<IBroadcastingCortex>().ManageAntennas();
+        }
+
+        public static void Relay(this IAiBrain brain, MyIGCMessage packet)
+        {
+            brain.Cortex<IBroadcastingCortex>().Relay(packet);
+        }
+
+        public static void BroadcastTarget(this IAiBrain brain, MyDetectedEntityInfo target)
+        {
+            brain.Cortex<IBroadcastingCortex>().BroadcastTarget(target);
+        }
+
+        public static void BroadcastTarget(this IAiBrain brain, Vector3D target)
+        {
+            brain.Cortex<IBroadcastingCortex>().BroadcastTarget(target);
         }
     }
 }
