@@ -34,6 +34,12 @@ namespace IngameScript
             _brain.state.CurrentDestination = destination;
         }
 
+        public void Stop()
+        {
+            _brain.remote.ClearWaypoints();
+            _brain.remote.SetAutoPilotEnabled(false);
+        }
+
         private int GetSpeedLimit()
         {
             int speedLimit;

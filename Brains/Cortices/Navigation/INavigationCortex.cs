@@ -10,5 +10,6 @@ namespace IngameScript
     public interface INavigationCortex : IAdvancedCortex
     {
         void Go(Vector3D destination, bool forceKeenModel = false);
+        void Stop();
     }
 }

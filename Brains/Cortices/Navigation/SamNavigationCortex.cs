@@ -44,5 +44,10 @@ namespace IngameScript
             _brain.state.Enroute = false;
             return;
         }
+
+        public void Stop()
+        {
+            _brain.samController.TryRun("STOP");
+        }
     }
 }

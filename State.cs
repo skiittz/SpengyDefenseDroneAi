@@ -89,11 +89,7 @@ namespace IngameScript
             Status = newStatus;
             CurrentDestination = Vector3D.Zero;
             
-            brain.remote.ClearWaypoints();
-            brain.remote.SetAutoPilotEnabled(false);
-
-            if (brain.samController != null)
-                brain.samController.TryRun("STOP");
+            brain.Cortex<INavigationCortex>().Stop();
         }
 
         public void SetNextPatrolWaypoint(IAdvancedAiBrain brain)
