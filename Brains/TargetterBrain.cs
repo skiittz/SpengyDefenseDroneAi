@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Sandbox.ModAPI.Ingame;
 
 namespace IngameScript
@@ -29,6 +30,7 @@ namespace IngameScript
             GridProgram.Echo("Checking for enemies");
             this.EnemyCheck();
             this.ManageAntennas();
+            cortices = this.CreateCortices().ToList();
         }
 
         public void StatusReport()

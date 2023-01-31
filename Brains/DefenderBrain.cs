@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
 
@@ -29,6 +30,7 @@ namespace IngameScript
             this.wcPbApi = wcPbApi;
             this.weaponCoreIsActive = weaponCoreIsActive;
             this.SetUpRadioListeners();
+            cortices = this.CreateCortices().ToList();
         }
 
         public BrainType MyBrainType { get; set; }

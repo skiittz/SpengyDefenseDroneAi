@@ -24,7 +24,7 @@ namespace IngameScript
             this.wcPbApi = wcPbApi;
             this.weaponCoreIsActive = weaponCoreIsActive;
             LoadDronesFrom(storage);
-            this.CreateCortices();
+            cortices = this.CreateCortices().ToList();
         }
         public void Process(string argument)
         {

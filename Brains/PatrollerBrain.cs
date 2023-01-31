@@ -29,6 +29,7 @@ namespace IngameScript
             this.wcPbApi = wcPbApi;
             this.weaponCoreIsActive = weaponCoreIsActive;
             this.SetUpRadioListeners();
+            cortices = this.CreateCortices().ToList();
         }
 
         public BrainType MyBrainType { get; set; }
