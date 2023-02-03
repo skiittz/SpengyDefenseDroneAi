@@ -117,6 +117,9 @@ namespace IngameScript
 
             myBrain.StatusReport();
             myBrain.Process(argument);
+
+            Echo($"Utilization: {Math.Round((double)((Runtime.CurrentInstructionCount / Runtime.MaxInstructionCount) * 100),0)}");
+            Echo($"Runtime: {Runtime.LastRunTimeMs}");
         }
 
         private void ClearProgramData()
