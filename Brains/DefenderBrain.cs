@@ -62,7 +62,7 @@ namespace IngameScript
                 {
                     case Status.Docking:
                         if (connector.Status == MyShipConnectorStatus.Connectable)
-                            this.Dock();
+                            this.Cortex<INavigationCortex>().Dock();
                         break;
                     case Status.Returning:
                         if (connector.Status == MyShipConnectorStatus.Connected)
@@ -111,7 +111,7 @@ namespace IngameScript
                                 {
                                     state.PendingTarget = targetPosition;
                                     state.Status = Status.PreparingToAttack;
-                                    this.UnDock();
+                                    this.Cortex<INavigationCortex>().UnDock();
                                 }
                             }
                             else

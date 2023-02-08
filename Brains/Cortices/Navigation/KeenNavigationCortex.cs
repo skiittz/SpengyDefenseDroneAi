@@ -68,5 +68,25 @@ namespace IngameScript
         {
             _brain.GridProgram.Echo($"{Prompts.NavigationModel}: Keen SWH");
         }
+
+        public void Dock()
+        {
+            _brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
+            _brain.h2Tanks.ForEach(x => x.Stockpile = false);
+
+            _brain.connector.Disconnect();
+
+            _brain.Cortex<INavigationCortex>().Go(_brain.state.DockApproach);
+        }
+
+        public void UnDock()
+        {
+            _brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
+            _brain.h2Tanks.ForEach(x => x.Stockpile = false);
+
+            _brain.connector.Disconnect();
+
+            _brain.Cortex<INavigationCortex>().Go(_brain.state.DockApproach);
+        }
     }
 }

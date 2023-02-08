@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sandbox.Game.GUI.DebugInputComponents;
 using Sandbox.ModAPI.Ingame;
 using VRageMath;
 
@@ -13,30 +14,12 @@ namespace IngameScript
         void Go(Vector3D destination, bool forceKeenModel = false);
         void Stop();
         void EchoModel();
+        void Dock();
+        void UnDock();
     }
 
     public static class NaviagationExtensions
     {
-        public static void UnDock(this IAdvancedAiBrain brain)
-        {
-            brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
-            brain.h2Tanks.ForEach(x => x.Stockpile = false);
-
-            brain.connector.Disconnect();
-
-            brain.Cortex<INavigationCortex>().Go(brain.state.DockApproach);
-        }
-
-        public static void Dock(this IAdvancedAiBrain brain)
-        {
-            brain.connector.Connect();
-
-            brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Recharge);
-            brain.h2Tanks.ForEach(x => x.Stockpile = true);
-
-            brain.state.CompleteStateAndChangeTo(Status.Waiting, brain);
-        }
-
         public static double DistanceToWaypoint(this IAdvancedAiBrain brain)
         {
             return brain.DistanceToWaypoint(brain.state.CurrentDestination);

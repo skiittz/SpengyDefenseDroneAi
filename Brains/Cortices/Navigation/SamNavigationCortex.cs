@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sandbox.ModAPI.Ingame;
 using VRageMath;
 
 namespace IngameScript
@@ -53,6 +54,26 @@ namespace IngameScript
         public void EchoModel()
         {
             _brain.GridProgram.Echo($"{Prompts.NavigationModel}: SAM Autopilot Manager");
+        }
+
+        public void Dock()
+        {
+            _brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
+            _brain.h2Tanks.ForEach(x => x.Stockpile = false);
+
+            _brain.connector.Disconnect();
+
+            _brain.Cortex<INavigationCortex>().Go(_brain.state.DockApproach);
+        }
+
+        public void UnDock()
+        {
+            _brain.batteries.ForEach(x => x.ChargeMode = ChargeMode.Auto);
+            _brain.h2Tanks.ForEach(x => x.Stockpile = false);
+
+            _brain.connector.Disconnect();
+
+            _brain.Cortex<INavigationCortex>().Go(_brain.state.DockApproach);
         }
     }
 }

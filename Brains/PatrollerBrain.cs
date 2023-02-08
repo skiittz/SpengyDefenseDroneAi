@@ -58,7 +58,7 @@ namespace IngameScript
                 if (!this.NeedsService())
                 {
                     state.Status = Status.Patrolling;
-                    this.UnDock();
+                    this.Cortex<INavigationCortex>().UnDock();
                 }
                 else
                 {
@@ -89,7 +89,7 @@ namespace IngameScript
                         {
                             case Status.Docking:
                                 if (connector.Status == MyShipConnectorStatus.Connectable)
-                                    this.Dock();
+                                    this.Cortex<INavigationCortex>().Dock();
                                 break;
                             case Status.Returning:
                                 state.CompleteStateAndChangeTo(Status.Docking, this);
