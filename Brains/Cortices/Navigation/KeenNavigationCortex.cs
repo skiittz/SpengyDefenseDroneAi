@@ -88,5 +88,15 @@ namespace IngameScript
 
             _brain.Cortex<INavigationCortex>().Go(_brain.state.DockApproach);
         }
+
+        public void ReturnToDockApproach()
+        {
+            Go(_brain.state.DockApproach);
+        }
+
+        public void ReturnToDockPosition()
+        {
+            Go(_brain.state.DockPos);
+        }
     }
 }

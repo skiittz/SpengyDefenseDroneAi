@@ -114,11 +114,10 @@ namespace IngameScript
                     switch (state.Status)
                     {
                         case Status.Returning:
-                            this.Cortex<INavigationCortex>().Go(state.DockApproach);
+                            this.Cortex<INavigationCortex>().ReturnToDockApproach();
                             break;
                         case Status.Docking:
-                            state.CurrentDestination = state.DockPos;
-                            this.Cortex<INavigationCortex>().Go(state.DockPos, forceKeenModel:true);
+                            this.Cortex<INavigationCortex>().ReturnToDockPosition();
                             break;
                         case Status.Patrolling:
                             state.CompleteStateAndChangeTo(Status.Waiting, this);

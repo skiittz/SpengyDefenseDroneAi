@@ -16,6 +16,8 @@ namespace IngameScript
         void EchoModel();
         void Dock();
         void UnDock();
+        void ReturnToDockApproach();
+        void ReturnToDockPosition();
     }
 
     public static class NaviagationExtensions
