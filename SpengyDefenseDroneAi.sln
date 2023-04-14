@@ -7,7 +7,16 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpengyDefenseDroneAi", "Spe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KeyMaker", "..\KeyMaker\KeyMaker.csproj", "{8D21C78A-A3BF-49CE-A554-8AF4F30CE131}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpengyAutomatonDefenseDroneAi", "..\SpengyAutomatonDefenseDroneAi\SpengyAutomatonDefenseDroneAi.csproj", "{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SeUtils", "..\Shared\SeUtils\SeUtils.shproj", "{AF051520-4C7E-4D0D-8839-9DFE84D5DD52}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\Shared\SeUtils\SeUtils.projitems*{80879e3d-70fd-47f8-ad00-14f8d5426045}*SharedItemsImports = 4
+		..\Shared\SeUtils\SeUtils.projitems*{af051520-4c7e-4d0d-8839-9dfe84d5dd52}*SharedItemsImports = 13
+		..\Shared\SeUtils\SeUtils.projitems*{f049ef97-aeb7-44ef-90b2-d594db0dbd87}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
@@ -30,6 +39,13 @@ Global
 		{8D21C78A-A3BF-49CE-A554-8AF4F30CE131}.Release|Any CPU.Build.0 = Release|Any CPU
 		{8D21C78A-A3BF-49CE-A554-8AF4F30CE131}.Release|x64.ActiveCfg = Release|Any CPU
 		{8D21C78A-A3BF-49CE-A554-8AF4F30CE131}.Release|x64.Build.0 = Release|Any CPU
+		{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}.Debug|x64.ActiveCfg = Debug|x64
+		{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}.Debug|x64.Build.0 = Debug|x64
+		{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}.Release|Any CPU.ActiveCfg = Debug|x64
+		{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}.Release|Any CPU.Build.0 = Debug|x64
+		{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}.Release|x64.ActiveCfg = Debug|x64
+		{F049EF97-AEB7-44EF-90B2-D594DB0DBD87}.Release|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
